@@ -25,6 +25,8 @@ import Profile from '@/pages/Profile';
 import OpportunityDetail from '@/pages/OpportunityDetail';
 import PlayerProfilePage from '@/pages/PlayerProfilePage';
 import CreateOpportunity from '@/pages/CreateOpportunity';
+import CoachDashboard from '@/pages/CoachDashboard';
+import TeamProfilePage from '@/pages/TeamProfilePage';
 import AdminDashboard from '@/pages/AdminDashboard';
 
 const AuthenticatedApp = () => {
@@ -74,7 +76,9 @@ const AuthenticatedApp = () => {
         {/* Full-screen routes (no bottom nav) */}
         <Route path="/opportunity/:id" element={<OpportunityDetail />} />
         <Route path="/player/:id" element={<PlayerProfilePage />} />
+        <Route path="/team/:id" element={<TeamProfilePage />} />
         <Route path="/create-opportunity" element={<CreateOpportunity />} />
+        <Route path="/coach-dashboard" element={<CoachDashboard />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/settings" element={<Profile />} />

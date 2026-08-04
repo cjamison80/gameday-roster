@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, ChevronRight, Edit, Settings, Bell, HelpCircle, LogOut, Shield, Camera } from 'lucide-react';
+import { Plus, ChevronRight, Edit, Settings, Bell, HelpCircle, LogOut, Shield, Camera, ClipboardList } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { getInitials } from '@/lib/utils';
 import VerifiedBadge from '@/components/VerifiedBadge';
@@ -119,6 +119,24 @@ export default function Profile() {
       </div>
 
       <div className="px-5 py-5 space-y-5">
+        {/* Coach dashboard entry (for coaches) */}
+        {userProfile?.role === 'coach' && (
+          <button
+            onClick={() => navigate('/coach-dashboard')}
+            className="w-full flex items-center gap-3 p-4 rounded-2xl text-left"
+            style={{ backgroundColor: '#0B1528' }}
+          >
+            <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#2563EB' }}>
+              <ClipboardList size={20} color="white" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-bold text-white">Coach Dashboard</h3>
+              <p className="text-xs mt-0.5" style={{ color: '#94A3B8' }}>Manage teams, posts & applicants</p>
+            </div>
+            <ChevronRight size={18} color="#94A3B8" />
+          </button>
+        )}
+
         {/* Players section (for parents) */}
         {(!userProfile?.role || userProfile?.role === 'parent') && (
           <div>
