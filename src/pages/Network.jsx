@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, X } from 'lucide-react';
+import { Search, X, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import PlayerCard from '@/components/PlayerCard';
@@ -127,7 +127,22 @@ function TeamListItem({ team, onClick }) {
         </span>
       </div>
       <div className="flex-1 min-w-0">
-        <h3 className="font-bold" style={{ color: '#0B1528' }}>{team.name}</h3>
+        <div className="flex items-center justify-between gap-2">
+          <h3 className="font-bold truncate" style={{ color: '#0B1528' }}>{team.name}</h3>
+          {team.gamechanger_url && (
+            <a
+              href={team.gamechanger_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={e => e.stopPropagation()}
+              className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold flex-shrink-0"
+              style={{ backgroundColor: '#EFF6FF', color: '#2563EB' }}
+            >
+              <ExternalLink size={12} />
+              GameChanger
+            </a>
+          )}
+        </div>
         <p className="text-sm mt-0.5" style={{ color: '#64748B' }}>{team.city}, {team.state}</p>
         <div className="flex gap-2 mt-1">
           {team.age_division && (

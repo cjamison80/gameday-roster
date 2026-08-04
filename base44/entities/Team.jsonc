@@ -50,6 +50,10 @@
     },
     "roster_size": {
       "type": "integer"
+    },
+    "gamechanger_url": {
+      "type": "string",
+      "description": "Optional link to the team's GameChanger page"
     }
   },
   "required": [

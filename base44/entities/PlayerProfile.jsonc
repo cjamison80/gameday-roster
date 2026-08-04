@@ -105,6 +105,10 @@
     },
     "gpa": {
       "type": "number"
+    },
+    "gamechanger_url": {
+      "type": "string",
+      "description": "Optional link to the player's GameChanger page"
     }
   },
   "required": [

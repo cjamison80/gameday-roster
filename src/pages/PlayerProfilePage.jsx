@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Edit, Share, MapPin, Trophy, MessageCircle } from 'lucide-react';
+import { ArrowLeft, Edit, Share, MapPin, Trophy, MessageCircle, ExternalLink } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import VerifiedBadge from '@/components/VerifiedBadge';
 import AvailabilityChip from '@/components/AvailabilityChip';
@@ -201,6 +201,33 @@ export default function PlayerProfilePage() {
             ))}
           </div>
         </div>
+
+        {/* GameChanger + highlight links */}
+        {(player.gamechanger_url || (isOwner && editing)) && (
+          <div className="bg-white rounded-2xl border border-gray-100 p-5">
+            <h3 className="font-bold mb-3" style={{ color: '#0B1528' }}>GameChanger</h3>
+            {editing ? (
+              <input
+                value={editData.gamechanger_url || ''}
+                onChange={e => setEditData(d => ({ ...d, gamechanger_url: e.target.value }))}
+                placeholder="https://www.gc.com/..."
+                className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
+                style={{ color: '#0B1528' }}
+              />
+            ) : player.gamechanger_url && (
+              <a
+                href={player.gamechanger_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-bold"
+                style={{ backgroundColor: '#EFF6FF', color: '#2563EB' }}
+              >
+                <ExternalLink size={16} />
+                View {player.first_name} on GameChanger
+              </a>
+            )}
+          </div>
+        )}
 
         {/* Save button */}
         {editing && (
