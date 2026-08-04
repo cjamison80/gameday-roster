@@ -339,6 +339,29 @@ export default function OpportunityDetail() {
         )}
       </div>
 
+      {/* Application Submitted Confirmation (SCR-016) */}
+      {applied && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-6" style={{ backgroundColor: 'rgba(11,21,40,0.85)' }}>
+          <div className="w-full max-w-sm bg-white rounded-3xl p-8 text-center">
+            <div className="w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center" style={{ backgroundColor: '#DCFCE7' }}>
+              <CheckCircle size={44} color="#16A34A" />
+            </div>
+            <h2 className="text-2xl font-black" style={{ color: '#0B1528' }}>Application Submitted!</h2>
+            <p className="text-sm mt-2" style={{ color: '#64748B' }}>
+              Your application for {opportunity.title} has been sent. We'll notify you when the coach responds.
+            </p>
+            <div className="space-y-3 mt-6">
+              <button onClick={() => navigate('/activity')} className="w-full py-4 rounded-2xl font-bold text-white" style={{ backgroundColor: '#2563EB' }}>
+                View My Applications
+              </button>
+              <button onClick={() => navigate('/discover')} className="w-full py-4 rounded-2xl font-bold border-2" style={{ borderColor: '#E2E8F0', color: '#0B1528' }}>
+                Return to Discover
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Apply Modal */}
       {showApplyModal && (
         <div className="fixed inset-0 z-50 flex items-end" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>

@@ -105,11 +105,11 @@ export default function Network() {
           )) : <EmptyState icon="🏆" title="No teams found" />
         ) : activeTab === 'Organizations' ? (
           filteredOrgs.length > 0 ? filteredOrgs.map(org => (
-            <OrgListItem key={org.id} org={org} />
+            <OrgListItem key={org.id} org={org} onClick={() => navigate(`/organization/${org.id}`)} />
           )) : <EmptyState icon="🏢" title="No organizations found" />
         ) : (
           filteredCoaches.length > 0 ? filteredCoaches.map(coach => (
-            <CoachListItem key={coach.id} coach={coach} />
+            <CoachListItem key={coach.id} coach={coach} onClick={() => navigate(`/coach/${coach.id}`)} />
           )) : <EmptyState icon="👨‍🏫" title="No coaches found" />
         )}
       </div>
@@ -166,9 +166,9 @@ function TeamListItem({ team, onClick }) {
   );
 }
 
-function OrgListItem({ org }) {
+function OrgListItem({ org, onClick }) {
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-4 flex items-center gap-3">
+    <div onClick={onClick} className="bg-white rounded-2xl border border-gray-100 p-4 flex items-center gap-3 cursor-pointer hover:shadow-md transition-shadow">
       <div className="w-14 h-14 rounded-xl flex-shrink-0 flex items-center justify-center" style={{ backgroundColor: '#F5F3FF' }}>
         {org.logo_url ? (
           <img src={org.logo_url} alt={org.name} className="w-14 h-14 rounded-xl object-cover" />
@@ -191,9 +191,9 @@ function OrgListItem({ org }) {
   );
 }
 
-function CoachListItem({ coach }) {
+function CoachListItem({ coach, onClick }) {
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-4 flex items-center gap-3">
+    <div onClick={onClick} className="bg-white rounded-2xl border border-gray-100 p-4 flex items-center gap-3 cursor-pointer hover:shadow-md transition-shadow">
       <div className="w-14 h-14 rounded-xl flex-shrink-0 flex items-center justify-center" style={{ backgroundColor: '#EFF6FF' }}>
         {coach.photo_url ? (
           <img src={coach.photo_url} alt={`${coach.first_name}`} className="w-14 h-14 rounded-xl object-cover" />

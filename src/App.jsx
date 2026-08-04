@@ -27,6 +27,8 @@ import PlayerProfilePage from '@/pages/PlayerProfilePage';
 import CreateOpportunity from '@/pages/CreateOpportunity';
 import CoachDashboard from '@/pages/CoachDashboard';
 import TeamProfilePage from '@/pages/TeamProfilePage';
+import CoachProfilePage from '@/pages/CoachProfilePage';
+import OrganizationProfilePage from '@/pages/OrganizationProfilePage';
 import AdminDashboard from '@/pages/AdminDashboard';
 
 const AuthenticatedApp = () => {
@@ -77,6 +79,8 @@ const AuthenticatedApp = () => {
         <Route path="/opportunity/:id" element={<OpportunityDetail />} />
         <Route path="/player/:id" element={<PlayerProfilePage />} />
         <Route path="/team/:id" element={<TeamProfilePage />} />
+        <Route path="/coach/:id" element={<CoachProfilePage />} />
+        <Route path="/organization/:id" element={<OrganizationProfilePage />} />
         <Route path="/create-opportunity" element={<CreateOpportunity />} />
         <Route path="/coach-dashboard" element={<CoachDashboard />} />
         <Route path="/admin" element={<AdminDashboard />} />
