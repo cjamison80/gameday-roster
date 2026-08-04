@@ -1,0 +1,16 @@
+{
+  "name": "SavedOpportunity",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "opportunity_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "user_id",
+    "opportunity_id"
+  ]
+}

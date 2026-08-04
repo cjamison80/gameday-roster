@@ -1,0 +1,61 @@
+{
+  "name": "Availability",
+  "type": "object",
+  "properties": {
+    "parent_id": {
+      "type": "string"
+    },
+    "player_id": {
+      "type": "string"
+    },
+    "week_start": {
+      "type": "string",
+      "format": "date"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "available",
+        "maybe",
+        "unavailable",
+        "not_set"
+      ],
+      "default": "not_set"
+    },
+    "friday": {
+      "type": "boolean",
+      "default": false
+    },
+    "saturday": {
+      "type": "boolean",
+      "default": true
+    },
+    "sunday": {
+      "type": "boolean",
+      "default": true
+    },
+    "overnight": {
+      "type": "boolean",
+      "default": false
+    },
+    "travel_radius_override": {
+      "type": "integer"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date"
+    },
+    "is_expired": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "parent_id",
+    "player_id",
+    "week_start"
+  ]
+}

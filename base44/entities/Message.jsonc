@@ -1,0 +1,46 @@
+{
+  "name": "Message",
+  "type": "object",
+  "properties": {
+    "conversation_id": {
+      "type": "string"
+    },
+    "sender_id": {
+      "type": "string"
+    },
+    "recipient_id": {
+      "type": "string"
+    },
+    "opportunity_id": {
+      "type": "string"
+    },
+    "content": {
+      "type": "string"
+    },
+    "attachment_url": {
+      "type": "string"
+    },
+    "attachment_type": {
+      "type": "string",
+      "enum": [
+        "image",
+        "document",
+        ""
+      ]
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false
+    },
+    "read_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "conversation_id",
+    "sender_id",
+    "recipient_id",
+    "content"
+  ]
+}

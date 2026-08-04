@@ -1,0 +1,44 @@
+{
+  "name": "Conversation",
+  "type": "object",
+  "properties": {
+    "participant_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "opportunity_id": {
+      "type": "string"
+    },
+    "last_message": {
+      "type": "string"
+    },
+    "last_message_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "unread_count_a": {
+      "type": "integer",
+      "default": 0
+    },
+    "unread_count_b": {
+      "type": "integer",
+      "default": 0
+    },
+    "participant_a_id": {
+      "type": "string"
+    },
+    "participant_b_id": {
+      "type": "string"
+    },
+    "is_blocked": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "participant_a_id",
+    "participant_b_id"
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "name": "Application",
+  "type": "object",
+  "properties": {
+    "opportunity_id": {
+      "type": "string"
+    },
+    "parent_id": {
+      "type": "string"
+    },
+    "player_id": {
+      "type": "string"
+    },
+    "coach_id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "accepted",
+        "declined",
+        "withdrawn"
+      ],
+      "default": "pending"
+    },
+    "message": {
+      "type": "string"
+    },
+    "coach_notes": {
+      "type": "string"
+    },
+    "match_score": {
+      "type": "integer"
+    },
+    "is_invitation": {
+      "type": "boolean",
+      "default": false
+    },
+    "read_by_coach": {
+      "type": "boolean",
+      "default": false
+    },
+    "read_by_parent": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "opportunity_id",
+    "parent_id",
+    "player_id"
+  ]
+}

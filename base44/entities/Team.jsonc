@@ -1,0 +1,58 @@
+{
+  "name": "Team",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string"
+    },
+    "head_coach_id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "logo_url": {
+      "type": "string"
+    },
+    "sport": {
+      "type": "string",
+      "default": "baseball"
+    },
+    "age_division": {
+      "type": "string"
+    },
+    "classification": {
+      "type": "string",
+      "enum": [
+        "AAA",
+        "AA",
+        "A",
+        "Open",
+        ""
+      ]
+    },
+    "city": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "is_recruiting": {
+      "type": "boolean",
+      "default": false
+    },
+    "bio": {
+      "type": "string"
+    },
+    "is_verified": {
+      "type": "boolean",
+      "default": false
+    },
+    "roster_size": {
+      "type": "integer"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

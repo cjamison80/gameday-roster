@@ -1,0 +1,56 @@
+{
+  "name": "UserProfile",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "parent",
+        "coach",
+        "organization",
+        "admin"
+      ],
+      "default": "parent"
+    },
+    "onboarding_complete": {
+      "type": "boolean",
+      "default": false
+    },
+    "onboarding_step": {
+      "type": "integer",
+      "default": 0
+    },
+    "phone": {
+      "type": "string"
+    },
+    "phone_verified": {
+      "type": "boolean",
+      "default": false
+    },
+    "push_notifications": {
+      "type": "boolean",
+      "default": true
+    },
+    "email_notifications": {
+      "type": "boolean",
+      "default": true
+    },
+    "availability_reminders": {
+      "type": "boolean",
+      "default": true
+    },
+    "city": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "user_id",
+    "role"
+  ]
+}

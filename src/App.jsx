@@ -1,48 +1,91 @@
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
-// Add page imports here
+import ProtectedRoute from '@/components/ProtectedRoute';
+import AppShell from '@/components/AppShell';
+
+// Auth pages (boilerplate)
+import Login from '@/pages/Login';
+import Register from '@/pages/Register';
+import ForgotPassword from '@/pages/ForgotPassword';
+import ResetPassword from '@/pages/ResetPassword';
+
+// App pages
+import Onboarding from '@/pages/Onboarding';
+import Discover from '@/pages/Discover';
+import Network from '@/pages/Network';
+import Messages from '@/pages/Messages';
+import Activity from '@/pages/Activity';
+import Profile from '@/pages/Profile';
+import OpportunityDetail from '@/pages/OpportunityDetail';
+import PlayerProfilePage from '@/pages/PlayerProfilePage';
+import CreateOpportunity from '@/pages/CreateOpportunity';
+import AdminDashboard from '@/pages/AdminDashboard';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
-  // Show loading spinner while checking app public settings or auth
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+      <div className="fixed inset-0 flex items-center justify-center" style={{ backgroundColor: '#0B1528' }}>
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-4 rounded-full animate-spin" style={{ borderColor: '#1E293B', borderTopColor: '#2563EB' }} />
+          <p className="text-sm font-semibold" style={{ color: '#64748B' }}>Loading GameDay Roster...</p>
+        </div>
       </div>
     );
   }
 
-  // Handle authentication errors
   if (authError) {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
     } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
       navigateToLogin();
       return null;
     }
   }
 
-  // Render the main app
   return (
     <Routes>
-      {/* Add your page Route elements here */}
+      {/* Public auth routes */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/welcome" element={<Onboarding />} />
+
+      {/* Protected routes */}
+      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+        {/* Routes with bottom nav */}
+        <Route element={<AppShell />}>
+          <Route path="/" element={<Navigate to="/discover" replace />} />
+          <Route path="/discover" element={<Discover />} />
+          <Route path="/network" element={<Network />} />
+          <Route path="/messages" element={<Messages />} />
+          <Route path="/activity" element={<Activity />} />
+          <Route path="/profile" element={<Profile />} />
+        </Route>
+
+        {/* Full-screen routes (no bottom nav) */}
+        <Route path="/opportunity/:id" element={<OpportunityDetail />} />
+        <Route path="/player/:id" element={<PlayerProfilePage />} />
+        <Route path="/create-opportunity" element={<CreateOpportunity />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/onboarding" element={<Onboarding />} />
+        <Route path="/settings" element={<Profile />} />
+      </Route>
+
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 };
 
-
 function App() {
-
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>

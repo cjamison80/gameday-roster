@@ -1,0 +1,115 @@
+{
+  "name": "PlayerProfile",
+  "type": "object",
+  "properties": {
+    "parent_id": {
+      "type": "string",
+      "description": "User ID of the parent who owns this profile"
+    },
+    "first_name": {
+      "type": "string"
+    },
+    "last_name": {
+      "type": "string"
+    },
+    "photo_url": {
+      "type": "string"
+    },
+    "bio": {
+      "type": "string"
+    },
+    "birth_year": {
+      "type": "integer"
+    },
+    "graduation_year": {
+      "type": "integer"
+    },
+    "sport": {
+      "type": "string",
+      "default": "baseball",
+      "enum": [
+        "baseball",
+        "softball",
+        "basketball",
+        "soccer",
+        "lacrosse",
+        "football",
+        "volleyball"
+      ]
+    },
+    "positions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "bats": {
+      "type": "string",
+      "enum": [
+        "Right",
+        "Left",
+        "Switch",
+        ""
+      ]
+    },
+    "throws": {
+      "type": "string",
+      "enum": [
+        "Right",
+        "Left",
+        ""
+      ]
+    },
+    "height_inches": {
+      "type": "integer"
+    },
+    "weight_lbs": {
+      "type": "integer"
+    },
+    "city": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "travel_radius_miles": {
+      "type": "integer",
+      "default": 100
+    },
+    "age_division": {
+      "type": "string"
+    },
+    "classification": {
+      "type": "string",
+      "enum": [
+        "AAA",
+        "AA",
+        "A",
+        "Open",
+        ""
+      ]
+    },
+    "highlight_video_url": {
+      "type": "string"
+    },
+    "is_verified": {
+      "type": "boolean",
+      "default": false
+    },
+    "is_public": {
+      "type": "boolean",
+      "default": true
+    },
+    "current_team_name": {
+      "type": "string"
+    },
+    "gpa": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "first_name",
+    "last_name",
+    "parent_id"
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "name": "CoachProfile",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "first_name": {
+      "type": "string"
+    },
+    "last_name": {
+      "type": "string"
+    },
+    "photo_url": {
+      "type": "string"
+    },
+    "bio": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "years_coaching": {
+      "type": "integer"
+    },
+    "sports": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "organization_id": {
+      "type": "string"
+    },
+    "is_verified": {
+      "type": "boolean",
+      "default": false
+    },
+    "verification_status": {
+      "type": "string",
+      "enum": [
+        "unverified",
+        "pending",
+        "verified",
+        "rejected"
+      ],
+      "default": "unverified"
+    },
+    "phone": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "user_id",
+    "first_name",
+    "last_name"
+  ]
+}
