@@ -29,7 +29,8 @@ export default function CreateOpportunity() {
     overnight_required: false,
     application_deadline: '',
     requirements: '',
-    notes: ''
+    notes: '',
+    sanctioning_body: ''
   });
 
   const update = (key, value) => setForm(f => ({ ...f, [key]: value }));
@@ -286,6 +287,19 @@ export default function CreateOpportunity() {
                   style={{ color: '#0B1528' }}
                 />
               </div>
+            </div>
+
+            <div>
+              <label className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Tournament Sanction</label>
+              <select
+                value={form.sanctioning_body}
+                onChange={e => update('sanctioning_body', e.target.value)}
+                className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
+                style={{ color: '#0B1528' }}
+              >
+                <option value="">None / Open</option>
+                {['USSSA', '2D', 'PG', 'NSA', 'AAU', 'Other'].map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
             </div>
           </div>
         )}

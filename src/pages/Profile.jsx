@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, ChevronRight, Edit, Settings, Bell, HelpCircle, LogOut, Shield, Camera, ClipboardList } from 'lucide-react';
+import { Plus, ChevronRight, Edit, Settings, Bell, HelpCircle, LogOut, Shield, Camera, ClipboardList, Heart } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { getInitials } from '@/lib/utils';
 import VerifiedBadge from '@/components/VerifiedBadge';
@@ -14,8 +14,13 @@ export default function Profile() {
   const [players, setPlayers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreatePlayer, setShowCreatePlayer] = useState(false);
-  const [newPlayer, setNewPlayer] = useState({ first_name: '', last_name: '', age_division: '', positions: [] });
+  const [newPlayer, setNewPlayer] = useState({
+    first_name: '', last_name: '', age_division: '', positions: [],
+    guardian_name: '', guardian_relationship: '', guardian_email: '', guardian_phone: ''
+  });
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [favorites, setFavorites] = useState({ teams: [], players: [] });
 
   useEffect(() => {
     loadData();
@@ -25,12 +30,23 @@ export default function Profile() {
     try {
       const u = await base44.auth.me();
       setUser(u);
-      const [profiles, myPlayers] = await Promise.all([
+      const [profiles, myPlayers, favs] = await Promise.all([
         base44.entities.UserProfile.filter({ user_id: u.id }),
-        base44.entities.PlayerProfile.filter({ parent_id: u.id })
+        base44.entities.PlayerProfile.filter({ parent_id: u.id }),
+        base44.entities.Favorite.filter({ user_id: u.id })
       ]);
       if (profiles.length > 0) setUserProfile(profiles[0]);
       setPlayers(myPlayers);
+      const teamIds = favs.filter(f => f.target_type === 'team').map(f => f.target_id);
+      const playerIds = favs.filter(f => f.target_type === 'player').map(f => f.target_id);
+      const [favTeams, favPlayers] = await Promise.all([
+        Promise.all(teamIds.map(tid => base44.entities.Team.get(tid).catch(() => null))),
+        Promise.all(playerIds.map(pid => base44.entities.PlayerProfile.get(pid).catch(() => null)))
+      ]);
+      setFavorites({
+        teams: favTeams.filter(Boolean),
+        players: favPlayers.filter(Boolean)
+      });
     } catch (e) {
       console.error(e);
     } finally {
@@ -39,16 +55,21 @@ export default function Profile() {
   };
 
   const handleCreatePlayer = async () => {
-    if (!newPlayer.first_name || !newPlayer.last_name || !user) return;
+    if (!newPlayer.first_name || !newPlayer.last_name || !newPlayer.guardian_name || !newPlayer.guardian_relationship || !termsAccepted || !user) return;
     setCreating(true);
     try {
       const p = await base44.entities.PlayerProfile.create({
         ...newPlayer,
-        parent_id: user.id
+        parent_id: user.id,
+        guardian_name: newPlayer.guardian_name,
+        guardian_email: newPlayer.guardian_email || user.email,
+        has_accepted_parental_terms: true,
+        parental_terms_accepted_at: new Date().toISOString()
       });
       setPlayers(prev => [...prev, p]);
       setShowCreatePlayer(false);
-      setNewPlayer({ first_name: '', last_name: '', age_division: '', positions: [] });
+      setTermsAccepted(false);
+      setNewPlayer({ first_name: '', last_name: '', age_division: '', positions: [], guardian_name: '', guardian_relationship: '', guardian_email: '', guardian_phone: '' });
     } catch (e) {
       console.error(e);
     } finally {
@@ -204,6 +225,31 @@ export default function Profile() {
           </div>
         )}
 
+        {/* Favorites */}
+        {(favorites.teams.length > 0 || favorites.players.length > 0) && (
+          <div>
+            <h2 className="text-lg font-black mb-3" style={{ color: '#0B1528' }}>Favorites</h2>
+            <div className="space-y-3">
+              {favorites.players.map(p => (
+                <FavoritesRow
+                  key={`p-${p.id}`}
+                  title={`${p.first_name} ${p.last_name}`}
+                  sub={[p.positions?.[0], p.age_division].filter(Boolean).join(' · ') || 'Player'}
+                  onClick={() => navigate(`/player/${p.id}`)}
+                />
+              ))}
+              {favorites.teams.map(t => (
+                <FavoritesRow
+                  key={`t-${t.id}`}
+                  title={t.name}
+                  sub={[t.age_division, t.classification, t.city].filter(Boolean).join(' · ') || 'Team'}
+                  onClick={() => navigate(`/team/${t.id}`)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Settings menu */}
         <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
           {[
@@ -295,6 +341,59 @@ export default function Profile() {
               </select>
             </div>
 
+            <div className="rounded-2xl p-4" style={{ backgroundColor: '#EFF6FF', border: '1px solid #DBEAFE' }}>
+              <p className="text-xs font-semibold mb-3" style={{ color: '#1E3A8A' }}>
+                Parent / Guardian Information (required — player pages are parent/guardian-run)
+              </p>
+              <input
+                value={newPlayer.guardian_name}
+                onChange={e => setNewPlayer(p => ({ ...p, guardian_name: e.target.value }))}
+                placeholder="Parent / Guardian name"
+                className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none mb-3"
+                style={{ color: '#0B1528' }}
+              />
+              <select
+                value={newPlayer.guardian_relationship}
+                onChange={e => setNewPlayer(p => ({ ...p, guardian_relationship: e.target.value }))}
+                className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none mb-3"
+                style={{ color: '#0B1528' }}
+              >
+                <option value="">Relationship</option>
+                {['Mother', 'Father', 'Legal Guardian', 'Grandparent', 'Other'].map(r => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
+              </select>
+              <div className="grid grid-cols-2 gap-3">
+                <input
+                  value={newPlayer.guardian_email}
+                  onChange={e => setNewPlayer(p => ({ ...p, guardian_email: e.target.value }))}
+                  placeholder="Email"
+                  className="rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
+                  style={{ color: '#0B1528' }}
+                />
+                <input
+                  value={newPlayer.guardian_phone}
+                  onChange={e => setNewPlayer(p => ({ ...p, guardian_phone: e.target.value }))}
+                  placeholder="Phone"
+                  className="rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
+                  style={{ color: '#0B1528' }}
+                />
+              </div>
+            </div>
+
+            <label className="flex items-start gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={termsAccepted}
+                onChange={e => setTermsAccepted(e.target.checked)}
+                className="mt-0.5 w-5 h-5 flex-shrink-0"
+                style={{ accentColor: '#2563EB' }}
+              />
+              <span className="text-xs leading-relaxed" style={{ color: '#475569' }}>
+                I am this player's parent or legal guardian and acknowledge that player pages on GameDay Roster are created and managed by a parent or legal guardian.
+              </span>
+            </label>
+
             <div className="flex gap-3">
               <button
                 onClick={() => setShowCreatePlayer(false)}
@@ -305,9 +404,9 @@ export default function Profile() {
               </button>
               <button
                 onClick={handleCreatePlayer}
-                disabled={!newPlayer.first_name || !newPlayer.last_name || creating}
+                disabled={!newPlayer.first_name || !newPlayer.last_name || !newPlayer.guardian_name || !newPlayer.guardian_relationship || !termsAccepted || creating}
                 className="flex-1 py-4 rounded-2xl font-bold text-white transition-opacity"
-                style={{ backgroundColor: '#2563EB', opacity: (!newPlayer.first_name || !newPlayer.last_name) ? 0.6 : 1 }}
+                style={{ backgroundColor: '#2563EB', opacity: (!newPlayer.first_name || !newPlayer.last_name || !newPlayer.guardian_name || !newPlayer.guardian_relationship || !termsAccepted) ? 0.6 : 1 }}
               >
                 {creating ? 'Creating...' : 'Create Player'}
               </button>
@@ -315,6 +414,24 @@ export default function Profile() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function FavoritesRow({ title, sub, onClick }) {
+  return (
+    <div
+      onClick={onClick}
+      className="bg-white rounded-2xl border border-gray-100 p-4 flex items-center gap-3 cursor-pointer hover:shadow-md transition-shadow"
+    >
+      <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#FEE2E2' }}>
+        <Heart size={18} color="#DC2626" fill="#DC2626" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <h3 className="font-bold truncate" style={{ color: '#0B1528' }}>{title}</h3>
+        <p className="text-sm truncate" style={{ color: '#64748B' }}>{sub}</p>
+      </div>
+      <ChevronRight size={16} color="#94A3B8" />
     </div>
   );
 }

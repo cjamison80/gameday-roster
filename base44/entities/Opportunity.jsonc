@@ -27,6 +27,20 @@
       "type": "string",
       "default": "baseball"
     },
+    "sanctioning_body": {
+      "type": "string",
+      "enum": [
+        "USSSA",
+        "2D",
+        "PG",
+        "NSA",
+        "AAU",
+        "Other",
+        ""
+      ],
+      "default": "",
+      "description": "Tournament sanctioning body this event is played under"
+    },
     "description": {
       "type": "string"
     },

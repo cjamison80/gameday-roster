@@ -31,6 +31,20 @@
         ""
       ]
     },
+    "sanctioning_body": {
+      "type": "string",
+      "enum": [
+        "USSSA",
+        "2D",
+        "PG",
+        "NSA",
+        "AAU",
+        "Other",
+        ""
+      ],
+      "default": "",
+      "description": "Primary tournament sanctioning body (USSSA, 2D Sports, Perfect Game, etc.)"
+    },
     "city": {
       "type": "string"
     },
@@ -54,6 +68,10 @@
     "gamechanger_url": {
       "type": "string",
       "description": "Optional link to the team's GameChanger page"
+    },
+    "sidelinehd_url": {
+      "type": "string",
+      "description": "Optional link to the team's Sideline HD page"
     }
   },
   "required": [

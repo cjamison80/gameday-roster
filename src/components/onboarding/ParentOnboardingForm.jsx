@@ -1,12 +1,19 @@
 import React, { useState } from 'react';
+import { ShieldCheck } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
+const PARENTAL_TERMS = 'I understand that this player page is created and managed by a parent or legal guardian. Player profiles on GameDay Roster are owned, controlled, and posted by the parent/guardian on behalf of their athlete. I confirm I am the parent or legal guardian of this player and am authorized to create this page. I agree to provide accurate guardian information and to comply with all safety and community guidelines.';
+
 export default function ParentOnboardingForm({ user, onComplete }) {
-  const [form, setForm] = useState({ first_name: '', last_name: '', age_division: '', position: '', city: '', state: '' });
+  const [form, setForm] = useState({
+    first_name: '', last_name: '', age_division: '', position: '', city: '', state: '',
+    guardian_name: user?.full_name || '', guardian_relationship: '', guardian_email: user?.email || '', guardian_phone: ''
+  });
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const set = (k) => (e) => setForm(f => ({ ...f, [k]: e.target.value }));
-  const valid = form.first_name && form.last_name;
+  const valid = form.first_name && form.last_name && form.guardian_name && form.guardian_relationship && acceptedTerms;
 
   const submit = async () => {
     if (!valid || saving) return;
@@ -20,7 +27,13 @@ export default function ParentOnboardingForm({ user, onComplete }) {
         positions: form.position ? [form.position] : [],
         city: form.city,
         state: form.state,
-        is_public: true
+        is_public: true,
+        guardian_name: form.guardian_name,
+        guardian_relationship: form.guardian_relationship,
+        guardian_email: form.guardian_email,
+        guardian_phone: form.guardian_phone,
+        has_accepted_parental_terms: true,
+        parental_terms_accepted_at: new Date().toISOString()
       });
       onComplete();
     } catch (e) {
@@ -43,6 +56,36 @@ export default function ParentOnboardingForm({ user, onComplete }) {
         <Field label="City" value={form.city} onChange={set('city')} placeholder="Rogers" />
         <Field label="State" value={form.state} onChange={set('state')} placeholder="AR" />
       </div>
+
+      <div className="rounded-2xl p-4" style={{ backgroundColor: '#EFF6FF', border: '1px solid #DBEAFE' }}>
+        <div className="flex items-start gap-2 mb-3">
+          <ShieldCheck size={18} color="#2563EB" className="flex-shrink-0 mt-0.5" />
+          <p className="text-xs leading-relaxed font-semibold" style={{ color: '#1E3A8A' }}>
+            Player pages are parent/guardian-run. Please provide the parent or guardian's information for this player.
+          </p>
+        </div>
+        <Field label="Parent / Guardian Name *" value={form.guardian_name} onChange={set('guardian_name')} placeholder="Jamie Jamison" />
+        <div className="h-3" />
+        <Select label="Relationship *" value={form.guardian_relationship} onChange={set('guardian_relationship')}
+          options={['Mother','Father','Legal Guardian','Grandparent','Other']} />
+        <div className="h-3" />
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Email" value={form.guardian_email} onChange={set('guardian_email')} placeholder="jamie@email.com" />
+          <Field label="Phone" value={form.guardian_phone} onChange={set('guardian_phone')} placeholder="(555) 123-4567" />
+        </div>
+      </div>
+
+      <label className="flex items-start gap-3 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={acceptedTerms}
+          onChange={e => setAcceptedTerms(e.target.checked)}
+          className="mt-0.5 w-5 h-5 rounded flex-shrink-0"
+          style={{ accentColor: '#2563EB' }}
+        />
+        <span className="text-xs leading-relaxed" style={{ color: '#475569' }}>{PARENTAL_TERMS}</span>
+      </label>
+
       <button
         onClick={submit}
         disabled={!valid || saving}

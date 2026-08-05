@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 
 export default function CoachOnboardingForm({ user, onComplete }) {
   const [coach, setCoach] = useState({ first_name: '', last_name: '', city: '', state: '', bio: '', years_coaching: '' });
-  const [team, setTeam] = useState({ name: '', age_division: '', classification: '', city: '', state: '' });
+  const [team, setTeam] = useState({ name: '', age_division: '', classification: '', city: '', state: '', sanctioning_body: '' });
   const [saving, setSaving] = useState(false);
 
   const setCoachField = (k) => (e) => setCoach(f => ({ ...f, [k]: e.target.value }));
@@ -32,6 +32,7 @@ export default function CoachOnboardingForm({ user, onComplete }) {
         classification: team.classification,
         city: team.city || coach.city,
         state: team.state || coach.state,
+        sanctioning_body: team.sanctioning_body,
         is_recruiting: true
       });
       onComplete();
@@ -69,6 +70,8 @@ export default function CoachOnboardingForm({ user, onComplete }) {
         <Field label="Team City" value={team.city} onChange={setTeamField('city')} placeholder="Rogers" />
         <Field label="Team State" value={team.state} onChange={setTeamField('state')} placeholder="AR" />
       </div>
+      <Select label="Tournament Sanction" value={team.sanctioning_body} onChange={setTeamField('sanctioning_body')}
+        options={['USSSA', '2D', 'PG', 'NSA', 'AAU', 'Other']} />
 
       <button
         onClick={submit}

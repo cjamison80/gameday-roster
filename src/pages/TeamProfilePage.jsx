@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, ExternalLink, MessageCircle, Trophy, Users } from 'lucide-react';
+import { ArrowLeft, MapPin, ExternalLink, MessageCircle, Trophy, Users, Heart } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import OpportunityCard from '@/components/OpportunityCard';
 import VerifiedBadge from '@/components/VerifiedBadge';
 import { Image } from '@/components/ui/image';
 import { SkeletonCard } from '@/components/SkeletonCard';
+import { useFavorite } from '@/hooks/useFavorite';
 
 export default function TeamProfilePage() {
   const { id } = useParams();
@@ -15,6 +16,7 @@ export default function TeamProfilePage() {
   const [opportunities, setOpportunities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [following, setFollowing] = useState(false);
+  const { isFav, toggle: toggleFav } = useFavorite(id, 'team');
 
   useEffect(() => {
     loadData();
@@ -67,11 +69,12 @@ export default function TeamProfilePage() {
             <ArrowLeft size={24} color="white" />
           </button>
           <button
-            onClick={() => setFollowing(f => !f)}
-            className="px-4 py-1.5 rounded-full text-sm font-bold"
-            style={{ backgroundColor: following ? '#1E293B' : '#2563EB', color: '#FFFFFF' }}
+            onClick={toggleFav}
+            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-bold"
+            style={{ backgroundColor: isFav ? '#DC2626' : '#2563EB', color: '#FFFFFF' }}
           >
-            {following ? 'Following' : 'Follow'}
+            <Heart size={14} fill={isFav ? '#FFFFFF' : 'none'} />
+            {isFav ? 'Favorited' : 'Favorite'}
           </button>
         </div>
 
@@ -108,6 +111,11 @@ export default function TeamProfilePage() {
               {team.classification && (
                 <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: '#3F3F12', color: '#FDE68A' }}>
                   {team.classification}
+                </span>
+              )}
+              {team.sanctioning_body && (
+                <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: '#1E293B', color: '#FDE68A' }}>
+                  {team.sanctioning_body}
                 </span>
               )}
             </div>
@@ -159,18 +167,34 @@ export default function TeamProfilePage() {
           </div>
         )}
 
-        {/* GameChanger */}
-        {team.gamechanger_url && (
-          <a
-            href={team.gamechanger_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl text-sm font-bold"
-            style={{ backgroundColor: '#EFF6FF', color: '#2563EB' }}
-          >
-            <ExternalLink size={16} />
-            View {team.name} on GameChanger
-          </a>
+        {/* GameChanger + Sideline HD */}
+        {(team.gamechanger_url || team.sidelinehd_url) && (
+          <div className="space-y-2">
+            {team.gamechanger_url && (
+              <a
+                href={team.gamechanger_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl text-sm font-bold"
+                style={{ backgroundColor: '#EFF6FF', color: '#2563EB' }}
+              >
+                <ExternalLink size={16} />
+                View {team.name} on GameChanger
+              </a>
+            )}
+            {team.sidelinehd_url && (
+              <a
+                href={team.sidelinehd_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl text-sm font-bold"
+                style={{ backgroundColor: '#ECFEFF', color: '#0E7490' }}
+              >
+                <ExternalLink size={16} />
+                View {team.name} on Sideline HD
+              </a>
+            )}
+          </div>
         )}
 
         {/* Active Opportunities */}

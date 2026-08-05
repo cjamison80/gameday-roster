@@ -89,6 +89,19 @@
         ""
       ]
     },
+    "sanctioning_body": {
+      "type": "string",
+      "enum": [
+        "USSSA",
+        "2D",
+        "PG",
+        "NSA",
+        "AAU",
+        "Other",
+        ""
+      ],
+      "default": ""
+    },
     "highlight_video_url": {
       "type": "string"
     },
@@ -109,6 +122,41 @@
     "gamechanger_url": {
       "type": "string",
       "description": "Optional link to the player's GameChanger page"
+    },
+    "sidelinehd_url": {
+      "type": "string",
+      "description": "Optional link to the player's Sideline HD page"
+    },
+    "guardian_name": {
+      "type": "string",
+      "description": "Full name of the parent/guardian who manages this page"
+    },
+    "guardian_relationship": {
+      "type": "string",
+      "enum": [
+        "Mother",
+        "Father",
+        "Legal Guardian",
+        "Grandparent",
+        "Other",
+        ""
+      ],
+      "default": ""
+    },
+    "guardian_email": {
+      "type": "string"
+    },
+    "guardian_phone": {
+      "type": "string"
+    },
+    "has_accepted_parental_terms": {
+      "type": "boolean",
+      "default": false,
+      "description": "Parent/guardian acknowledged that player pages are parent-run and must comply with safety terms"
+    },
+    "parental_terms_accepted_at": {
+      "type": "string",
+      "format": "date-time"
     }
   },
   "required": [

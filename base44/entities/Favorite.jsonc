@@ -1,0 +1,27 @@
+{
+  "name": "Favorite",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "User who favorited the target"
+    },
+    "target_id": {
+      "type": "string",
+      "description": "ID of the favorited entity record"
+    },
+    "target_type": {
+      "type": "string",
+      "enum": [
+        "team",
+        "player"
+      ],
+      "default": "team"
+    }
+  },
+  "required": [
+    "user_id",
+    "target_id",
+    "target_type"
+  ]
+}

@@ -28,7 +28,7 @@ export default function Discover() {
   const [savedIds, setSavedIds] = useState(new Set());
   const [user, setUser] = useState(null);
   const [playerProfile, setPlayerProfile] = useState(null);
-  const [filters, setFilters] = useState({ position: '', age_division: '', classification: '', sport: '' });
+  const [filters, setFilters] = useState({ position: '', age_division: '', classification: '', sport: '', sanctioning: '' });
 
   useEffect(() => {
     init();
@@ -99,6 +99,7 @@ export default function Discover() {
     if (filters.position) filtered = filtered.filter(o => o.positions_needed?.includes(filters.position));
     if (filters.age_division) filtered = filtered.filter(o => o.age_division === filters.age_division);
     if (filters.classification) filtered = filtered.filter(o => o.classification === filters.classification);
+    if (filters.sanctioning) filtered = filtered.filter(o => o.sanctioning_body === filters.sanctioning);
 
     return filtered;
   };
@@ -208,9 +209,21 @@ export default function Discover() {
                 <option value="softball">Softball</option>
               </select>
             </div>
+            <div>
+              <label className="text-xs font-semibold uppercase tracking-wide mb-1 block" style={{ color: '#64748B' }}>Tournament Type</label>
+              <select
+                value={filters.sanctioning}
+                onChange={e => setFilters(f => ({ ...f, sanctioning: e.target.value }))}
+                className="w-full rounded-xl px-3 py-2 text-sm border border-gray-200 outline-none"
+                style={{ color: '#0B1528' }}
+              >
+                <option value="">All Sanctions</option>
+                {['USSSA', '2D', 'PG', 'NSA', 'AAU', 'Other'].map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
           </div>
           <button
-            onClick={() => setFilters({ position: '', age_division: '', classification: '', sport: '' })}
+            onClick={() => setFilters({ position: '', age_division: '', classification: '', sport: '', sanctioning: '' })}
             className="text-sm font-semibold"
             style={{ color: '#2563EB' }}
           >

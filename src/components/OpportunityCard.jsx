@@ -116,6 +116,11 @@ export default function OpportunityCard({ opportunity, matchScore, onSave, isSav
                 {opportunity.classification}
               </span>
             )}
+            {opportunity.sanctioning_body && (
+              <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: '#FFF7ED', color: '#C2410C' }}>
+                {opportunity.sanctioning_body}
+              </span>
+            )}
           </div>
           {opportunity.application_deadline && (
             <span className="text-xs" style={{ color: '#94A3B8' }}>

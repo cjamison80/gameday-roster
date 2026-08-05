@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Edit, Share, MapPin, Trophy, MessageCircle, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Edit, Share, MapPin, Trophy, MessageCircle, ExternalLink, Heart, ShieldCheck } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import VerifiedBadge from '@/components/VerifiedBadge';
 import AvailabilityChip from '@/components/AvailabilityChip';
 import { Image } from '@/components/ui/image';
 import { getInitials } from '@/lib/utils';
+import { useFavorite } from '@/hooks/useFavorite';
 
 export default function PlayerProfilePage() {
   const { id } = useParams();
@@ -18,6 +19,7 @@ export default function PlayerProfilePage() {
   const [editing, setEditing] = useState(false);
   const [editData, setEditData] = useState({});
   const [saving, setSaving] = useState(false);
+  const { isFav, toggle: toggleFav } = useFavorite(id, 'player');
 
   useEffect(() => {
     loadData();
@@ -83,6 +85,15 @@ export default function PlayerProfilePage() {
             <ArrowLeft size={24} color="white" />
           </button>
           <div className="flex gap-2">
+            {!isOwner && (
+              <button
+                onClick={toggleFav}
+                className="w-9 h-9 rounded-full flex items-center justify-center"
+                style={{ backgroundColor: '#1E293B' }}
+              >
+                <Heart size={18} fill={isFav ? '#DC2626' : 'none'} color={isFav ? '#DC2626' : '#FFFFFF'} />
+              </button>
+            )}
             {isOwner && (
               <button
                 onClick={() => setEditing(!editing)}
@@ -134,6 +145,14 @@ export default function PlayerProfilePage() {
       </div>
 
       <div className="px-5 py-5 space-y-5">
+        {/* Parent/guardian-run disclaimer */}
+        <div className="flex items-start gap-2 rounded-2xl p-4" style={{ backgroundColor: '#EFF6FF', border: '1px solid #DBEAFE' }}>
+          <ShieldCheck size={18} color="#2563EB" className="flex-shrink-0 mt-0.5" />
+          <p className="text-xs leading-relaxed font-semibold" style={{ color: '#1E3A8A' }}>
+            This player page is created and managed by {player.guardian_name ? player.guardian_name : 'a parent or legal guardian'}{player.guardian_relationship ? ` (${player.guardian_relationship})` : ''}. Player profiles on GameDay Roster are parent/guardian-run.
+          </p>
+        </div>
+
         {/* Availability + classification */}
         <div className="flex gap-3">
           <AvailabilityChip status={availability?.status || 'not_set'} />
@@ -202,30 +221,133 @@ export default function PlayerProfilePage() {
           </div>
         </div>
 
-        {/* GameChanger + highlight links */}
-        {(player.gamechanger_url || (isOwner && editing)) && (
+        {/* Parent / Guardian info */}
+        {(player.guardian_name || player.guardian_relationship || isOwner) && (
           <div className="bg-white rounded-2xl border border-gray-100 p-5">
-            <h3 className="font-bold mb-3" style={{ color: '#0B1528' }}>GameChanger</h3>
-            {editing ? (
-              <input
-                value={editData.gamechanger_url || ''}
-                onChange={e => setEditData(d => ({ ...d, gamechanger_url: e.target.value }))}
-                placeholder="https://www.gc.com/..."
-                className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
-                style={{ color: '#0B1528' }}
-              />
-            ) : player.gamechanger_url && (
-              <a
-                href={player.gamechanger_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-bold"
-                style={{ backgroundColor: '#EFF6FF', color: '#2563EB' }}
-              >
-                <ExternalLink size={16} />
-                View {player.first_name} on GameChanger
-              </a>
-            )}
+            <h3 className="font-bold mb-3" style={{ color: '#0B1528' }}>Parent / Guardian</h3>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between py-2 border-b border-gray-50">
+                <span className="text-sm" style={{ color: '#64748B' }}>Name</span>
+                {editing ? (
+                  <input
+                    value={editData.guardian_name || ''}
+                    onChange={e => setEditData(d => ({ ...d, guardian_name: e.target.value }))}
+                    placeholder="Parent / Guardian name"
+                    className="rounded-lg px-3 py-1.5 text-sm border border-gray-200 outline-none text-right"
+                    style={{ color: '#0B1528' }}
+                  />
+                ) : (
+                  <span className="text-sm font-semibold" style={{ color: '#0B1528' }}>{player.guardian_name || 'Not provided'}</span>
+                )}
+              </div>
+              <div className="flex items-center justify-between py-2 border-b border-gray-50">
+                <span className="text-sm" style={{ color: '#64748B' }}>Relationship</span>
+                {editing ? (
+                  <select
+                    value={editData.guardian_relationship || ''}
+                    onChange={e => setEditData(d => ({ ...d, guardian_relationship: e.target.value }))}
+                    className="rounded-lg px-3 py-1.5 text-sm border border-gray-200 outline-none"
+                    style={{ color: '#0B1528' }}
+                  >
+                    <option value="">Select</option>
+                    {['Mother', 'Father', 'Legal Guardian', 'Grandparent', 'Other'].map(r => <option key={r} value={r}>{r}</option>)}
+                  </select>
+                ) : (
+                  <span className="text-sm font-semibold" style={{ color: '#0B1528' }}>{player.guardian_relationship || 'Not provided'}</span>
+                )}
+              </div>
+              {isOwner && (
+                <>
+                  <div className="flex items-center justify-between py-2 border-b border-gray-50">
+                    <span className="text-sm" style={{ color: '#64748B' }}>Email</span>
+                    {editing ? (
+                      <input
+                        value={editData.guardian_email || ''}
+                        onChange={e => setEditData(d => ({ ...d, guardian_email: e.target.value }))}
+                        placeholder="email@example.com"
+                        className="rounded-lg px-3 py-1.5 text-sm border border-gray-200 outline-none text-right"
+                        style={{ color: '#0B1528' }}
+                      />
+                    ) : (
+                      <span className="text-sm font-semibold" style={{ color: '#0B1528' }}>{player.guardian_email || 'Not provided'}</span>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between py-2">
+                    <span className="text-sm" style={{ color: '#64748B' }}>Phone</span>
+                    {editing ? (
+                      <input
+                        value={editData.guardian_phone || ''}
+                        onChange={e => setEditData(d => ({ ...d, guardian_phone: e.target.value }))}
+                        placeholder="(555) 123-4567"
+                        className="rounded-lg px-3 py-1.5 text-sm border border-gray-200 outline-none text-right"
+                        style={{ color: '#0B1528' }}
+                      />
+                    ) : (
+                      <span className="text-sm font-semibold" style={{ color: '#0B1528' }}>{player.guardian_phone || 'Not provided'}</span>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Linked profiles: GameChanger + Sideline HD */}
+        {(player.gamechanger_url || player.sidelinehd_url || (isOwner && editing)) && (
+          <div className="bg-white rounded-2xl border border-gray-100 p-5">
+            <h3 className="font-bold mb-3" style={{ color: '#0B1528' }}>Linked Profiles</h3>
+            <div className="space-y-3">
+              <div>
+                {editing ? (
+                  <>
+                    <label className="text-xs font-semibold block mb-1" style={{ color: '#64748B' }}>GameChanger URL</label>
+                    <input
+                      value={editData.gamechanger_url || ''}
+                      onChange={e => setEditData(d => ({ ...d, gamechanger_url: e.target.value }))}
+                      placeholder="https://www.gc.com/..."
+                      className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
+                      style={{ color: '#0B1528' }}
+                    />
+                  </>
+                ) : player.gamechanger_url && (
+                  <a
+                    href={player.gamechanger_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-bold"
+                    style={{ backgroundColor: '#EFF6FF', color: '#2563EB' }}
+                  >
+                    <ExternalLink size={16} />
+                    View {player.first_name} on GameChanger
+                  </a>
+                )}
+              </div>
+              <div>
+                {editing ? (
+                  <>
+                    <label className="text-xs font-semibold block mb-1" style={{ color: '#64748B' }}>Sideline HD URL</label>
+                    <input
+                      value={editData.sidelinehd_url || ''}
+                      onChange={e => setEditData(d => ({ ...d, sidelinehd_url: e.target.value }))}
+                      placeholder="https://sidelinehd.com/..."
+                      className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
+                      style={{ color: '#0B1528' }}
+                    />
+                  </>
+                ) : player.sidelinehd_url && (
+                  <a
+                    href={player.sidelinehd_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-bold"
+                    style={{ backgroundColor: '#ECFEFF', color: '#0E7490' }}
+                  >
+                    <ExternalLink size={16} />
+                    View {player.first_name} on Sideline HD
+                  </a>
+                )}
+              </div>
+            </div>
           </div>
         )}
 
