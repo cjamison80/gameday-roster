@@ -284,8 +284,8 @@ export default function Profile() {
 
       {/* Create Player Modal */}
       {showCreatePlayer && (
-        <div className="fixed inset-0 z-50 flex items-end" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="w-full bg-white rounded-t-3xl p-6 pb-8 space-y-5">
+        <div className="fixed inset-0 z-[60] flex items-end" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="w-full bg-white rounded-t-3xl p-6 pb-10 space-y-5 max-h-[92vh] overflow-y-auto">
             <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto" />
             <h2 className="text-xl font-black" style={{ color: '#0B1528' }}>Add Player</h2>
 
