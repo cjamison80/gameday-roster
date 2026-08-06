@@ -206,8 +206,52 @@ export default function PlayerProfilePage() {
         <div className="bg-white rounded-2xl border border-gray-100 p-5">
           <h3 className="font-bold mb-3" style={{ color: '#0B1528' }}>Player Info</h3>
           <div className="space-y-2">
+            {editing ? (
+              <div className="py-2 border-b border-gray-50">
+                <span className="text-sm font-semibold block mb-2" style={{ color: '#0B1528' }}>Bats</span>
+                <div className="grid grid-cols-3 gap-2">
+                  {['Right', 'Left', 'Switch'].map(b => (
+                    <button
+                      key={b}
+                      type="button"
+                      onClick={() => setEditData(d => ({ ...d, bats: d.bats === b ? '' : b }))}
+                      className="py-2 rounded-xl border-2 text-sm font-bold transition-all active:scale-[0.98]"
+                      style={{
+                        borderColor: editData.bats === b ? '#2563EB' : '#E2E8F0',
+                        backgroundColor: editData.bats === b ? '#EFF6FF' : '#FFFFFF',
+                        color: editData.bats === b ? '#2563EB' : '#64748B'
+                      }}
+                    >
+                      {b}
+                    </button>
+                  ))}
+                </div>
+                <span className="text-sm font-semibold block mt-3 mb-2" style={{ color: '#0B1528' }}>Throws</span>
+                <div className="grid grid-cols-2 gap-2">
+                  {['Right', 'Left'].map(t => (
+                    <button
+                      key={t}
+                      type="button"
+                      onClick={() => setEditData(d => ({ ...d, throws: d.throws === t ? '' : t }))}
+                      className="py-2 rounded-xl border-2 text-sm font-bold transition-all active:scale-[0.98]"
+                      style={{
+                        borderColor: editData.throws === t ? '#2563EB' : '#E2E8F0',
+                        backgroundColor: editData.throws === t ? '#EFF6FF' : '#FFFFFF',
+                        color: editData.throws === t ? '#2563EB' : '#64748B'
+                      }}
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between py-2 border-b border-gray-50">
+                <span className="text-sm" style={{ color: '#64748B' }}>Bats / Throws</span>
+                <span className="text-sm font-semibold" style={{ color: '#0B1528' }}>{player.bats && player.throws ? `${player.bats} / ${player.throws}` : 'Not set'}</span>
+              </div>
+            )}
             {[
-              { label: 'Bats / Throws', value: player.bats && player.throws ? `${player.bats} / ${player.throws}` : 'Not set' },
               { label: 'Height', value: player.height_inches ? `${Math.floor(player.height_inches/12)}'${player.height_inches%12}"` : 'Not set' },
               { label: 'Weight', value: player.weight_lbs ? `${player.weight_lbs} lbs` : 'Not set' },
               { label: 'Travel Radius', value: player.travel_radius_miles ? `${player.travel_radius_miles} miles` : 'Not set' },
