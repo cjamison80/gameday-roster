@@ -7,6 +7,7 @@ import AvailabilityChip from '@/components/AvailabilityChip';
 import { Image } from '@/components/ui/image';
 import { getInitials } from '@/lib/utils';
 import { useFavorite } from '@/hooks/useFavorite';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function PlayerProfilePage() {
   const { id } = useParams();
@@ -22,6 +23,7 @@ export default function PlayerProfilePage() {
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const fileInputRef = useRef(null);
   const { isFav, toggle: toggleFav } = useFavorite(id, 'player');
+  const { toast } = useToast();
 
   useEffect(() => {
     loadData();
@@ -49,11 +51,16 @@ export default function PlayerProfilePage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await base44.entities.PlayerProfile.update(id, editData);
-      setPlayer(editData);
+      const { id: _id, created_date: _cd, updated_date: _ud, created_by_id: _cb, ...payload } = editData;
+      await base44.entities.PlayerProfile.update(id, payload);
+      const fresh = await base44.entities.PlayerProfile.get(id);
+      setPlayer(fresh);
+      setEditData(fresh);
       setEditing(false);
+      toast({ title: 'Changes saved', description: 'Player profile updated.' });
     } catch (e) {
       console.error(e);
+      toast({ title: 'Could not save', description: e?.message || 'Please try again.', variant: 'destructive' });
     } finally {
       setSaving(false);
     }
