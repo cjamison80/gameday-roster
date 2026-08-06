@@ -30,10 +30,15 @@ export default function OpportunityDetail() {
 
   const loadData = async () => {
     try {
-      const [opp, u] = await Promise.all([
-        base44.entities.Opportunity.get(id),
-        base44.auth.me()
-      ]);
+      let opp = null;
+      try {
+        opp = await base44.entities.Opportunity.get(id);
+      } catch {
+        const found = await base44.entities.Opportunity.filter({ id });
+        opp = found[0] || null;
+      }
+      if (!opp) { setLoading(false); return; }
+      const u = await base44.auth.me();
       setOpportunity(opp);
       setUser(u);
       const [saved, myPlayers, existingApps] = await Promise.all([

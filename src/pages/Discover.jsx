@@ -96,10 +96,24 @@ export default function Discover() {
     }
 
     // Filter panel
+    if (filters.sport) filtered = filtered.filter(o => o.sport === filters.sport);
     if (filters.position) filtered = filtered.filter(o => o.positions_needed?.includes(filters.position));
     if (filters.age_division) filtered = filtered.filter(o => o.age_division === filters.age_division);
     if (filters.classification) filtered = filtered.filter(o => o.classification === filters.classification);
     if (filters.sanctioning) filtered = filtered.filter(o => o.sanctioning_body === filters.sanctioning);
+
+    // Near You: prioritize opportunities in the user's state (proximity sort),
+    // preserving all other selected filters instead of clearing them.
+    if (activeFilter === 'nearby') {
+      const myState = playerProfile?.state;
+      if (myState) {
+        filtered = filtered.sort((a, b) => {
+          const aNear = a.state === myState ? 0 : 1;
+          const bNear = b.state === myState ? 0 : 1;
+          return aNear - bNear;
+        });
+      }
+    }
 
     return filtered;
   };
