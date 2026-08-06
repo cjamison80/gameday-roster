@@ -419,6 +419,7 @@ export default function OpportunityDetail() {
                 {players.map(p => (
                   <button
                     key={p.id}
+                    aria-label={`Select player ${p.first_name} ${p.last_name}`}
                     onClick={() => setSelectedPlayer(p)}
                     className="w-full flex items-center gap-3 p-4 rounded-2xl border-2 text-left transition-all"
                     style={{
@@ -442,8 +443,11 @@ export default function OpportunityDetail() {
             )}
 
             <div>
-              <label className="text-sm font-semibold mb-2 block" style={{ color: '#0B1528' }}>Message (Optional)</label>
+              <label htmlFor="apply-message" className="text-sm font-semibold mb-2 block" style={{ color: '#0B1528' }}>Message (Optional)</label>
               <textarea
+                id="apply-message"
+                name="application_message"
+                aria-label="Message to coach (optional)"
                 value={applicationMessage}
                 onChange={e => setApplicationMessage(e.target.value)}
                 placeholder="Add a note to the coach..."
@@ -464,6 +468,7 @@ export default function OpportunityDetail() {
               <button
                 onClick={handleApply}
                 disabled={applying || !selectedPlayer}
+                aria-label="Submit Application"
                 className="flex-1 py-4 rounded-2xl font-bold text-white transition-opacity"
                 style={{ backgroundColor: '#2563EB', opacity: (!selectedPlayer || applying) ? 0.6 : 1 }}
               >
