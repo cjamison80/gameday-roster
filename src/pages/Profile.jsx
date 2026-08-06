@@ -323,36 +323,57 @@ export default function Profile() {
             </div>
 
             <div>
-              <label htmlFor="np-age" className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Age Division</label>
-              <select
-                id="np-age"
-                name="age_division"
-                value={newPlayer.age_division}
-                onChange={e => setNewPlayer(p => ({ ...p, age_division: e.target.value }))}
-                className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
-                style={{ color: '#0B1528' }}
-              >
-                <option value="">Select Age Division</option>
+              <span id="np-age" className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Age Division</span>
+              <div role="group" aria-labelledby="np-age" className="grid grid-cols-4 gap-2">
                 {['8U','9U','10U','11U','12U','13U','14U','15U','16U','17U','18U'].map(a => (
-                  <option key={a} value={a}>{a}</option>
+                  <button
+                    key={a}
+                    type="button"
+                    onClick={() => { setNewPlayer(p => ({ ...p, age_division: p.age_division === a ? '' : a })); setFormError(''); }}
+                    className="py-2.5 rounded-xl border-2 text-sm font-bold transition-all active:scale-[0.98]"
+                    style={{
+                      borderColor: newPlayer.age_division === a ? '#2563EB' : '#E2E8F0',
+                      backgroundColor: newPlayer.age_division === a ? '#EFF6FF' : '#FFFFFF',
+                      color: newPlayer.age_division === a ? '#2563EB' : '#64748B'
+                    }}
+                  >
+                    {a}
+                  </button>
                 ))}
-              </select>
+              </div>
             </div>
 
             <div>
-              <label htmlFor="np-position" className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Primary Position</label>
-              <select
-                id="np-position"
-                name="positions"
-                onChange={e => setNewPlayer(p => ({ ...p, positions: e.target.value ? [e.target.value] : [] }))}
-                className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
-                style={{ color: '#0B1528' }}
-              >
-                <option value="">Select Position</option>
-                {['Pitcher', 'Catcher', 'Shortstop', 'Second Base', 'Third Base', 'First Base', 'Outfield', 'Utility'].map(pos => (
-                  <option key={pos} value={pos}>{pos}</option>
-                ))}
-              </select>
+              <span id="np-position" className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Positions</span>
+              <div role="group" aria-labelledby="np-position" className="grid grid-cols-3 gap-2">
+                {['Pitcher', 'Catcher', 'Shortstop', 'Second Base', 'Third Base', 'First Base', 'Outfield', 'Utility'].map(pos => {
+                  const selected = (newPlayer.positions || []).includes(pos);
+                  return (
+                    <button
+                      key={pos}
+                      type="button"
+                      onClick={() => {
+                        setNewPlayer(p => ({
+                          ...p,
+                          positions: selected
+                            ? (p.positions || []).filter(x => x !== pos)
+                            : [...(p.positions || []), pos]
+                        }));
+                        setFormError('');
+                      }}
+                      className="py-2.5 px-2 rounded-xl border-2 text-sm font-bold transition-all active:scale-[0.98]"
+                      style={{
+                        borderColor: selected ? '#2563EB' : '#E2E8F0',
+                        backgroundColor: selected ? '#EFF6FF' : '#FFFFFF',
+                        color: selected ? '#2563EB' : '#64748B'
+                      }}
+                    >
+                      {pos}
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="text-xs mt-1.5" style={{ color: '#94A3B8' }}>Tap to select one or more (primary, secondary, etc.)</p>
             </div>
 
             <div className="rounded-2xl p-4 space-y-3" style={{ backgroundColor: '#EFF6FF', border: '1px solid #DBEAFE' }}>
