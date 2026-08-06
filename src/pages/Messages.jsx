@@ -49,9 +49,11 @@ export default function Messages() {
       // Load user info for participants
       const userIds = new Set();
       convs.forEach(c => { userIds.add(c.participant_a_id); userIds.add(c.participant_b_id); });
-      const users = await base44.entities.User.list();
       const map = {};
-      users.forEach(usr => { map[usr.id] = usr; });
+      try {
+        const users = await base44.entities.User.list();
+        users.forEach(usr => { map[usr.id] = usr; });
+      } catch { /* non-admin users can't list users — resolve names per-conversation instead */ }
       setUserMap(map);
       setConversations(convs);
       // Auto-open a conversation referenced by ?conversation=<id> (e.g. from an opportunity)
