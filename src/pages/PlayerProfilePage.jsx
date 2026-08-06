@@ -8,6 +8,7 @@ import { Image } from '@/components/ui/image';
 import { getInitials } from '@/lib/utils';
 import { useFavorite } from '@/hooks/useFavorite';
 import { useToast } from '@/components/ui/use-toast';
+import PlayerVideos from '@/components/player/PlayerVideos';
 
 export default function PlayerProfilePage() {
   const { id } = useParams();
@@ -259,6 +260,9 @@ export default function PlayerProfilePage() {
             )}
           </div>
         )}
+
+        {/* Highlight Videos */}
+        <PlayerVideos playerId={player.id} isOwner={isOwner} />
 
         {/* Player Info */}
         <div className="bg-white rounded-2xl border border-gray-100 p-5">

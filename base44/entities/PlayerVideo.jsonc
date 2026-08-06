@@ -1,0 +1,30 @@
+{
+  "name": "PlayerVideo",
+  "type": "object",
+  "properties": {
+    "player_id": {
+      "type": "string",
+      "description": "ID of the PlayerProfile this video belongs to"
+    },
+    "url": {
+      "type": "string",
+      "description": "Full YouTube or Instagram video URL"
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "youtube",
+        "instagram"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "description": "Optional caption / title"
+    }
+  },
+  "required": [
+    "player_id",
+    "url",
+    "platform"
+  ]
+}
