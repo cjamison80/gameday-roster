@@ -184,6 +184,21 @@ export default function PlayerProfilePage() {
       </div>
 
       <div className="px-5 py-5 space-y-5">
+        {editing && (
+          <div className="bg-white rounded-2xl border border-gray-100 p-4">
+            <label htmlFor="pp-photo-url" className="text-sm font-semibold mb-1.5 block" style={{ color: '#0B1528' }}>Profile Photo</label>
+            <p className="text-xs mb-2" style={{ color: '#64748B' }}>Upload via the camera icon on the avatar, or paste an image URL below.</p>
+            <input
+              id="pp-photo-url"
+              type="url"
+              value={editData.photo_url || ''}
+              onChange={e => setEditData(d => ({ ...d, photo_url: e.target.value }))}
+              placeholder="https://.../photo.jpg"
+              className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
+              style={{ color: '#0B1528' }}
+            />
+          </div>
+        )}
         {/* Parent/guardian-run disclaimer */}
         <div className="flex items-start gap-2 rounded-2xl p-4" style={{ backgroundColor: '#EFF6FF', border: '1px solid #DBEAFE' }}>
           <ShieldCheck size={18} color="#2563EB" className="flex-shrink-0 mt-0.5" />
