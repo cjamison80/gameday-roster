@@ -19,6 +19,9 @@ export default function Profile() {
 
   useEffect(() => {
     loadData();
+    // Safety net: never let the page spin forever even if a network call stalls.
+    const watchdog = setTimeout(() => setLoading(false), 6000);
+    return () => clearTimeout(watchdog);
   }, []);
 
   const loadData = async () => {
@@ -172,7 +175,7 @@ export default function Profile() {
                         <Image src={player.photo_url} alt={player.first_name} className="w-14 h-14" fittingType="fill" />
                       ) : (
                         <span className="text-xl font-black" style={{ color: '#2563EB' }}>
-                          {player.first_name[0]}{player.last_name[0]}
+                          {player.first_name?.[0]}{player.last_name?.[0]}
                         </span>
                       )}
                     </div>
@@ -262,7 +265,7 @@ export default function Profile() {
             <h2 className="text-xl font-black" style={{ color: '#0B1528' }}>Add Player</h2>
             <PlayerCreateForm
               user={user}
-              onCreated={(p) => { setPlayers(prev => [...prev, p]); setShowCreatePlayer(false); }}
+              onCreated={(p) => { if (p?.id) setPlayers(prev => [...prev, p]); setShowCreatePlayer(false); }}
               onCancel={() => setShowCreatePlayer(false)}
             />
           </div>
