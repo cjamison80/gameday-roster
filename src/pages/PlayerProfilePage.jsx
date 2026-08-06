@@ -4,6 +4,7 @@ import { ArrowLeft, Edit, Share, MapPin, Trophy, MessageCircle, ExternalLink, He
 import { base44 } from '@/api/base44Client';
 import VerifiedBadge from '@/components/VerifiedBadge';
 import AvailabilityChip from '@/components/AvailabilityChip';
+import AvailabilityCheckin from '@/components/AvailabilityCheckin';
 import { Image } from '@/components/ui/image';
 import { getInitials } from '@/lib/utils';
 import { useFavorite } from '@/hooks/useFavorite';
@@ -226,6 +227,11 @@ export default function PlayerProfilePage() {
             </span>
           )}
         </div>
+
+        {/* Weekly availability check-in (owner only) */}
+        {isOwner && (
+          <AvailabilityCheckin user={user} playerId={id} onSaved={loadData} />
+        )}
 
         {/* Positions */}
         {player.positions?.length > 0 && (

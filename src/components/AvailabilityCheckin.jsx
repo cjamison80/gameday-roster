@@ -28,7 +28,7 @@ function weekendRange(weekStart) {
   return `${fmt(friday)} – ${fmt(sunday)}`;
 }
 
-export default function AvailabilityCheckin({ user }) {
+export default function AvailabilityCheckin({ user, playerId, onSaved }) {
   const [players, setPlayers] = useState([]);
   const [selectedPlayerId, setSelectedPlayerId] = useState('');
   const [loadingPlayers, setLoadingPlayers] = useState(true);
@@ -46,16 +46,24 @@ export default function AvailabilityCheckin({ user }) {
     (async () => {
       if (!user) { setLoadingPlayers(false); return; }
       try {
-        const myPlayers = await base44.entities.PlayerProfile.filter({ parent_id: user.id });
-        setPlayers(myPlayers);
-        if (myPlayers.length > 0) setSelectedPlayerId(myPlayers[0].id);
-        const existing = await base44.entities.Availability.filter({ parent_id: user.id, player_id: myPlayers[0]?.id || '', week_start: weekStart });
-        if (existing.length > 0) {
-          const a = existing[0];
-          setStatus(a.status && a.status !== 'not_set' ? a.status : 'available');
-          setDays({ friday: !!a.friday, saturday: !!a.saturday, sunday: !!a.sunday });
-          setOvernight(!!a.overnight);
-          setNotes(a.notes || '');
+        let targetId = playerId || '';
+        if (playerId) {
+          setSelectedPlayerId(playerId);
+          setPlayers([{ id: playerId }]);
+        } else {
+          const myPlayers = await base44.entities.PlayerProfile.filter({ parent_id: user.id });
+          setPlayers(myPlayers);
+          if (myPlayers.length > 0) { setSelectedPlayerId(myPlayers[0].id); targetId = myPlayers[0].id; }
+        }
+        if (targetId) {
+          const existing = await base44.entities.Availability.filter({ parent_id: user.id, player_id: targetId, week_start: weekStart });
+          if (existing.length > 0) {
+            const a = existing[0];
+            setStatus(a.status && a.status !== 'not_set' ? a.status : 'available');
+            setDays({ friday: !!a.friday, saturday: !!a.saturday, sunday: !!a.sunday });
+            setOvernight(!!a.overnight);
+            setNotes(a.notes || '');
+          }
         }
       } catch (e) {
         console.error(e);
@@ -63,7 +71,7 @@ export default function AvailabilityCheckin({ user }) {
         setLoadingPlayers(false);
       }
     })();
-  }, [user]);
+  }, [user, playerId]);
 
   const handlePlayerChange = async (pid) => {
     setSelectedPlayerId(pid);
@@ -113,6 +121,7 @@ export default function AvailabilityCheckin({ user }) {
         await base44.entities.Availability.create(payload);
       }
       setSaved(true);
+      if (onSaved) onSaved();
     } catch (e) {
       console.error(e);
       setError(e?.message || 'Could not save availability. Please try again.');
@@ -129,7 +138,7 @@ export default function AvailabilityCheckin({ user }) {
     );
   }
 
-  if (players.length === 0) {
+  if (!playerId && players.length === 0) {
     return (
       <div className="bg-white rounded-2xl p-6 border border-gray-100 text-center">
         <div className="text-4xl mb-3">⚾</div>
@@ -157,21 +166,23 @@ export default function AvailabilityCheckin({ user }) {
           </p>
         </div>
 
-        {/* Player selector */}
-        <div>
-          <label htmlFor="avail-player" className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Player</label>
-          <select
-            id="avail-player"
-            value={selectedPlayerId}
-            onChange={(e) => handlePlayerChange(e.target.value)}
-            className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
-            style={{ color: '#0B1528' }}
-          >
-            {players.map(p => (
-              <option key={p.id} value={p.id}>{p.first_name} {p.last_name}</option>
-            ))}
-          </select>
-        </div>
+        {/* Player selector (hidden when locked to a specific player) */}
+        {!playerId && (
+          <div>
+            <label htmlFor="avail-player" className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Player</label>
+            <select
+              id="avail-player"
+              value={selectedPlayerId}
+              onChange={(e) => handlePlayerChange(e.target.value)}
+              className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
+              style={{ color: '#0B1528' }}
+            >
+              {players.map(p => (
+                <option key={p.id} value={p.id}>{p.first_name} {p.last_name}</option>
+              ))}
+            </select>
+          </div>
+        )}
 
         {/* Overall status */}
         <div>
