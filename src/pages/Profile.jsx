@@ -297,8 +297,10 @@ export default function Profile() {
             <form onSubmit={(e) => { e.preventDefault(); handleCreatePlayer(); }} className="space-y-5">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>First Name *</label>
+                <label htmlFor="np-first-name" className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>First Name *</label>
                 <input
+                  id="np-first-name"
+                  name="first_name"
                   value={newPlayer.first_name}
                   onChange={e => setNewPlayer(p => ({ ...p, first_name: e.target.value }))}
                   placeholder="Knox"
@@ -307,8 +309,10 @@ export default function Profile() {
                 />
               </div>
               <div>
-                <label className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Last Name *</label>
+                <label htmlFor="np-last-name" className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Last Name *</label>
                 <input
+                  id="np-last-name"
+                  name="last_name"
                   value={newPlayer.last_name}
                   onChange={e => setNewPlayer(p => ({ ...p, last_name: e.target.value }))}
                   placeholder="Jamison"
@@ -319,8 +323,10 @@ export default function Profile() {
             </div>
 
             <div>
-              <label className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Age Division</label>
+              <label htmlFor="np-age" className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Age Division</label>
               <select
+                id="np-age"
+                name="age_division"
                 value={newPlayer.age_division}
                 onChange={e => setNewPlayer(p => ({ ...p, age_division: e.target.value }))}
                 className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
@@ -334,8 +340,10 @@ export default function Profile() {
             </div>
 
             <div>
-              <label className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Primary Position</label>
+              <label htmlFor="np-position" className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Primary Position</label>
               <select
+                id="np-position"
+                name="positions"
                 onChange={e => setNewPlayer(p => ({ ...p, positions: e.target.value ? [e.target.value] : [] }))}
                 className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
                 style={{ color: '#0B1528' }}
@@ -347,43 +355,63 @@ export default function Profile() {
               </select>
             </div>
 
-            <div className="rounded-2xl p-4" style={{ backgroundColor: '#EFF6FF', border: '1px solid #DBEAFE' }}>
-              <p className="text-xs font-semibold mb-3" style={{ color: '#1E3A8A' }}>
+            <div className="rounded-2xl p-4 space-y-3" style={{ backgroundColor: '#EFF6FF', border: '1px solid #DBEAFE' }}>
+              <p className="text-xs font-semibold" style={{ color: '#1E3A8A' }}>
                 Parent / Guardian Information (required — player pages are parent/guardian-run)
               </p>
-              <input
-                value={newPlayer.guardian_name}
-                onChange={e => setNewPlayer(p => ({ ...p, guardian_name: e.target.value }))}
-                placeholder="Parent / Guardian name"
-                className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none mb-3"
-                style={{ color: '#0B1528' }}
-              />
-              <select
-                value={newPlayer.guardian_relationship}
-                onChange={e => setNewPlayer(p => ({ ...p, guardian_relationship: e.target.value }))}
-                className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none mb-3"
-                style={{ color: '#0B1528' }}
-              >
-                <option value="">Relationship</option>
-                {['Mother', 'Father', 'Legal Guardian', 'Grandparent', 'Other'].map(r => (
-                  <option key={r} value={r}>{r}</option>
-                ))}
-              </select>
+              <div>
+                <label htmlFor="np-guardian-name" className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Parent / Guardian Name *</label>
+                <input
+                  id="np-guardian-name"
+                  name="guardian_name"
+                  value={newPlayer.guardian_name}
+                  onChange={e => setNewPlayer(p => ({ ...p, guardian_name: e.target.value }))}
+                  placeholder="Parent / Guardian name"
+                  className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
+                  style={{ color: '#0B1528' }}
+                />
+              </div>
+              <div>
+                <label htmlFor="np-guardian-relationship" className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Relationship *</label>
+                <select
+                  id="np-guardian-relationship"
+                  name="guardian_relationship"
+                  value={newPlayer.guardian_relationship}
+                  onChange={e => setNewPlayer(p => ({ ...p, guardian_relationship: e.target.value }))}
+                  className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
+                  style={{ color: '#0B1528' }}
+                >
+                  <option value="">Select Relationship</option>
+                  {['Mother', 'Father', 'Legal Guardian', 'Grandparent', 'Other'].map(r => (
+                    <option key={r} value={r}>{r}</option>
+                  ))}
+                </select>
+              </div>
               <div className="grid grid-cols-2 gap-3">
-                <input
-                  value={newPlayer.guardian_email}
-                  onChange={e => setNewPlayer(p => ({ ...p, guardian_email: e.target.value }))}
-                  placeholder="Email"
-                  className="rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
-                  style={{ color: '#0B1528' }}
-                />
-                <input
-                  value={newPlayer.guardian_phone}
-                  onChange={e => setNewPlayer(p => ({ ...p, guardian_phone: e.target.value }))}
-                  placeholder="Phone"
-                  className="rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
-                  style={{ color: '#0B1528' }}
-                />
+                <div>
+                  <label htmlFor="np-guardian-email" className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Email</label>
+                  <input
+                    id="np-guardian-email"
+                    name="guardian_email"
+                    value={newPlayer.guardian_email}
+                    onChange={e => setNewPlayer(p => ({ ...p, guardian_email: e.target.value }))}
+                    placeholder="Email"
+                    className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
+                    style={{ color: '#0B1528' }}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="np-guardian-phone" className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Phone</label>
+                  <input
+                    id="np-guardian-phone"
+                    name="guardian_phone"
+                    value={newPlayer.guardian_phone}
+                    onChange={e => setNewPlayer(p => ({ ...p, guardian_phone: e.target.value }))}
+                    placeholder="Phone"
+                    className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
+                    style={{ color: '#0B1528' }}
+                  />
+                </div>
               </div>
             </div>
 
