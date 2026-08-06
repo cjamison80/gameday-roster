@@ -43,9 +43,8 @@ export default function Messages() {
     try {
       const u = await base44.auth.me();
       setUser(u);
-      const convs = await base44.entities.Conversation.filter({
-        $or: [{ participant_a_id: u.id }, { participant_b_id: u.id }]
-      }, '-last_message_at', 50);
+      const allConvs = await base44.entities.Conversation.list('-last_message_at', 200);
+      const convs = allConvs.filter(c => c.participant_a_id === u.id || c.participant_b_id === u.id);
 
       // Load user info for participants
       const userIds = new Set();

@@ -78,11 +78,11 @@ export default function OpportunityDetail() {
     const coachId = opportunity.coach_id;
     if (!coachId) { navigate('/messages'); return; }
     try {
-      const existing = await base44.entities.Conversation.filter({
-        $or: [{ participant_a_id: user.id }, { participant_b_id: user.id }],
-        opportunity_id: id
-      });
-      let conv = existing.find(c => c.participant_a_id === coachId || c.participant_b_id === coachId);
+      const existing = await base44.entities.Conversation.filter({ opportunity_id: id });
+      let conv = existing.find(c =>
+        (c.participant_a_id === user.id || c.participant_b_id === user.id) &&
+        (c.participant_a_id === coachId || c.participant_b_id === coachId)
+      );
       if (!conv) {
         conv = await base44.entities.Conversation.create({
           participant_a_id: user.id,
