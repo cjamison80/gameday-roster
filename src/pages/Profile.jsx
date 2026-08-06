@@ -372,20 +372,24 @@ export default function Profile() {
                 />
               </div>
               <div>
-                <label htmlFor="np-guardian-relationship" className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Relationship *</label>
-                <select
-                  id="np-guardian-relationship"
-                  name="guardian_relationship"
-                  value={newPlayer.guardian_relationship}
-                  onChange={e => setNewPlayer(p => ({ ...p, guardian_relationship: e.target.value }))}
-                  className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
-                  style={{ color: '#0B1528' }}
-                >
-                  <option value="">Select Relationship</option>
+                <span id="np-guardian-relationship" className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Relationship *</span>
+                <div role="group" aria-labelledby="np-guardian-relationship" className="grid grid-cols-3 gap-2">
                   {['Mother', 'Father', 'Legal Guardian', 'Grandparent', 'Other'].map(r => (
-                    <option key={r} value={r}>{r}</option>
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => { setNewPlayer(p => ({ ...p, guardian_relationship: p.guardian_relationship === r ? '' : r })); setFormError(''); }}
+                      className="py-3 px-2 rounded-xl border-2 text-sm font-bold transition-all active:scale-[0.98]"
+                      style={{
+                        borderColor: newPlayer.guardian_relationship === r ? '#2563EB' : '#E2E8F0',
+                        backgroundColor: newPlayer.guardian_relationship === r ? '#EFF6FF' : '#FFFFFF',
+                        color: newPlayer.guardian_relationship === r ? '#2563EB' : '#64748B'
+                      }}
+                    >
+                      {r}
+                    </button>
                   ))}
-                </select>
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
