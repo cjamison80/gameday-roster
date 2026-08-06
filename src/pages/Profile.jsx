@@ -20,6 +20,7 @@ export default function Profile() {
   });
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [formError, setFormError] = useState('');
   const [favorites, setFavorites] = useState({ teams: [], players: [] });
 
   useEffect(() => {
@@ -55,7 +56,11 @@ export default function Profile() {
   };
 
   const handleCreatePlayer = async () => {
-    if (!newPlayer.first_name || !newPlayer.last_name || !newPlayer.guardian_name || !newPlayer.guardian_relationship || !termsAccepted || !user) return;
+    setFormError('');
+    if (!user) { setFormError('Please wait for your account to load.'); return; }
+    if (!newPlayer.first_name || !newPlayer.last_name) { setFormError('First and last name are required.'); return; }
+    if (!newPlayer.guardian_name || !newPlayer.guardian_relationship) { setFormError('Parent / guardian name and relationship are required.'); return; }
+    if (!termsAccepted) { setFormError('Please accept the parent / guardian terms to continue.'); return; }
     setCreating(true);
     try {
       const p = await base44.entities.PlayerProfile.create({
@@ -72,6 +77,7 @@ export default function Profile() {
       setNewPlayer({ first_name: '', last_name: '', age_division: '', positions: [], guardian_name: '', guardian_relationship: '', guardian_email: '', guardian_phone: '' });
     } catch (e) {
       console.error(e);
+      setFormError(e?.message || 'Could not create player. Please try again.');
     } finally {
       setCreating(false);
     }
@@ -285,10 +291,10 @@ export default function Profile() {
       {/* Create Player Modal */}
       {showCreatePlayer && (
         <div className="fixed inset-0 z-[60] flex items-end" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="w-full bg-white rounded-t-3xl p-6 pb-10 space-y-5 max-h-[92vh] overflow-y-auto">
+          <div className="w-full bg-white rounded-t-3xl p-6 pb-10 max-h-[92vh] overflow-y-auto">
             <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto" />
             <h2 className="text-xl font-black" style={{ color: '#0B1528' }}>Add Player</h2>
-
+            <form onSubmit={(e) => { e.preventDefault(); handleCreatePlayer(); }} className="space-y-5">
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>First Name *</label>
@@ -394,23 +400,30 @@ export default function Profile() {
               </span>
             </label>
 
+            {formError && (
+              <div className="rounded-xl px-4 py-3 text-sm font-medium" style={{ backgroundColor: '#FEE2E2', color: '#DC2626' }}>
+                {formError}
+              </div>
+            )}
             <div className="flex gap-3">
               <button
-                onClick={() => setShowCreatePlayer(false)}
+                type="button"
+                onClick={() => { setShowCreatePlayer(false); setFormError(''); }}
                 className="flex-1 py-4 rounded-2xl font-bold border-2 border-gray-200"
                 style={{ color: '#64748B' }}
               >
                 Cancel
               </button>
               <button
-                onClick={handleCreatePlayer}
-                disabled={!newPlayer.first_name || !newPlayer.last_name || !newPlayer.guardian_name || !newPlayer.guardian_relationship || !termsAccepted || creating}
+                type="submit"
+                disabled={creating}
                 className="flex-1 py-4 rounded-2xl font-bold text-white transition-opacity"
-                style={{ backgroundColor: '#2563EB', opacity: (!newPlayer.first_name || !newPlayer.last_name || !newPlayer.guardian_name || !newPlayer.guardian_relationship || !termsAccepted) ? 0.6 : 1 }}
+                style={{ backgroundColor: '#2563EB', opacity: creating ? 0.6 : 1 }}
               >
                 {creating ? 'Creating...' : 'Create Player'}
               </button>
             </div>
+            </form>
           </div>
         </div>
       )}
