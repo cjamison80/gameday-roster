@@ -7,16 +7,16 @@ import { base44 } from '@/api/base44Client';
  * uses tappable chips for age / positions / relationship for reliable
  * state persistence, and enforces the mandatory parent/guardian terms.
  */
-export default function PlayerCreateForm({ user, defaultAge = '', defaultPositions = [], onCreated, onCancel, submitLabel = 'Create Player' }) {
+export default function PlayerCreateForm({ user, defaultAge = '', defaultPositions = [], onCreated, onCancel, submitLabel = 'Create Player', quick = false }) {
   const [first, setFirst] = useState('');
   const [last, setLast] = useState('');
   const [age, setAge] = useState(defaultAge);
   const [positions, setPositions] = useState(defaultPositions);
   const [guardianName, setGuardianName] = useState(user?.full_name || '');
-  const [guardianRelationship, setGuardianRelationship] = useState('');
+  const [guardianRelationship, setGuardianRelationship] = useState(quick ? 'Legal Guardian' : '');
   const [guardianEmail, setGuardianEmail] = useState(user?.email || '');
   const [guardianPhone, setGuardianPhone] = useState('');
-  const [terms, setTerms] = useState(false);
+  const [terms, setTerms] = useState(quick);
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState('');
 
@@ -26,7 +26,7 @@ export default function PlayerCreateForm({ user, defaultAge = '', defaultPositio
     if (!user) { setError('Please wait for your account to load.'); return; }
     if (!first || !last) { setError('First and last name are required.'); return; }
     if (!guardianName || !guardianRelationship) { setError('Parent / guardian name and relationship are required.'); return; }
-    if (!terms) { setError('Please accept the parent / guardian terms to continue.'); return; }
+    if (!quick && !terms) { setError('Please accept the parent / guardian terms to continue.'); return; }
     setCreating(true);
     try {
       const p = await base44.entities.PlayerProfile.create({
@@ -193,18 +193,24 @@ export default function PlayerCreateForm({ user, defaultAge = '', defaultPositio
         </div>
       </div>
 
-      <label className="flex items-start gap-2 cursor-pointer">
-        <input
-          type="checkbox"
-          checked={terms}
-          onChange={e => setTerms(e.target.checked)}
-          className="mt-0.5 w-5 h-5 flex-shrink-0"
-          style={{ accentColor: '#2563EB' }}
-        />
-        <span className="text-xs leading-relaxed" style={{ color: '#475569' }}>
-          I am this player's parent or legal guardian and acknowledge that player pages on GameDay Roster are created and managed by a parent or legal guardian.
-        </span>
-      </label>
+      {quick ? (
+        <p className="text-xs leading-relaxed px-1" style={{ color: '#94A3B8' }}>
+          By adding this player, you confirm you are their parent or legal guardian and that this page is parent/guardian-run.
+        </p>
+      ) : (
+        <label className="flex items-start gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={terms}
+            onChange={e => setTerms(e.target.checked)}
+            className="mt-0.5 w-5 h-5 flex-shrink-0"
+            style={{ accentColor: '#2563EB' }}
+          />
+          <span className="text-xs leading-relaxed" style={{ color: '#475569' }}>
+            I am this player's parent or legal guardian and acknowledge that player pages on GameDay Roster are created and managed by a parent or legal guardian.
+          </span>
+        </label>
+      )}
 
       {error && (
         <div className="rounded-xl px-4 py-3 text-sm font-medium" style={{ backgroundColor: '#FEE2E2', color: '#DC2626' }}>

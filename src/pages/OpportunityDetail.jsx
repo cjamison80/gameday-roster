@@ -385,6 +385,7 @@ export default function OpportunityDetail() {
                   defaultAge={opportunity.age_division || ''}
                   defaultPositions={opportunity.positions_needed || []}
                   submitLabel="Add Player & Continue"
+                  quick
                   onCreated={(p) => { setPlayers(prev => [...prev, p]); setSelectedPlayer(p); }}
                 />
               </div>
