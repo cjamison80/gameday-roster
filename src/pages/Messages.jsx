@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Send, Search, Plus, Image, Paperclip } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { timeAgo, getInitials } from '@/lib/utils';
@@ -13,6 +14,7 @@ export default function Messages() {
   const [sending, setSending] = useState(false);
   const [user, setUser] = useState(null);
   const [userMap, setUserMap] = useState({});
+  const [searchParams] = useSearchParams();
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -53,6 +55,29 @@ export default function Messages() {
       users.forEach(usr => { map[usr.id] = usr; });
       setUserMap(map);
       setConversations(convs);
+      // Auto-open a conversation referenced by ?conversation=<id> (e.g. from an opportunity)
+      const targetId = searchParams.get('conversation');
+      if (targetId) {
+        let target = convs.find(c => c.id === targetId);
+        if (!target) {
+          try {
+            target = await base44.entities.Conversation.get(targetId);
+            if (target) {
+              setConversations(prev => prev.find(c => c.id === target.id) ? prev : [target, ...prev]);
+              const otherId = target.participant_a_id === u.id ? target.participant_b_id : target.participant_a_id;
+              if (!map[otherId]) {
+                try {
+                  map[otherId] = await base44.entities.User.get(otherId);
+                  setUserMap({ ...map });
+                } catch { /* ignore */ }
+              }
+            }
+          } catch (e) {
+            console.error(e);
+          }
+        }
+        if (target) setActiveConv(target);
+      }
     } catch (e) {
       console.error(e);
     } finally {

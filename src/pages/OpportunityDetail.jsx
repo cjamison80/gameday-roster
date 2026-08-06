@@ -73,6 +73,31 @@ export default function OpportunityDetail() {
     }
   };
 
+  const handleMessageCoach = async () => {
+    if (!user || !opportunity) return;
+    const coachId = opportunity.coach_id;
+    if (!coachId) { navigate('/messages'); return; }
+    try {
+      const existing = await base44.entities.Conversation.filter({
+        $or: [{ participant_a_id: user.id }, { participant_b_id: user.id }],
+        opportunity_id: id
+      });
+      let conv = existing.find(c => c.participant_a_id === coachId || c.participant_b_id === coachId);
+      if (!conv) {
+        conv = await base44.entities.Conversation.create({
+          participant_a_id: user.id,
+          participant_b_id: coachId,
+          participant_ids: [user.id, coachId],
+          opportunity_id: id
+        });
+      }
+      navigate(`/messages?conversation=${conv.id}`);
+    } catch (e) {
+      console.error(e);
+      navigate('/messages');
+    }
+  };
+
   const handleApply = async () => {
     if (!selectedPlayer || !user || applying) return;
     setApplying(true);
@@ -327,7 +352,7 @@ export default function OpportunityDetail() {
         ) : (
           <div className="flex gap-3">
             <button
-              onClick={() => navigate(`/messages`)}
+              onClick={handleMessageCoach}
               className="flex-1 py-4 rounded-2xl font-bold text-base border-2 transition-colors"
               style={{ borderColor: '#E2E8F0', color: '#0B1528' }}
             >
