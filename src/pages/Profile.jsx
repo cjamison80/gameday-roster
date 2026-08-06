@@ -6,6 +6,7 @@ import { getInitials } from '@/lib/utils';
 import VerifiedBadge from '@/components/VerifiedBadge';
 import AvailabilityChip from '@/components/AvailabilityChip';
 import { Image } from '@/components/ui/image';
+import PlayerCreateForm from '@/components/player/PlayerCreateForm';
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -14,13 +15,6 @@ export default function Profile() {
   const [players, setPlayers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreatePlayer, setShowCreatePlayer] = useState(false);
-  const [newPlayer, setNewPlayer] = useState({
-    first_name: '', last_name: '', age_division: '', positions: [],
-    guardian_name: '', guardian_relationship: '', guardian_email: '', guardian_phone: ''
-  });
-  const [termsAccepted, setTermsAccepted] = useState(false);
-  const [creating, setCreating] = useState(false);
-  const [formError, setFormError] = useState('');
   const [favorites, setFavorites] = useState({ teams: [], players: [] });
 
   useEffect(() => {
@@ -52,34 +46,6 @@ export default function Profile() {
       console.error(e);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleCreatePlayer = async () => {
-    setFormError('');
-    if (!user) { setFormError('Please wait for your account to load.'); return; }
-    if (!newPlayer.first_name || !newPlayer.last_name) { setFormError('First and last name are required.'); return; }
-    if (!newPlayer.guardian_name || !newPlayer.guardian_relationship) { setFormError('Parent / guardian name and relationship are required.'); return; }
-    if (!termsAccepted) { setFormError('Please accept the parent / guardian terms to continue.'); return; }
-    setCreating(true);
-    try {
-      const p = await base44.entities.PlayerProfile.create({
-        ...newPlayer,
-        parent_id: user.id,
-        guardian_name: newPlayer.guardian_name,
-        guardian_email: newPlayer.guardian_email || user.email,
-        has_accepted_parental_terms: true,
-        parental_terms_accepted_at: new Date().toISOString()
-      });
-      setPlayers(prev => [...prev, p]);
-      setShowCreatePlayer(false);
-      setTermsAccepted(false);
-      setNewPlayer({ first_name: '', last_name: '', age_division: '', positions: [], guardian_name: '', guardian_relationship: '', guardian_email: '', guardian_phone: '' });
-    } catch (e) {
-      console.error(e);
-      setFormError(e?.message || 'Could not create player. Please try again.');
-    } finally {
-      setCreating(false);
     }
   };
 
@@ -294,189 +260,11 @@ export default function Profile() {
           <div className="w-full bg-white rounded-t-3xl p-6 pb-10 max-h-[92vh] overflow-y-auto">
             <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto" />
             <h2 className="text-xl font-black" style={{ color: '#0B1528' }}>Add Player</h2>
-            <form onSubmit={(e) => { e.preventDefault(); handleCreatePlayer(); }} className="space-y-5">
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label htmlFor="np-first-name" className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>First Name *</label>
-                <input
-                  id="np-first-name"
-                  name="first_name"
-                  value={newPlayer.first_name}
-                  onChange={e => setNewPlayer(p => ({ ...p, first_name: e.target.value }))}
-                  placeholder="Knox"
-                  className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
-                  style={{ color: '#0B1528' }}
-                />
-              </div>
-              <div>
-                <label htmlFor="np-last-name" className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Last Name *</label>
-                <input
-                  id="np-last-name"
-                  name="last_name"
-                  value={newPlayer.last_name}
-                  onChange={e => setNewPlayer(p => ({ ...p, last_name: e.target.value }))}
-                  placeholder="Jamison"
-                  className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
-                  style={{ color: '#0B1528' }}
-                />
-              </div>
-            </div>
-
-            <div>
-              <span id="np-age" className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Age Division</span>
-              <div role="group" aria-labelledby="np-age" className="grid grid-cols-4 gap-2">
-                {['8U','9U','10U','11U','12U','13U','14U','15U','16U','17U','18U'].map(a => (
-                  <button
-                    key={a}
-                    type="button"
-                    onClick={() => { setNewPlayer(p => ({ ...p, age_division: p.age_division === a ? '' : a })); setFormError(''); }}
-                    className="py-2.5 rounded-xl border-2 text-sm font-bold transition-all active:scale-[0.98]"
-                    style={{
-                      borderColor: newPlayer.age_division === a ? '#2563EB' : '#E2E8F0',
-                      backgroundColor: newPlayer.age_division === a ? '#EFF6FF' : '#FFFFFF',
-                      color: newPlayer.age_division === a ? '#2563EB' : '#64748B'
-                    }}
-                  >
-                    {a}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <span id="np-position" className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Positions</span>
-              <div role="group" aria-labelledby="np-position" className="grid grid-cols-3 gap-2">
-                {['Pitcher', 'Catcher', 'Shortstop', 'Second Base', 'Third Base', 'First Base', 'Outfield', 'Utility'].map(pos => {
-                  const selected = (newPlayer.positions || []).includes(pos);
-                  return (
-                    <button
-                      key={pos}
-                      type="button"
-                      onClick={() => {
-                        setNewPlayer(p => ({
-                          ...p,
-                          positions: selected
-                            ? (p.positions || []).filter(x => x !== pos)
-                            : [...(p.positions || []), pos]
-                        }));
-                        setFormError('');
-                      }}
-                      className="py-2.5 px-2 rounded-xl border-2 text-sm font-bold transition-all active:scale-[0.98]"
-                      style={{
-                        borderColor: selected ? '#2563EB' : '#E2E8F0',
-                        backgroundColor: selected ? '#EFF6FF' : '#FFFFFF',
-                        color: selected ? '#2563EB' : '#64748B'
-                      }}
-                    >
-                      {pos}
-                    </button>
-                  );
-                })}
-              </div>
-              <p className="text-xs mt-1.5" style={{ color: '#94A3B8' }}>Tap to select one or more (primary, secondary, etc.)</p>
-            </div>
-
-            <div className="rounded-2xl p-4 space-y-3" style={{ backgroundColor: '#EFF6FF', border: '1px solid #DBEAFE' }}>
-              <p className="text-xs font-semibold" style={{ color: '#1E3A8A' }}>
-                Parent / Guardian Information (required — player pages are parent/guardian-run)
-              </p>
-              <div>
-                <label htmlFor="np-guardian-name" className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Parent / Guardian Name *</label>
-                <input
-                  id="np-guardian-name"
-                  name="guardian_name"
-                  value={newPlayer.guardian_name}
-                  onChange={e => setNewPlayer(p => ({ ...p, guardian_name: e.target.value }))}
-                  placeholder="Parent / Guardian name"
-                  className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
-                  style={{ color: '#0B1528' }}
-                />
-              </div>
-              <div>
-                <span id="np-guardian-relationship" className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Relationship *</span>
-                <div role="group" aria-labelledby="np-guardian-relationship" className="grid grid-cols-3 gap-2">
-                  {['Mother', 'Father', 'Legal Guardian', 'Grandparent', 'Other'].map(r => (
-                    <button
-                      key={r}
-                      type="button"
-                      onClick={() => { setNewPlayer(p => ({ ...p, guardian_relationship: p.guardian_relationship === r ? '' : r })); setFormError(''); }}
-                      className="py-3 px-2 rounded-xl border-2 text-sm font-bold transition-all active:scale-[0.98]"
-                      style={{
-                        borderColor: newPlayer.guardian_relationship === r ? '#2563EB' : '#E2E8F0',
-                        backgroundColor: newPlayer.guardian_relationship === r ? '#EFF6FF' : '#FFFFFF',
-                        color: newPlayer.guardian_relationship === r ? '#2563EB' : '#64748B'
-                      }}
-                    >
-                      {r}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label htmlFor="np-guardian-email" className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Email</label>
-                  <input
-                    id="np-guardian-email"
-                    name="guardian_email"
-                    value={newPlayer.guardian_email}
-                    onChange={e => setNewPlayer(p => ({ ...p, guardian_email: e.target.value }))}
-                    placeholder="Email"
-                    className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
-                    style={{ color: '#0B1528' }}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="np-guardian-phone" className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Phone</label>
-                  <input
-                    id="np-guardian-phone"
-                    name="guardian_phone"
-                    value={newPlayer.guardian_phone}
-                    onChange={e => setNewPlayer(p => ({ ...p, guardian_phone: e.target.value }))}
-                    placeholder="Phone"
-                    className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
-                    style={{ color: '#0B1528' }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <label className="flex items-start gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={termsAccepted}
-                onChange={e => setTermsAccepted(e.target.checked)}
-                className="mt-0.5 w-5 h-5 flex-shrink-0"
-                style={{ accentColor: '#2563EB' }}
-              />
-              <span className="text-xs leading-relaxed" style={{ color: '#475569' }}>
-                I am this player's parent or legal guardian and acknowledge that player pages on GameDay Roster are created and managed by a parent or legal guardian.
-              </span>
-            </label>
-
-            {formError && (
-              <div className="rounded-xl px-4 py-3 text-sm font-medium" style={{ backgroundColor: '#FEE2E2', color: '#DC2626' }}>
-                {formError}
-              </div>
-            )}
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={() => { setShowCreatePlayer(false); setFormError(''); }}
-                className="flex-1 py-4 rounded-2xl font-bold border-2 border-gray-200"
-                style={{ color: '#64748B' }}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={creating}
-                className="flex-1 py-4 rounded-2xl font-bold text-white transition-opacity"
-                style={{ backgroundColor: '#2563EB', opacity: creating ? 0.6 : 1 }}
-              >
-                {creating ? 'Creating...' : 'Create Player'}
-              </button>
-            </div>
-            </form>
+            <PlayerCreateForm
+              user={user}
+              onCreated={(p) => { setPlayers(prev => [...prev, p]); setShowCreatePlayer(false); }}
+              onCancel={() => setShowCreatePlayer(false)}
+            />
           </div>
         </div>
       )}

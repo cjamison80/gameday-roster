@@ -5,6 +5,7 @@ import { base44 } from '@/api/base44Client';
 import { formatDateRange, formatDate, calculateMatchScore } from '@/lib/utils';
 import MatchScoreBadge from '@/components/MatchScoreBadge';
 import { Image } from '@/components/ui/image';
+import PlayerCreateForm from '@/components/player/PlayerCreateForm';
 
 const tabs = ['Overview', 'Details', 'Team', 'Location'];
 
@@ -370,18 +371,22 @@ export default function OpportunityDetail() {
       {/* Apply Modal */}
       {showApplyModal && (
         <div className="fixed inset-0 z-50 flex items-end" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="w-full bg-white rounded-t-3xl p-6 pb-8 space-y-5">
+          <div className="w-full bg-white rounded-t-3xl p-6 pb-8 space-y-5 max-h-[92vh] overflow-y-auto">
             <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto" />
             <h2 className="text-xl font-black" style={{ color: '#0B1528' }}>Apply Now</h2>
             <p className="text-sm" style={{ color: '#64748B' }}>Choose which player you're applying for:</p>
 
             {players.length === 0 ? (
-              <div className="text-center py-4">
-                <p className="text-sm" style={{ color: '#64748B' }}>No player profiles yet.</p>
-                <button onClick={() => { setShowApplyModal(false); navigate('/profile'); }}
-                  className="mt-2 text-sm font-semibold" style={{ color: '#2563EB' }}>
-                  Create a Player Profile
-                </button>
+              <div className="bg-gray-50 rounded-2xl p-4 space-y-1">
+                <p className="text-sm font-bold" style={{ color: '#0B1528' }}>No player profiles yet</p>
+                <p className="text-xs" style={{ color: '#64748B' }}>Quickly add a player to apply for this opportunity:</p>
+                <PlayerCreateForm
+                  user={user}
+                  defaultAge={opportunity.age_division || ''}
+                  defaultPositions={opportunity.positions_needed || []}
+                  submitLabel="Add Player & Continue"
+                  onCreated={(p) => { setPlayers(prev => [...prev, p]); setSelectedPlayer(p); }}
+                />
               </div>
             ) : (
               <div className="space-y-2">
