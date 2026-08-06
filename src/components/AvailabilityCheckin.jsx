@@ -44,12 +44,12 @@ export default function AvailabilityCheckin({ user }) {
 
   useEffect(() => {
     (async () => {
-      if (!user) return;
+      if (!user) { setLoadingPlayers(false); return; }
       try {
         const myPlayers = await base44.entities.PlayerProfile.filter({ parent_id: user.id });
         setPlayers(myPlayers);
         if (myPlayers.length > 0) setSelectedPlayerId(myPlayers[0].id);
-        const existing = await base44.entities.Availability.filter({ parent_id: user.id, player_id: myPlayers[0]?.id || '' });
+        const existing = await base44.entities.Availability.filter({ parent_id: user.id, player_id: myPlayers[0]?.id || '', week_start: weekStart });
         if (existing.length > 0) {
           const a = existing[0];
           setStatus(a.status && a.status !== 'not_set' ? a.status : 'available');
@@ -70,7 +70,7 @@ export default function AvailabilityCheckin({ user }) {
     setSaved(false);
     setError('');
     try {
-      const existing = await base44.entities.Availability.filter({ parent_id: user.id, player_id: pid });
+      const existing = await base44.entities.Availability.filter({ parent_id: user.id, player_id: pid, week_start: weekStart });
       if (existing.length > 0) {
         const a = existing[0];
         setStatus(a.status && a.status !== 'not_set' ? a.status : 'available');
@@ -106,7 +106,7 @@ export default function AvailabilityCheckin({ user }) {
         overnight,
         notes
       };
-      const existing = await base44.entities.Availability.filter({ parent_id: user.id, player_id: selectedPlayerId });
+      const existing = await base44.entities.Availability.filter({ parent_id: user.id, player_id: selectedPlayerId, week_start: weekStart });
       if (existing.length > 0) {
         await base44.entities.Availability.update(existing[0].id, payload);
       } else {
@@ -261,15 +261,17 @@ export default function AvailabilityCheckin({ user }) {
           </div>
         )}
 
-        <button
-          type="button"
-          onClick={handleSave}
-          disabled={saving}
-          className="w-full py-4 rounded-2xl font-bold text-white transition-opacity"
-          style={{ backgroundColor: '#2563EB', opacity: saving ? 0.6 : 1 }}
-        >
-          {saving ? 'Saving...' : 'Save Availability'}
-        </button>
+        <div className="sticky bottom-20 z-10">
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={saving}
+            className="w-full py-4 rounded-2xl font-bold text-white shadow-lg transition-opacity"
+            style={{ backgroundColor: '#2563EB', opacity: saving ? 0.6 : 1 }}
+          >
+            {saving ? 'Saving...' : 'Save Availability'}
+          </button>
+        </div>
       </div>
     </div>
   );

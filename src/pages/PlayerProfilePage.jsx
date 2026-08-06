@@ -40,7 +40,7 @@ export default function PlayerProfilePage() {
       setUser(u);
       setEditData(p);
       setIsOwner(p.parent_id === u.id);
-      const avail = await base44.entities.Availability.filter({ player_id: id });
+      const avail = await base44.entities.Availability.filter({ player_id: id }, '-week_start', 1);
       if (avail.length > 0) setAvailability(avail[0]);
     } catch (e) {
       console.error(e);
