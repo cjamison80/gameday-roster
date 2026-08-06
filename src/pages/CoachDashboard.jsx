@@ -155,9 +155,16 @@ export default function CoachDashboard() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-bold truncate" style={{ color: '#0B1528' }}>{team.name}</h3>
-                    <p className="text-sm" style={{ color: '#64748B' }}>
-                      {team.age_division || '—'}{team.classification ? ` · ${team.classification}` : ''}
-                    </p>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-sm" style={{ color: '#64748B' }}>
+                        {team.age_division || '—'}{team.classification ? ` · ${team.classification}` : ''}
+                      </span>
+                      {team.sanctioning_body && (
+                        <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: '#FEFCE8', color: '#A4A017' }}>
+                          {team.sanctioning_body}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <ChevronRight size={16} color="#94A3B8" />
                 </div>

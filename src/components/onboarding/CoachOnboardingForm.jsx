@@ -70,8 +70,29 @@ export default function CoachOnboardingForm({ user, onComplete }) {
         <Field label="Team City" value={team.city} onChange={setTeamField('city')} placeholder="Rogers" />
         <Field label="Team State" value={team.state} onChange={setTeamField('state')} placeholder="AR" />
       </div>
-      <Select label="Tournament Sanction" value={team.sanctioning_body} onChange={setTeamField('sanctioning_body')}
-        options={['USSSA', '2D', 'PG', 'NSA', 'AAU', 'Other']} />
+      <div>
+        <span className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Tournament Sanction</span>
+        <div className="grid grid-cols-3 gap-2">
+          {['USSSA', '2D', 'PG', 'NSA', 'AAU', 'Other'].map(s => {
+            const selected = team.sanctioning_body === s;
+            return (
+              <button
+                key={s}
+                type="button"
+                onClick={() => setTeam(f => ({ ...f, sanctioning_body: selected ? '' : s }))}
+                className="py-2.5 rounded-xl border-2 text-sm font-bold transition-all active:scale-[0.98]"
+                style={{
+                  borderColor: selected ? '#2563EB' : '#E2E8F0',
+                  backgroundColor: selected ? '#EFF6FF' : '#FFFFFF',
+                  color: selected ? '#2563EB' : '#64748B'
+                }}
+              >
+                {s}
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
       <button
         onClick={submit}
