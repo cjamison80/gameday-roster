@@ -30,6 +30,7 @@ import TeamProfilePage from '@/pages/TeamProfilePage';
 import CoachProfilePage from '@/pages/CoachProfilePage';
 import OrganizationProfilePage from '@/pages/OrganizationProfilePage';
 import AdminDashboard from '@/pages/AdminDashboard';
+import Settings from '@/pages/Settings';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -85,7 +86,7 @@ const AuthenticatedApp = () => {
         <Route path="/coach-dashboard" element={<CoachDashboard />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/onboarding" element={<Onboarding />} />
-        <Route path="/settings" element={<Profile />} />
+        <Route path="/settings" element={<Settings />} />
       </Route>
 
       <Route path="*" element={<PageNotFound />} />
