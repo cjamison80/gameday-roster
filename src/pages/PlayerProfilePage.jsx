@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Edit, Share, MapPin, Trophy, MessageCircle, ExternalLink, Heart, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Edit, Share, MapPin, Trophy, MessageCircle, ExternalLink, Heart, ShieldCheck, Camera } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import VerifiedBadge from '@/components/VerifiedBadge';
 import AvailabilityChip from '@/components/AvailabilityChip';
@@ -19,6 +19,8 @@ export default function PlayerProfilePage() {
   const [editing, setEditing] = useState(false);
   const [editData, setEditData] = useState({});
   const [saving, setSaving] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const fileInputRef = useRef(null);
   const { isFav, toggle: toggleFav } = useFavorite(id, 'player');
 
   useEffect(() => {
@@ -54,6 +56,21 @@ export default function PlayerProfilePage() {
       console.error(e);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleSelectPhoto = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingPhoto(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setEditData(d => ({ ...d, photo_url: file_url }));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setUploadingPhoto(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
@@ -111,14 +128,36 @@ export default function PlayerProfilePage() {
         <div className="flex items-center gap-4">
           <div className="relative">
             <div className="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0" style={{ backgroundColor: '#1E293B' }}>
-              {player.photo_url ? (
-                <Image src={player.photo_url} alt={fullName} className="w-24 h-24" fittingType="fill" />
+              {(editing ? editData.photo_url : player.photo_url) ? (
+                <Image src={editing ? editData.photo_url : player.photo_url} alt={fullName} className="w-24 h-24" fittingType="fill" />
               ) : (
                 <div className="w-24 h-24 flex items-center justify-center">
                   <span className="text-4xl font-black text-white">{getInitials(fullName)}</span>
                 </div>
               )}
             </div>
+            {editing && (
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingPhoto}
+                className="absolute inset-0 flex items-center justify-center rounded-2xl transition-opacity"
+                style={{ backgroundColor: uploadingPhoto ? 'rgba(11,21,40,0.7)' : 'rgba(11,21,40,0.5)' }}
+              >
+                {uploadingPhoto ? (
+                  <div className="w-6 h-6 border-2 rounded-full animate-spin" style={{ borderColor: 'rgba(255,255,255,0.3)', borderTopColor: '#FFFFFF' }} />
+                ) : (
+                  <Camera size={22} color="white" />
+                )}
+              </button>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleSelectPhoto}
+              className="hidden"
+            />
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2 flex-wrap">
