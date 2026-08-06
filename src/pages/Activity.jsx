@@ -3,6 +3,7 @@ import { CheckCircle, Mail, Bell, Clock, Shield, ChevronRight } from 'lucide-rea
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { timeAgo } from '@/lib/utils';
+import AvailabilityCheckin from '@/components/AvailabilityCheckin';
 
 const tabs = ['All', 'Applications', 'Invitations', 'Availability'];
 
@@ -206,83 +207,6 @@ function ApplicationsList({ applications, navigate }) {
           </div>
         );
       })}
-    </div>
-  );
-}
-
-function AvailabilityCheckin({ user }) {
-  const [status, setStatus] = useState(null);
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
-
-  const handleSelect = async (s) => {
-    if (!user) return;
-    setStatus(s);
-    setSaving(true);
-    try {
-      const weekStart = new Date();
-      weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
-      const weekStartStr = weekStart.toISOString().split('T')[0];
-
-      const existing = await base44.entities.Availability.filter({ parent_id: user.id });
-      if (existing.length > 0) {
-        await base44.entities.Availability.update(existing[0].id, { status: s, week_start: weekStartStr });
-      } else {
-        await base44.entities.Availability.create({
-          parent_id: user.id,
-          player_id: '',
-          week_start: weekStartStr,
-          status: s
-        });
-      }
-      setSaved(true);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const options = [
-    { value: 'available', label: 'Available', emoji: '✅', description: 'Ready for this weekend', color: '#16A34A', bg: '#DCFCE7' },
-    { value: 'maybe', label: 'Maybe', emoji: '🤔', description: 'Possibly available', color: '#F59E0B', bg: '#FEF9C3' },
-    { value: 'unavailable', label: 'Not Available', emoji: '❌', description: "Can't make it this weekend", color: '#DC2626', bg: '#FEE2E2' }
-  ];
-
-  return (
-    <div className="space-y-4">
-      <div className="bg-white rounded-2xl p-5 border border-gray-100">
-        <h2 className="text-lg font-black mb-1" style={{ color: '#0B1528' }}>Weekly Check-In</h2>
-        <p className="text-sm mb-5" style={{ color: '#64748B' }}>
-          Are you available for pickup opportunities this weekend?
-        </p>
-        <div className="space-y-3">
-          {options.map(opt => (
-            <button
-              key={opt.value}
-              onClick={() => handleSelect(opt.value)}
-              disabled={saving}
-              className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all active:scale-[0.98]"
-              style={{
-                borderColor: status === opt.value ? opt.color : '#E2E8F0',
-                backgroundColor: status === opt.value ? opt.bg : '#FFFFFF'
-              }}
-            >
-              <span className="text-3xl">{opt.emoji}</span>
-              <div>
-                <div className="font-bold" style={{ color: opt.color }}>{opt.label}</div>
-                <div className="text-sm" style={{ color: '#64748B' }}>{opt.description}</div>
-              </div>
-            </button>
-          ))}
-        </div>
-        {saved && (
-          <div className="mt-4 flex items-center justify-center gap-2 py-3 rounded-xl" style={{ backgroundColor: '#DCFCE7' }}>
-            <CheckCircle size={18} color="#16A34A" />
-            <span className="font-semibold text-sm" style={{ color: '#16A34A' }}>Availability updated!</span>
-          </div>
-        )}
-      </div>
     </div>
   );
 }
