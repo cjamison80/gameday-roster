@@ -78,6 +78,8 @@ export default function Profile() {
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-black text-white">Profile</h1>
           <button
+            type="button"
+            aria-label="Account Settings"
             onClick={() => navigate('/settings')}
             className="w-10 h-10 rounded-full flex items-center justify-center"
             style={{ backgroundColor: '#1E293B' }}
@@ -114,7 +116,7 @@ export default function Profile() {
         </div>
       </div>
 
-      <div className="px-5 py-5 space-y-5">
+      <div className="px-5 py-5 space-y-5 pb-24">
         {/* Coach dashboard entry (for coaches) */}
         {userProfile?.role === 'coach' && (
           <button
@@ -235,7 +237,9 @@ export default function Profile() {
           ].map(({ icon: Icon, label, path }) => (
             <button
               key={label}
-              onClick={() => path && navigate(path)}
+              type="button"
+              aria-label={label}
+              onClick={() => path ? navigate(path) : null}
               className="w-full flex items-center gap-3 px-5 py-4 border-b border-gray-50 text-left hover:bg-gray-50 transition-colors last:border-b-0"
             >
               <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#F8FAFC' }}>
