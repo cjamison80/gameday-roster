@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 
 export default function CoachOnboardingForm({ user, onComplete }) {
   const [coach, setCoach] = useState({ first_name: '', last_name: '', city: '', state: '', bio: '', years_coaching: '' });
-  const [team, setTeam] = useState({ name: '', age_division: '', classification: '', city: '', state: '', sanctioning_body: '' });
+  const [team, setTeam] = useState({ name: '', age_division: '', classification: '', city: '', state: '' });
   const [saving, setSaving] = useState(false);
 
   const setCoachField = (k) => (e) => setCoach(f => ({ ...f, [k]: e.target.value }));
@@ -32,7 +32,6 @@ export default function CoachOnboardingForm({ user, onComplete }) {
         classification: team.classification,
         city: team.city || coach.city,
         state: team.state || coach.state,
-        sanctioning_body: team.sanctioning_body,
         is_recruiting: true
       });
       onComplete();
@@ -70,30 +69,6 @@ export default function CoachOnboardingForm({ user, onComplete }) {
         <Field label="Team City" value={team.city} onChange={setTeamField('city')} placeholder="Rogers" />
         <Field label="Team State" value={team.state} onChange={setTeamField('state')} placeholder="AR" />
       </div>
-      <div>
-        <span className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Tournament Sanction</span>
-        <div className="grid grid-cols-3 gap-2">
-          {['USSSA', '2D', 'PG', 'NSA', 'AAU', 'Other'].map(s => {
-            const selected = team.sanctioning_body === s;
-            return (
-              <button
-                key={s}
-                type="button"
-                onClick={() => setTeam(f => ({ ...f, sanctioning_body: selected ? '' : s }))}
-                className="py-2.5 rounded-xl border-2 text-sm font-bold transition-all active:scale-[0.98]"
-                style={{
-                  borderColor: selected ? '#2563EB' : '#E2E8F0',
-                  backgroundColor: selected ? '#EFF6FF' : '#FFFFFF',
-                  color: selected ? '#2563EB' : '#64748B'
-                }}
-              >
-                {s}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
       <button
         onClick={submit}
         disabled={!valid || saving}
