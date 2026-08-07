@@ -108,7 +108,7 @@ export default function CreateOpportunity() {
               <button
                 key={opt.value}
                 aria-label={`Listing type ${opt.label}`}
-                onClick={() => update('type', opt.value)}
+                onClick={() => { update('type', opt.value); setStep(1); }}
                 className="w-full text-left p-5 rounded-2xl border-2 transition-all"
                 style={{
                   borderColor: form.type === opt.value ? '#2563EB' : '#E2E8F0',
