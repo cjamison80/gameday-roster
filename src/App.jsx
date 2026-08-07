@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import OnboardingGate from '@/components/OnboardingGate';
 import AppShell from '@/components/AppShell';
 
 // Auth pages (boilerplate)
@@ -66,6 +67,7 @@ const AuthenticatedApp = () => {
 
       {/* Protected routes */}
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+        <Route element={<OnboardingGate />}>
         {/* Routes with bottom nav */}
         <Route element={<AppShell />}>
           <Route path="/" element={<Navigate to="/discover" replace />} />
@@ -87,6 +89,7 @@ const AuthenticatedApp = () => {
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/settings" element={<Settings />} />
+        </Route>
       </Route>
 
       <Route path="*" element={<PageNotFound />} />
