@@ -10,6 +10,7 @@
       "enum": [
         "parent",
         "coach",
+        "player",
         "organization",
         "admin"
       ],

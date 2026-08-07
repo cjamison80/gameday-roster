@@ -45,6 +45,7 @@ export default function Settings() {
   const roleLabel = {
     parent: 'Parent Account',
     coach: 'Coach Account',
+    player: 'Player Account',
     organization: 'Organization Account',
     admin: 'Administrator'
   };
@@ -132,7 +133,7 @@ export default function Settings() {
             </div>
             <div className="flex-1">
               <h4 className="font-bold text-sm" style={{ color: '#0B1528' }}>Switch Role / Re-run Onboarding</h4>
-              <p className="text-xs mt-0.5" style={{ color: '#2563EB' }}>Choose Parent, Coach, or Organization</p>
+              <p className="text-xs mt-0.5" style={{ color: '#2563EB' }}>Choose Parent, Coach, or Player</p>
             </div>
           </button>
         </div>

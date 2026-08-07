@@ -59,6 +59,7 @@ export default function Profile() {
   const roleLabel = {
     parent: 'Parent Account',
     coach: 'Coach Account',
+    player: 'Player Account',
     organization: 'Organization Account',
     admin: 'Administrator'
   };
@@ -136,7 +137,7 @@ export default function Profile() {
         )}
 
         {/* Players section (for parents) */}
-        {(!userProfile?.role || userProfile?.role === 'parent') && (
+        {(!userProfile?.role || userProfile?.role === 'parent' || userProfile?.role === 'player') && (
           <div>
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-lg font-black" style={{ color: '#0B1528' }}>My Players</h2>

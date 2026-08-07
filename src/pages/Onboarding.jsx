@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import { ChevronRight, ArrowLeft, Check, Users, Briefcase, Building2 } from 'lucide-react';
+import { ChevronRight, ArrowLeft, Check, Users, Briefcase, Building2, User } from 'lucide-react';
 import GameDayLogo from '@/components/GameDayLogo';
 import ParentOnboardingForm from '@/components/onboarding/ParentOnboardingForm';
 import CoachOnboardingForm from '@/components/onboarding/CoachOnboardingForm';
 import OrgOnboardingForm from '@/components/onboarding/OrgOnboardingForm';
+import PlayerOnboardingForm from '@/components/onboarding/PlayerOnboardingForm';
 
 const roles = [
-  { id: 'parent', icon: Users, title: 'Parent / Player', description: 'Find opportunities and manage player profiles', color: '#16A34A', bg: '#DCFCE7' },
+  { id: 'parent', icon: Users, title: 'Parent', description: 'Manage player profiles for your athletes', color: '#16A34A', bg: '#DCFCE7' },
   { id: 'coach', icon: Briefcase, title: 'Coach', description: 'Find players and manage your team roster', color: '#2563EB', bg: '#EFF6FF' },
+  { id: 'player', icon: User, title: 'Player', description: 'Create your own player profile (must be 18+)', color: '#A4A017', bg: '#FEFCE8' },
   { id: 'organization', icon: Building2, title: 'Organization', description: 'Manage teams, coaches and run recruiting', color: '#8B5CF6', bg: '#F5F3FF' }
 ];
 
@@ -51,6 +53,7 @@ export default function Onboarding() {
   const onCompleteByRole = {
     parent: () => finishOnboarding('/discover'),
     coach: () => finishOnboarding('/coach-dashboard'),
+    player: () => finishOnboarding('/discover'),
     organization: () => finishOnboarding('/discover')
   };
 
@@ -154,6 +157,7 @@ export default function Onboarding() {
             <p className="text-sm" style={{ color: '#64748B' }}>
               {step === 'parent' && "Let's add your first player."}
               {step === 'coach' && "Set up your coach profile and first team."}
+              {step === 'player' && "Confirm your age and build your player page."}
               {step === 'organization' && "Create your organization profile."}
             </p>
           </div>
@@ -162,6 +166,7 @@ export default function Onboarding() {
 
       {step === 'parent' && user && <ParentOnboardingForm user={user} onComplete={onCompleteByRole.parent} />}
       {step === 'coach' && user && <CoachOnboardingForm user={user} onComplete={onCompleteByRole.coach} />}
+      {step === 'player' && user && <PlayerOnboardingForm user={user} onComplete={onCompleteByRole.player} onBackToRole={() => setStep('role')} />}
       {step === 'organization' && user && <OrgOnboardingForm user={user} onComplete={onCompleteByRole.organization} />}
 
       <div className="px-6 py-8" />
