@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { ChevronRight, ArrowLeft, Check, Users, Briefcase, Building2, User } from 'lucide-react';
@@ -23,24 +23,31 @@ export default function Onboarding() {
   const [saving, setSaving] = useState(false);
   const [profileId, setProfileId] = useState(null);
 
-  const handleRoleSelect = async (role) => {
-    setSaving(true);
-    try {
-      const u = await base44.auth.me();
-      setUser(u);
-      const existing = await base44.entities.UserProfile.filter({ user_id: u.id });
-      if (existing.length > 0) {
-        await base44.entities.UserProfile.update(existing[0].id, { role, onboarding_complete: false, onboarding_step: 2 });
-        setProfileId(existing[0].id);
-      } else {
-        const created = await base44.entities.UserProfile.create({ user_id: u.id, role, onboarding_complete: false, onboarding_step: 2 });
-        setProfileId(created.id);
+  // Preload the current user so the role-specific form is ready immediately.
+  useEffect(() => {
+    base44.auth.me().then(u => setUser(u)).catch(() => {});
+  }, []);
+
+  const handleRoleSelect = (role) => {
+    // Advance instantly so the user is never stuck waiting on a background save.
+    setSelectedRole(role);
+    setStep(role);
+    (async () => {
+      try {
+        const u = user || await base44.auth.me();
+        if (!u) return;
+        const existing = await base44.entities.UserProfile.filter({ user_id: u.id });
+        if (existing.length > 0) {
+          await base44.entities.UserProfile.update(existing[0].id, { role, onboarding_complete: false, onboarding_step: 2 });
+          setProfileId(existing[0].id);
+        } else {
+          const created = await base44.entities.UserProfile.create({ user_id: u.id, role, onboarding_complete: false, onboarding_step: 2 });
+          setProfileId(created.id);
+        }
+      } catch (e) {
+        // Selection still advances even if the background save fails.
       }
-      setSelectedRole(role);
-      setStep(role);
-    } catch (e) {
-      setSaving(false);
-    }
+    })();
   };
 
   const finishOnboarding = (dest) => {
@@ -112,7 +119,6 @@ export default function Onboarding() {
               <button
                 key={role.id}
                 onClick={() => handleRoleSelect(role.id)}
-                disabled={saving}
                 className="w-full text-left rounded-2xl border-2 p-5 flex items-center gap-4 transition-all active:scale-[0.98]"
                 style={{ borderColor: isSelected ? role.color : '#E2E8F0', backgroundColor: isSelected ? role.bg : '#FFFFFF' }}
               >
