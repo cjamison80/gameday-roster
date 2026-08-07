@@ -24,10 +24,10 @@
     "classification": {
       "type": "string",
       "enum": [
+        "Major",
         "AAA",
         "AA",
         "A",
-        "Open",
         ""
       ]
     },

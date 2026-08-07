@@ -64,7 +64,7 @@ export default function CoachOnboardingForm({ user, onComplete }) {
         <Select label="Age Division" value={team.age_division} onChange={setTeamField('age_division')}
           options={['8U','9U','10U','11U','12U','13U','14U','15U','16U','17U','18U']} />
         <Select label="Classification" value={team.classification} onChange={setTeamField('classification')}
-          options={['AAA','AA','A','Open']} />
+          options={['Major','AAA','AA','A']} />
       </div>
       <div className="grid grid-cols-2 gap-3">
         <Field label="Team City" value={team.city} onChange={setTeamField('city')} placeholder="Rogers" />

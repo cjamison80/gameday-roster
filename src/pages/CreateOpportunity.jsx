@@ -5,7 +5,7 @@ import { base44 } from '@/api/base44Client';
 
 const positionOptions = ['Pitcher', 'Catcher', 'Shortstop', 'Second Base', 'Third Base', 'First Base', 'Left Field', 'Center Field', 'Right Field', 'Outfield', 'Utility'];
 const ageDivisions = ['8U', '9U', '10U', '11U', '12U', '13U', '14U', '15U', '16U', '17U', '18U'];
-const classifications = ['AAA', 'AA', 'A', 'Open'];
+const classifications = ['Major', 'AAA', 'AA', 'A'];
 
 export default function CreateOpportunity() {
   const navigate = useNavigate();
