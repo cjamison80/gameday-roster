@@ -107,6 +107,7 @@ export default function CreateOpportunity() {
             ].map(opt => (
               <button
                 key={opt.value}
+                aria-label={`Listing type ${opt.label}`}
                 onClick={() => update('type', opt.value)}
                 className="w-full text-left p-5 rounded-2xl border-2 transition-all"
                 style={{
@@ -126,6 +127,9 @@ export default function CreateOpportunity() {
             <div>
               <label className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Listing Name *</label>
               <input
+                id="opp-title"
+                name="title"
+                aria-label="Listing Name"
                 value={form.title}
                 onChange={e => update('title', e.target.value)}
                 placeholder="e.g. Gold Glove Elite 11U Needs Shortstop"
@@ -139,6 +143,7 @@ export default function CreateOpportunity() {
                 {['baseball', 'softball'].map(s => (
                   <button
                     key={s}
+                    aria-label={`Sport ${s}`}
                     onClick={() => update('sport', s)}
                     className="flex-1 py-3 rounded-xl font-semibold text-sm capitalize border-2 transition-all"
                     style={{
@@ -156,6 +161,9 @@ export default function CreateOpportunity() {
               <div>
                 <label className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Start Date *</label>
                 <input
+                  id="opp-start-date"
+                  name="event_date_start"
+                  aria-label="Start Date"
                   type="date"
                   value={form.event_date_start}
                   onChange={e => update('event_date_start', e.target.value)}
@@ -166,6 +174,9 @@ export default function CreateOpportunity() {
               <div>
                 <label className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>End Date</label>
                 <input
+                  id="opp-end-date"
+                  name="event_date_end"
+                  aria-label="End Date"
                   type="date"
                   value={form.event_date_end}
                   onChange={e => update('event_date_end', e.target.value)}
@@ -178,6 +189,9 @@ export default function CreateOpportunity() {
               <div>
                 <label className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>City *</label>
                 <input
+                  id="opp-city"
+                  name="city"
+                  aria-label="City"
                   value={form.city}
                   onChange={e => update('city', e.target.value)}
                   placeholder="Bentonville"
@@ -188,6 +202,9 @@ export default function CreateOpportunity() {
               <div>
                 <label className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>State</label>
                 <input
+                  id="opp-state"
+                  name="state"
+                  aria-label="State"
                   value={form.state}
                   onChange={e => update('state', e.target.value)}
                   placeholder="AR"
@@ -200,6 +217,9 @@ export default function CreateOpportunity() {
             <div>
               <label className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Description</label>
               <textarea
+                id="opp-description"
+                name="description"
+                aria-label="Description"
                 value={form.description}
                 onChange={e => update('description', e.target.value)}
                 rows={3}
@@ -222,6 +242,7 @@ export default function CreateOpportunity() {
                   return (
                     <button
                       key={pos}
+                      aria-label={`Position ${pos}`}
                       onClick={() => togglePosition(pos)}
                       className="px-3 py-2 rounded-xl text-sm font-bold border-2 transition-all flex items-center gap-1.5"
                       style={{
@@ -242,6 +263,9 @@ export default function CreateOpportunity() {
               <div>
                 <label className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Age Division</label>
                 <select
+                  id="opp-age-division"
+                  name="age_division"
+                  aria-label="Age Division"
                   value={form.age_division}
                   onChange={e => update('age_division', e.target.value)}
                   className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
@@ -254,6 +278,9 @@ export default function CreateOpportunity() {
               <div>
                 <label className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Classification</label>
                 <select
+                  id="opp-classification"
+                  name="classification"
+                  aria-label="Classification"
                   value={form.classification}
                   onChange={e => update('classification', e.target.value)}
                   className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
@@ -268,6 +295,9 @@ export default function CreateOpportunity() {
               <div>
                 <label className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Player Cost ($)</label>
                 <input
+                  id="opp-player-cost"
+                  name="player_cost"
+                  aria-label="Player Cost in dollars"
                   type="number"
                   value={form.player_cost}
                   onChange={e => update('player_cost', e.target.value)}
@@ -279,6 +309,9 @@ export default function CreateOpportunity() {
               <div>
                 <label className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Games Count</label>
                 <input
+                  id="opp-games-count"
+                  name="games_count"
+                  aria-label="Games Count"
                   type="number"
                   value={form.games_count}
                   onChange={e => update('games_count', e.target.value)}
@@ -292,6 +325,9 @@ export default function CreateOpportunity() {
             <div>
               <label className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Tournament Sanction</label>
               <select
+                id="opp-sanctioning-body"
+                name="sanctioning_body"
+                aria-label="Tournament Sanction"
                 value={form.sanctioning_body}
                 onChange={e => update('sanctioning_body', e.target.value)}
                 className="w-full rounded-xl px-4 py-3 text-sm border border-gray-200 outline-none"
@@ -309,6 +345,9 @@ export default function CreateOpportunity() {
             <div>
               <label className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Requirements</label>
               <textarea
+                id="opp-requirements"
+                name="requirements"
+                aria-label="Requirements"
                 value={form.requirements}
                 onChange={e => update('requirements', e.target.value)}
                 rows={3}
@@ -320,6 +359,9 @@ export default function CreateOpportunity() {
             <div>
               <label className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Application Deadline</label>
               <input
+                id="opp-application-deadline"
+                name="application_deadline"
+                aria-label="Application Deadline"
                 type="date"
                 value={form.application_deadline}
                 onChange={e => update('application_deadline', e.target.value)}
@@ -330,6 +372,9 @@ export default function CreateOpportunity() {
             <div>
               <label className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Spots Available</label>
               <input
+                id="opp-spots-available"
+                name="spots_available"
+                aria-label="Spots Available"
                 type="number"
                 value={form.spots_available}
                 onChange={e => update('spots_available', e.target.value)}
@@ -344,6 +389,7 @@ export default function CreateOpportunity() {
                 <p className="text-sm" style={{ color: '#64748B' }}>Players must arrange overnight accommodation</p>
               </div>
               <button
+                aria-label="Toggle Overnight Stay Required"
                 onClick={() => update('overnight_required', !form.overnight_required)}
                 className="w-12 h-6 rounded-full transition-colors relative"
                 style={{ backgroundColor: form.overnight_required ? '#2563EB' : '#E2E8F0' }}
@@ -355,6 +401,9 @@ export default function CreateOpportunity() {
             <div>
               <label className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>Coach Notes (private)</label>
               <textarea
+                id="opp-notes"
+                name="notes"
+                aria-label="Coach Notes private"
                 value={form.notes}
                 onChange={e => update('notes', e.target.value)}
                 rows={2}
@@ -372,6 +421,7 @@ export default function CreateOpportunity() {
         style={{ paddingBottom: 'calc(16px + env(safe-area-inset-bottom, 0px))' }}>
         {step < 3 ? (
           <button
+            aria-label="Continue to next step"
             onClick={() => setStep(s => s + 1)}
             disabled={!isValid()}
             className="w-full py-4 rounded-2xl font-bold text-white text-base transition-opacity"
@@ -381,6 +431,7 @@ export default function CreateOpportunity() {
           </button>
         ) : (
           <button
+            aria-label="Publish Listing"
             onClick={handleSubmit}
             disabled={saving}
             className="w-full py-4 rounded-2xl font-bold text-white text-base"
