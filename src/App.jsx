@@ -76,6 +76,7 @@ const AuthenticatedApp = () => {
           <Route path="/messages" element={<Messages />} />
           <Route path="/activity" element={<Activity />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/coach-dashboard" element={<CoachDashboard />} />
         </Route>
 
         {/* Full-screen routes (no bottom nav) */}
@@ -85,7 +86,6 @@ const AuthenticatedApp = () => {
         <Route path="/coach/:id" element={<CoachProfilePage />} />
         <Route path="/organization/:id" element={<OrganizationProfilePage />} />
         <Route path="/create-opportunity" element={<CreateOpportunity />} />
-        <Route path="/coach-dashboard" element={<CoachDashboard />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/settings" element={<Settings />} />
