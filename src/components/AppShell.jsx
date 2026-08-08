@@ -22,10 +22,17 @@ export default function AppShell() {
   const loadUnreadCounts = async () => {
     try {
       const user = await base44.auth.me();
-      const [notifs] = await Promise.all([
-        base44.entities.Notification.filter({ user_id: user.id, is_read: false })
+      const [notifs, convsA, convsB] = await Promise.all([
+        base44.entities.Notification.filter({ user_id: user.id, is_read: false }),
+        base44.entities.Conversation.filter({ participant_a_id: user.id }),
+        base44.entities.Conversation.filter({ participant_b_id: user.id })
       ]);
       setUnreadNotifications(notifs.length);
+      const unread = [
+        ...convsA.map(c => c.unread_count_a || 0),
+        ...convsB.map(c => c.unread_count_b || 0)
+      ].reduce((sum, n) => sum + n, 0);
+      setUnreadMessages(unread);
     } catch (e) {
       // not critical
     }
