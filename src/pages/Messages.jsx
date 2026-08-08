@@ -43,8 +43,13 @@ export default function Messages() {
     try {
       const u = await base44.auth.me();
       setUser(u);
-      const allConvs = await base44.entities.Conversation.list('-last_message_at', 200);
-      const convs = allConvs.filter(c => c.participant_a_id === u.id || c.participant_b_id === u.id);
+      const [asA, asB] = await Promise.all([
+        base44.entities.Conversation.filter({ participant_a_id: u.id }, '-last_message_at', 100),
+        base44.entities.Conversation.filter({ participant_b_id: u.id }, '-last_message_at', 100)
+      ]);
+      const convs = [...asA, ...asB]
+        .filter((conv, index, arr) => arr.findIndex(c => c.id === conv.id) === index)
+        .sort((a, b) => new Date(b.last_message_at || b.created_date || 0) - new Date(a.last_message_at || a.created_date || 0));
 
       // Load user info for participants
       const userIds = new Set();
@@ -63,7 +68,7 @@ export default function Messages() {
         if (!target) {
           try {
             target = await base44.entities.Conversation.get(targetId);
-            if (target) {
+            if (target && (target.participant_a_id === u.id || target.participant_b_id === u.id)) {
               setConversations(prev => prev.find(c => c.id === target.id) ? prev : [target, ...prev]);
               const otherId = target.participant_a_id === u.id ? target.participant_b_id : target.participant_a_id;
               if (!map[otherId]) {
@@ -72,6 +77,8 @@ export default function Messages() {
                   setUserMap({ ...map });
                 } catch { /* ignore */ }
               }
+            } else {
+              target = null;
             }
           } catch (e) {
             console.error(e);
@@ -87,6 +94,7 @@ export default function Messages() {
   };
 
   const loadMessages = async (convId) => {
+    if (!activeConv || !user || (activeConv.participant_a_id !== user.id && activeConv.participant_b_id !== user.id)) return;
     const msgs = await base44.entities.Message.filter({ conversation_id: convId }, 'created_date', 100);
     setMessages(msgs);
     // Mark as read
