@@ -5,43 +5,77 @@ export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
 
-// Match score calculation (rules-based)
-export function calculateMatchScore({ player, opportunity }) {
+// Match score calculation (rules-based MVP v2)
+export function calculateMatchScore({ player, opportunity, availability }) {
   if (!player || !opportunity) return 0;
+
+  // A player who has explicitly marked themselves unavailable should not be treated as a good match.
+  if (availability?.status === 'unavailable') return 0;
+
   let score = 0;
   let factors = 0;
 
-  // Position match (30%)
+  // Position match (30%) — exact position match earns full credit.
   if (opportunity.positions_needed?.length > 0 && player.positions?.length > 0) {
     const match = player.positions.some(p => opportunity.positions_needed.includes(p));
     score += match ? 30 : 0;
     factors += 30;
   }
 
-  // Age division (25%)
+  // Age division (20%).
   if (opportunity.age_division && player.age_division) {
-    score += opportunity.age_division === player.age_division ? 25 : 0;
-    factors += 25;
-  }
-
-  // Classification (20%)
-  if (opportunity.classification && player.classification) {
-    score += opportunity.classification === player.classification ? 20 : 0;
+    score += opportunity.age_division === player.age_division ? 20 : 0;
     factors += 20;
   }
 
-  // Verification bonus (15%)
-  if (player.is_verified) score += 15;
-  factors += 15;
+  // Classification (15%) — exact match full credit, one-level difference partial credit.
+  if (opportunity.classification && player.classification) {
+    const levels = ['A', 'AA', 'AAA', 'Major'];
+    const o = levels.indexOf(opportunity.classification);
+    const p = levels.indexOf(player.classification);
+    if (o >= 0 && p >= 0) {
+      score += o === p ? 15 : Math.abs(o - p) === 1 ? 8 : 0;
+    } else {
+      score += opportunity.classification === player.classification ? 15 : 0;
+    }
+    factors += 15;
+  }
 
-  // Distance / travel radius (10%)
-  if (player.travel_radius_miles >= 100) {
-    score += 10;
+  // Weekly availability (15%).
+  if (availability?.status) {
+    score += availability.status === 'available' ? 15 : availability.status === 'maybe' ? 8 : 0;
+    factors += 15;
+  }
+
+  // Travel readiness (10%) — temporary MVP proxy until true distance calculation is added.
+  if (player.travel_radius_miles) {
+    score += player.travel_radius_miles >= 100 ? 10 : player.travel_radius_miles >= 50 ? 6 : 3;
     factors += 10;
   }
 
+  // Verification confidence (5%).
+  score += player.is_verified ? 5 : 0;
+  factors += 5;
+
+  // Profile completeness (5%).
+  const completenessFields = [
+    player.photo_url,
+    player.positions?.length > 0,
+    player.age_division,
+    player.classification,
+    player.city,
+    player.state,
+    player.bats,
+    player.throws,
+    player.current_team_name,
+    player.highlight_video_url || player.gamechanger_url || player.sidelinehd_url
+  ];
+  const completeness = completenessFields.filter(Boolean).length / completenessFields.length;
+  score += Math.round(completeness * 5);
+  factors += 5;
+
   if (factors === 0) return 75;
-  return Math.round((score / factors) * 100);
+  return Math.max(0, Math.min(100, Math.round((score / factors) * 100)));
 }
 
 export function formatDate(dateStr) {
@@ -66,7 +100,7 @@ export function getInitials(name) {
 
 export function getMatchScoreColor(score) {
   if (score >= 85) return '#16A34A';
-  if (score >= 70) return '#A4A017';
+  if (score >= 70) return '#D4A017';
   if (score >= 50) return '#F59E0B';
   return '#94A3B8';
 }
