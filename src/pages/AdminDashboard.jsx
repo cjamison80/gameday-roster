@@ -10,6 +10,7 @@ export default function AdminDashboard() {
   const [coaches, setCoaches] = useState([]);
   const [orgs, setOrgs] = useState([]);
   const [activeTab, setActiveTab] = useState('overview');
+  const [authorized, setAuthorized] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -18,6 +19,13 @@ export default function AdminDashboard() {
   const loadData = async () => {
     try {
       const user = await base44.auth.me();
+      const profiles = await base44.entities.UserProfile.filter({ user_id: user.id });
+      const isAdmin = user?.role === 'admin' || profiles[0]?.role === 'admin';
+      if (!isAdmin) {
+        setAuthorized(false);
+        return;
+      }
+      setAuthorized(true);
       const [players, coachs, organizations, opps, apps] = await Promise.all([
         base44.entities.PlayerProfile.list(),
         base44.entities.CoachProfile.list(),
@@ -57,6 +65,19 @@ export default function AdminDashboard() {
     { icon: Building2, label: 'Organizations', value: stats.orgs, color: '#8B5CF6', bg: '#F5F3FF' },
     { icon: Trophy, label: 'Opportunities', value: stats.opportunities, color: '#A4A017', bg: '#FEFCE8' }
   ];
+
+  if (authorized === false) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center" style={{ backgroundColor: '#F8FAFC' }}>
+        <div className="text-5xl mb-4">🔒</div>
+        <h1 className="text-xl font-black" style={{ color: '#0B1528' }}>Admin access only</h1>
+        <p className="text-sm mt-2" style={{ color: '#64748B' }}>You do not have permission to view the admin dashboard.</p>
+        <button onClick={() => navigate('/discover')} className="mt-6 px-5 py-3 rounded-2xl font-bold text-white" style={{ backgroundColor: '#2563EB' }}>
+          Back to Discover
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#F8FAFC' }}>
