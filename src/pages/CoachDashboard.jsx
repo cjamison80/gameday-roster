@@ -61,18 +61,39 @@ export default function CoachDashboard() {
       if (decision === 'accepted') {
         const opp = opportunities.find(o => o.id === app.opportunity_id);
         const newFilled = (opp?.spots_filled || 0) + 1;
-        if (opp && (!opp.spots_available || newFilled < opp.spots_available)) {
-          const updatedOpp = await base44.entities.Opportunity.update(opp.id, { spots_filled: newFilled });
+        if (opp) {
+          const shouldClose = !!opp.spots_available && newFilled >= opp.spots_available;
+          const updatedOpp = await base44.entities.Opportunity.update(opp.id, {
+            spots_filled: newFilled,
+            ...(shouldClose ? { status: 'closed' } : {})
+          });
           setOpportunities(prev => prev.map(o => o.id === opp.id ? updatedOpp : o));
         }
+
+        const existingConvs = await base44.entities.Conversation.filter({ opportunity_id: app.opportunity_id });
+        let conv = existingConvs.find(c =>
+          (c.participant_a_id === user.id || c.participant_b_id === user.id) &&
+          (c.participant_a_id === app.parent_id || c.participant_b_id === app.parent_id)
+        );
+        if (!conv) {
+          conv = await base44.entities.Conversation.create({
+            participant_a_id: user.id,
+            participant_b_id: app.parent_id,
+            participant_ids: [user.id, app.parent_id],
+            opportunity_id: app.opportunity_id,
+            last_message: 'Application accepted. Conversation opened.',
+            last_message_at: new Date().toISOString()
+          });
+        }
+
         await base44.entities.Notification.create({
           user_id: app.parent_id,
           type: 'application_accepted',
           title: 'Application Accepted',
-          body: `Your application was accepted by ${user.full_name}.`,
+          body: `Your application was accepted by ${user.full_name}. You can now message the coach.`,
           related_id: app.opportunity_id,
           related_type: 'opportunity',
-          action_url: `/opportunity/${app.opportunity_id}`
+          action_url: `/messages?conversation=${conv.id}`
         });
       } else {
         await base44.entities.Notification.create({
@@ -251,6 +272,7 @@ export default function CoachDashboard() {
                                   onClick={() => navigate('/messages')}
                                   className="w-9 h-9 rounded-xl flex items-center justify-center"
                                   style={{ backgroundColor: '#0B1528' }}
+                                  title="Open messages"
                                 >
                                   <MessageCircle size={16} color="white" />
                                 </button>
