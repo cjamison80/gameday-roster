@@ -18,6 +18,8 @@ export default function OpportunityDetail() {
   const [isSaved, setIsSaved] = useState(false);
   const [applying, setApplying] = useState(false);
   const [applied, setApplied] = useState(false);
+  const [applicationStatus, setApplicationStatus] = useState(null);
+  const [showSubmittedConfirmation, setShowSubmittedConfirmation] = useState(false);
   const [showApplyModal, setShowApplyModal] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [players, setPlayers] = useState([]);
@@ -53,7 +55,10 @@ export default function OpportunityDetail() {
         setSelectedPlayer(myPlayers[0]);
         setMatchScore(calculateMatchScore({ player: myPlayers[0], opportunity: opp }));
       }
-      if (existingApps.length > 0) setApplied(true);
+      if (existingApps.length > 0) {
+        setApplied(true);
+        setApplicationStatus(existingApps[0].status);
+      }
     } catch (e) {
       console.error(e);
     } finally {
@@ -74,7 +79,7 @@ export default function OpportunityDetail() {
   };
 
   const handleMessageCoach = async () => {
-    if (!user || !opportunity) return;
+    if (!user || !opportunity || applicationStatus !== 'accepted') return;
     const coachId = opportunity.coach_id;
     if (!coachId) { navigate('/messages'); return; }
     try {
@@ -112,15 +117,20 @@ export default function OpportunityDetail() {
         status: 'pending'
       });
       setApplied(true);
+      setApplicationStatus('pending');
       setShowApplyModal(false);
-      await base44.entities.Notification.create({
-        user_id: user.id,
-        type: 'application_received',
-        title: 'Application Submitted!',
-        body: `Your application for ${opportunity.title} has been sent.`,
-        related_id: id,
-        related_type: 'opportunity'
-      });
+      setShowSubmittedConfirmation(true);
+      if (opportunity.coach_id) {
+        await base44.entities.Notification.create({
+          user_id: opportunity.coach_id,
+          type: 'application_received',
+          title: 'New Application Received',
+          body: `${selectedPlayer.first_name} ${selectedPlayer.last_name} applied for ${opportunity.title}.`,
+          related_id: id,
+          related_type: 'opportunity',
+          action_url: '/coach-dashboard'
+        });
+      }
     } catch (e) {
       console.error(e);
     } finally {
@@ -345,33 +355,44 @@ export default function OpportunityDetail() {
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-5 py-4"
         style={{ paddingBottom: 'calc(16px + env(safe-area-inset-bottom, 0px))' }}>
         {applied ? (
-          <div className="flex items-center justify-center gap-2 py-4 rounded-2xl" style={{ backgroundColor: '#DCFCE7' }}>
-            <CheckCircle size={20} color="#16A34A" />
-            <span className="font-bold" style={{ color: '#16A34A' }}>Application Submitted!</span>
-          </div>
+          applicationStatus === 'accepted' ? (
+            <div className="flex gap-3">
+              <div className="flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl" style={{ backgroundColor: '#DCFCE7' }}>
+                <CheckCircle size={20} color="#16A34A" />
+                <span className="font-bold" style={{ color: '#16A34A' }}>Accepted</span>
+              </div>
+              <button
+                onClick={handleMessageCoach}
+                className="flex-1 py-4 rounded-2xl font-bold text-white text-base"
+                style={{ backgroundColor: '#0B1528' }}
+              >
+                Message Coach
+              </button>
+            </div>
+          ) : applicationStatus === 'declined' ? (
+            <div className="flex items-center justify-center gap-2 py-4 rounded-2xl" style={{ backgroundColor: '#FEE2E2' }}>
+              <span className="font-bold" style={{ color: '#DC2626' }}>Application Declined</span>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center gap-2 py-4 rounded-2xl" style={{ backgroundColor: '#FEF9C3' }}>
+              <CheckCircle size={20} color="#F59E0B" />
+              <span className="font-bold" style={{ color: '#A16207' }}>Application Pending</span>
+            </div>
+          )
         ) : (
-          <div className="flex gap-3">
-            <button
-              onClick={handleMessageCoach}
-              className="flex-1 py-4 rounded-2xl font-bold text-base border-2 transition-colors"
-              style={{ borderColor: '#E2E8F0', color: '#0B1528' }}
-            >
-              Message Coach
-            </button>
-            <button
-              onClick={() => setShowApplyModal(true)}
-              disabled={applying}
-              className="flex-1 py-4 rounded-2xl font-bold text-white text-base transition-transform active:scale-95"
-              style={{ backgroundColor: '#2563EB' }}
-            >
-              Apply Now
-            </button>
-          </div>
+          <button
+            onClick={() => setShowApplyModal(true)}
+            disabled={applying}
+            className="w-full py-4 rounded-2xl font-bold text-white text-base transition-transform active:scale-95"
+            style={{ backgroundColor: '#2563EB' }}
+          >
+            Apply Now
+          </button>
         )}
       </div>
 
       {/* Application Submitted Confirmation (SCR-016) */}
-      {applied && (
+      {showSubmittedConfirmation && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-6" style={{ backgroundColor: 'rgba(11,21,40,0.85)' }}>
           <div className="w-full max-w-sm bg-white rounded-3xl p-8 text-center">
             <div className="w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center" style={{ backgroundColor: '#DCFCE7' }}>
@@ -382,10 +403,10 @@ export default function OpportunityDetail() {
               Your application for {opportunity.title} has been sent. We'll notify you when the coach responds.
             </p>
             <div className="space-y-3 mt-6">
-              <button onClick={() => navigate('/activity')} className="w-full py-4 rounded-2xl font-bold text-white" style={{ backgroundColor: '#2563EB' }}>
+              <button onClick={() => { setShowSubmittedConfirmation(false); navigate('/activity'); }} className="w-full py-4 rounded-2xl font-bold text-white" style={{ backgroundColor: '#2563EB' }}>
                 View My Applications
               </button>
-              <button onClick={() => navigate('/discover')} className="w-full py-4 rounded-2xl font-bold border-2" style={{ borderColor: '#E2E8F0', color: '#0B1528' }}>
+              <button onClick={() => { setShowSubmittedConfirmation(false); navigate('/discover'); }} className="w-full py-4 rounded-2xl font-bold border-2" style={{ borderColor: '#E2E8F0', color: '#0B1528' }}>
                 Return to Discover
               </button>
             </div>
