@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, X, Check } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
@@ -11,6 +11,10 @@ export default function CreateOpportunity() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
+  const [accessChecked, setAccessChecked] = useState(false);
+  const [accessError, setAccessError] = useState('');
+  const [currentUser, setCurrentUser] = useState(null);
+  const [currentProfile, setCurrentProfile] = useState(null);
   const [form, setForm] = useState({
     title: '',
     type: 'pickup',
@@ -33,6 +37,32 @@ export default function CreateOpportunity() {
     sanctioning_body: ''
   });
 
+  useEffect(() => {
+    checkAccess();
+  }, []);
+
+  const isAllowedToCreate = (user, profile) => {
+    return user?.role === 'admin' || ['coach', 'organization', 'admin'].includes(profile?.role);
+  };
+
+  const checkAccess = async () => {
+    try {
+      const user = await base44.auth.me();
+      const profiles = await base44.entities.UserProfile.filter({ user_id: user.id });
+      const profile = profiles[0] || null;
+      setCurrentUser(user);
+      setCurrentProfile(profile);
+      if (!isAllowedToCreate(user, profile)) {
+        setAccessError('Only coach, organization, or admin accounts can create opportunities.');
+      }
+    } catch (e) {
+      console.error(e);
+      setAccessError('Could not verify your account permissions.');
+    } finally {
+      setAccessChecked(true);
+    }
+  };
+
   const update = (key, value) => setForm(f => ({ ...f, [key]: value }));
 
   const togglePosition = (pos) => {
@@ -45,9 +75,15 @@ export default function CreateOpportunity() {
   };
 
   const handleSubmit = async () => {
+    setAccessError('');
     setSaving(true);
     try {
-      const user = await base44.auth.me();
+      const user = currentUser || await base44.auth.me();
+      const profile = currentProfile || (await base44.entities.UserProfile.filter({ user_id: user.id }))[0] || null;
+      if (!isAllowedToCreate(user, profile)) {
+        setAccessError('Only coach, organization, or admin accounts can create opportunities.');
+        return;
+      }
       const payload = {
         ...form,
         player_cost: form.player_cost ? parseFloat(form.player_cost) : 0,
@@ -60,6 +96,7 @@ export default function CreateOpportunity() {
       navigate('/discover');
     } catch (e) {
       console.error(e);
+      setAccessError(e?.message || 'Could not create this opportunity.');
     } finally {
       setSaving(false);
     }
@@ -73,6 +110,27 @@ export default function CreateOpportunity() {
     if (step === 2) return form.positions_needed.length > 0;
     return true;
   };
+
+  if (!accessChecked) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F8FAFC' }}>
+        <div className="w-8 h-8 border-4 rounded-full animate-spin" style={{ borderColor: '#E2E8F0', borderTopColor: '#2563EB' }} />
+      </div>
+    );
+  }
+
+  if (accessError && !isAllowedToCreate(currentUser, currentProfile)) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center" style={{ backgroundColor: '#F8FAFC' }}>
+        <div className="text-5xl mb-4">🔒</div>
+        <h1 className="text-xl font-black" style={{ color: '#0B1528' }}>Coach tools only</h1>
+        <p className="text-sm mt-2" style={{ color: '#64748B' }}>{accessError}</p>
+        <button onClick={() => navigate('/profile')} className="mt-6 px-5 py-3 rounded-2xl font-bold text-white" style={{ backgroundColor: '#2563EB' }}>
+          Back to Profile
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#F8FAFC' }}>
