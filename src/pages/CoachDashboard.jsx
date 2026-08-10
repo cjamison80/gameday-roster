@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, ChevronRight, Check, X, MessageCircle, Users, ClipboardList } from 'lucide-react';
+import { Plus, ChevronRight, Check, X, MessageCircle, Users, ClipboardList, Trophy } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { calculateMatchScore, getMatchScoreColor } from '@/lib/utils';
 import MatchScoreBadge from '@/components/MatchScoreBadge';
@@ -141,15 +141,25 @@ export default function CoachDashboard() {
       </div>
 
       <div className="px-5 py-5 space-y-5">
-        {/* Primary action */}
-        <button
-          onClick={() => navigate('/create-opportunity')}
-          className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-white"
-          style={{ backgroundColor: '#2563EB' }}
-        >
-          <Plus size={18} />
-          Post New Opportunity
-        </button>
+        {/* Primary actions */}
+        <div className="grid grid-cols-1 gap-3">
+          <button
+            onClick={() => navigate('/create-opportunity')}
+            className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-white"
+            style={{ backgroundColor: '#2563EB' }}
+          >
+            <Plus size={18} />
+            Post New Opportunity
+          </button>
+          <button
+            onClick={() => navigate(`/tournaments?state=${userProfile?.state || ''}${teams[0]?.age_division ? `&age=${teams[0].age_division}` : ''}${teams[0]?.classification ? `&classification=${teams[0].classification}` : ''}`)}
+            className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold border-2"
+            style={{ backgroundColor: '#FFFFFF', borderColor: '#E2E8F0', color: '#0B1528' }}
+          >
+            <Trophy size={18} color="#D4A017" />
+            Find Tournaments
+          </button>
+        </div>
 
         {opportunities.length === 0 && teams.length === 0 && (
           <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center">
