@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, MessageCircle, Trophy } from 'lucide-react';
+import { ArrowLeft, ExternalLink, MapPin, MessageCircle, Trophy } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import VerifiedBadge from '@/components/VerifiedBadge';
 import { Image } from '@/components/ui/image';
@@ -100,6 +100,23 @@ export default function CoachProfilePage() {
             <p className="text-sm leading-relaxed" style={{ color: '#64748B' }}>{coach.bio}</p>
           </div>
         )}
+
+        {/* Tournament Finder */}
+        <button
+          onClick={() => navigate(`/tournaments?state=${coach.state || ''}${teams[0]?.age_division ? `&age=${teams[0].age_division}` : ''}${teams[0]?.classification ? `&classification=${teams[0].classification}` : ''}`)}
+          className="w-full flex items-center justify-between gap-3 bg-white rounded-2xl border border-gray-100 p-4 text-left hover:shadow-md transition-shadow"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#FEFCE8' }}>
+              <Trophy size={22} color="#D4A017" />
+            </div>
+            <div>
+              <h3 className="font-black" style={{ color: '#0B1528' }}>Find Tournaments</h3>
+              <p className="text-sm" style={{ color: '#64748B' }}>Browse events by association, state, mileage, age and cost.</p>
+            </div>
+          </div>
+          <ExternalLink size={18} color="#94A3B8" />
+        </button>
 
         {/* Sports */}
         {coach.sports?.length > 0 && (
