@@ -131,6 +131,23 @@ export default function TeamProfilePage() {
           <StatCard icon={Trophy} label="Recruiting" value={team.is_recruiting ? 'Yes' : 'No'} />
         </div>
 
+        {/* Tournament Finder */}
+        <button
+          onClick={() => navigate(`/tournaments?state=${team.state || ''}${team.age_division ? `&age=${team.age_division}` : ''}${team.classification ? `&classification=${team.classification}` : ''}`)}
+          className="w-full flex items-center justify-between gap-3 bg-white rounded-2xl border border-gray-100 p-4 text-left hover:shadow-md transition-shadow"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#FEFCE8' }}>
+              <Trophy size={22} color="#D4A017" />
+            </div>
+            <div>
+              <h3 className="font-black" style={{ color: '#0B1528' }}>Find Tournaments</h3>
+              <p className="text-sm" style={{ color: '#64748B' }}>Search by mileage, state, association, cost and entered teams.</p>
+            </div>
+          </div>
+          <ExternalLink size={18} color="#94A3B8" />
+        </button>
+
         {/* Bio */}
         {team.bio && (
           <div className="bg-white rounded-2xl border border-gray-100 p-5">
