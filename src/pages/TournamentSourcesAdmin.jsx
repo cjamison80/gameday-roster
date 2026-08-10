@@ -129,7 +129,7 @@ export default function TournamentSourcesAdmin() {
         <div className="rounded-2xl p-4 flex gap-3" style={{ backgroundColor: '#FEFCE8', border: '1px solid #FEF08A' }}>
           <ShieldAlert size={20} color="#A16207" className="flex-shrink-0 mt-0.5" />
           <p className="text-sm leading-relaxed" style={{ color: '#713F12' }}>
-            Live scraping is disabled until each association source is approved for use. The app now tracks source permission, robots/terms review, test sync jobs, and manual CSV/partner-feed alternatives.
+            Daily scrape mode is enabled for public tournament sources. The production runner should still check robots/terms each run, use rate limits, preserve source attribution, and stop automatically if a source blocks or disallows access.
           </p>
         </div>
 
@@ -145,8 +145,8 @@ export default function TournamentSourcesAdmin() {
                       <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: '#EFF6FF', color: '#2563EB' }}>{source.association}</span>
                       <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: source.sync_enabled ? '#DCFCE7' : '#F1F5F9', color: source.sync_enabled ? '#16A34A' : '#64748B' }}>{source.sync_enabled ? 'Enabled' : 'Disabled'}</span>
                     </div>
-                    <p className="text-sm mt-1" style={{ color: '#64748B' }}>{SOURCE_TYPE_LABELS[source.source_type] || source.source_type} · Permission: {source.permission_status}</p>
-                    <p className="text-sm mt-2" style={{ color: validation.ok ? '#16A34A' : '#DC2626' }}>{getPipelineNextStep(source)}</p>
+                    <p className="text-sm mt-1" style={{ color: '#64748B' }}>{SOURCE_TYPE_LABELS[source.source_type] || source.source_type} · {source.sync_frequency || 'manual'} sync · Permission: {source.permission_status}</p>
+                    <p className="text-sm mt-2" style={{ color: validation.ok ? (validation.warning ? '#A16207' : '#16A34A') : '#DC2626' }}>{getPipelineNextStep(source)}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-xs font-bold" style={{ color: '#94A3B8' }}>Last status</p>
