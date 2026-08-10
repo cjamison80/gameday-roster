@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, Briefcase, Building2, Trophy, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import { ArrowLeft, Users, Briefcase, Building2, Trophy, AlertCircle, CheckCircle, Clock, Database } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 export default function AdminDashboard() {
@@ -144,6 +144,18 @@ export default function AdminDashboard() {
               <div className="text-3xl font-black" style={{ color: '#0B1528' }}>{loading ? '—' : stats.applications}</div>
               <div className="text-sm mt-1" style={{ color: '#94A3B8' }}>Total submitted</div>
             </div>
+            <button
+              onClick={() => navigate('/admin/tournament-sources')}
+              className="w-full bg-white rounded-2xl border border-gray-100 p-4 flex items-center gap-3 text-left hover:shadow-md transition-shadow"
+            >
+              <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#EFF6FF' }}>
+                <Database size={20} color="#2563EB" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold" style={{ color: '#0B1528' }}>Tournament Sources</h3>
+                <div className="text-sm mt-1" style={{ color: '#94A3B8' }}>Manage source permissions, sync readiness and import jobs</div>
+              </div>
+            </button>
           </div>
         )}
 
