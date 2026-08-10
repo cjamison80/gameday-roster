@@ -32,6 +32,8 @@ import CoachProfilePage from '@/pages/CoachProfilePage';
 import OrganizationProfilePage from '@/pages/OrganizationProfilePage';
 import AdminDashboard from '@/pages/AdminDashboard';
 import Settings from '@/pages/Settings';
+import Tournaments from '@/pages/Tournaments';
+import TournamentDetail from '@/pages/TournamentDetail';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -86,6 +88,8 @@ const AuthenticatedApp = () => {
         <Route path="/coach/:id" element={<CoachProfilePage />} />
         <Route path="/organization/:id" element={<OrganizationProfilePage />} />
         <Route path="/create-opportunity" element={<CreateOpportunity />} />
+        <Route path="/tournaments" element={<Tournaments />} />
+        <Route path="/tournament/:id" element={<TournamentDetail />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/settings" element={<Settings />} />
