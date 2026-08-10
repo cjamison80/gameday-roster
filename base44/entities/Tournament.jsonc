@@ -1,0 +1,159 @@
+{
+  "name": "Tournament",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "association": {
+      "type": "string",
+      "enum": [
+        "Perfect Game",
+        "2D Sports",
+        "USSSA",
+        "NSA",
+        "AAU",
+        "Ripken",
+        "Triple Crown",
+        "Other"
+      ],
+      "default": "Other"
+    },
+    "sport": {
+      "type": "string",
+      "default": "baseball",
+      "enum": [
+        "baseball",
+        "softball"
+      ]
+    },
+    "age_divisions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "classifications": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "city": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "venue": {
+      "type": "string"
+    },
+    "cost": {
+      "type": "number"
+    },
+    "currency": {
+      "type": "string",
+      "default": "USD"
+    },
+    "spots_available": {
+      "type": "integer"
+    },
+    "teams_entered_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "teams_entered": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "team_name": {
+            "type": "string"
+          },
+          "age_division": {
+            "type": "string"
+          },
+          "classification": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "registration_url": {
+      "type": "string"
+    },
+    "source_url": {
+      "type": "string"
+    },
+    "source_system": {
+      "type": "string"
+    },
+    "last_synced_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "waitlist",
+        "sold_out",
+        "closed",
+        "unknown"
+      ],
+      "default": "open"
+    },
+    "description": {
+      "type": "string"
+    },
+    "latitude": {
+      "type": "number"
+    },
+    "longitude": {
+      "type": "number"
+    },
+    "is_verified_source": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "name",
+    "association",
+    "start_date",
+    "city",
+    "state"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
