@@ -1,0 +1,33 @@
+name: Daily Tournament Sync
+
+on:
+  schedule:
+    # Runs daily at 5:15 AM Central Time during daylight saving offset approximation.
+    - cron: '15 10 * * *'
+  workflow_dispatch:
+
+jobs:
+  sync-tournaments:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run daily tournament sync
+        env:
+          BASE44_APP_ID: ${{ secrets.BASE44_APP_ID }}
+          BASE44_ACCESS_TOKEN: ${{ secrets.BASE44_ACCESS_TOKEN }}
+          BASE44_APP_BASE_URL: ${{ secrets.BASE44_APP_BASE_URL }}
+          MAX_EVENTS_PER_SOURCE: '75'
+          REQUEST_DELAY_MS: '1500'
+        run: npm run sync:tournaments
