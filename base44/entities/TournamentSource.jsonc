@@ -1,0 +1,126 @@
+{
+  "name": "TournamentSource",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "association": {
+      "type": "string",
+      "enum": [
+        "Perfect Game",
+        "2D Sports",
+        "USSSA",
+        "NSA",
+        "AAU",
+        "Ripken",
+        "Triple Crown",
+        "Other"
+      ],
+      "default": "Other"
+    },
+    "source_type": {
+      "type": "string",
+      "enum": [
+        "api",
+        "rss",
+        "csv",
+        "manual_upload",
+        "approved_scrape",
+        "partner_feed",
+        "other"
+      ],
+      "default": "manual_upload"
+    },
+    "base_url": {
+      "type": "string"
+    },
+    "events_url": {
+      "type": "string"
+    },
+    "registration_url_template": {
+      "type": "string"
+    },
+    "terms_url": {
+      "type": "string"
+    },
+    "robots_url": {
+      "type": "string"
+    },
+    "sync_enabled": {
+      "type": "boolean",
+      "default": false
+    },
+    "requires_permission": {
+      "type": "boolean",
+      "default": true
+    },
+    "permission_status": {
+      "type": "string",
+      "enum": [
+        "not_requested",
+        "requested",
+        "approved",
+        "rejected",
+        "unknown"
+      ],
+      "default": "not_requested"
+    },
+    "sync_frequency": {
+      "type": "string",
+      "enum": [
+        "manual",
+        "daily",
+        "weekly"
+      ],
+      "default": "manual"
+    },
+    "last_synced_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_status": {
+      "type": "string",
+      "enum": [
+        "never_run",
+        "success",
+        "partial",
+        "failed",
+        "blocked"
+      ],
+      "default": "never_run"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "parser_key": {
+      "type": "string"
+    },
+    "created_by_user_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "association",
+    "source_type"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

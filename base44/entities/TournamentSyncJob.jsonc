@@ -1,0 +1,96 @@
+{
+  "name": "TournamentSyncJob",
+  "type": "object",
+  "properties": {
+    "source_id": {
+      "type": "string"
+    },
+    "source_name": {
+      "type": "string"
+    },
+    "association": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "queued",
+        "running",
+        "success",
+        "partial",
+        "failed",
+        "blocked"
+      ],
+      "default": "queued"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "finished_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "records_found": {
+      "type": "integer",
+      "default": 0
+    },
+    "records_created": {
+      "type": "integer",
+      "default": 0
+    },
+    "records_updated": {
+      "type": "integer",
+      "default": 0
+    },
+    "records_skipped": {
+      "type": "integer",
+      "default": 0
+    },
+    "error_message": {
+      "type": "string"
+    },
+    "run_type": {
+      "type": "string",
+      "enum": [
+        "manual",
+        "scheduled",
+        "test"
+      ],
+      "default": "manual"
+    },
+    "created_by_user_id": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "source_name",
+    "association",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
