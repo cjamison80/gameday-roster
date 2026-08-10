@@ -54,11 +54,18 @@ export function normalizeTournamentRecord(raw = {}, source = {}) {
 export function validateSourceForSync(source) {
   if (!source) return { ok: false, reason: 'No source selected.' };
   if (!source.sync_enabled) return { ok: false, reason: 'Source sync is disabled.' };
-  if (source.requires_permission && source.permission_status !== 'approved') {
-    return { ok: false, reason: 'Source requires permission before sync can run.' };
-  }
   if (!source.events_url && source.source_type !== 'csv' && source.source_type !== 'manual_upload') {
     return { ok: false, reason: 'Source is missing an events/feed URL.' };
+  }
+  if (source.requires_permission && source.permission_status === 'rejected') {
+    return { ok: false, reason: 'Source permission was rejected.' };
+  }
+  if (source.source_type === 'approved_scrape' && source.permission_status !== 'approved') {
+    return {
+      ok: true,
+      warning: true,
+      reason: 'Daily scrape is enabled, but source permission is not confirmed. Runner must check robots/terms and stop if blocked.'
+    };
   }
   return { ok: true, reason: 'Source can run.' };
 }
@@ -78,6 +85,9 @@ export function buildSyncJobPayload(source, user, status = 'queued', extra = {})
 
 export function getPipelineNextStep(source) {
   if (!source) return 'Choose a source to review its setup.';
+  if (source.source_type === 'approved_scrape' && source.sync_enabled && source.sync_frequency === 'daily') {
+    return 'Daily scrape requested. Production runner should check robots/terms each run, use rate limits, preserve source attribution and stop if blocked.';
+  }
   if (source.requires_permission && source.permission_status !== 'approved') {
     return 'Confirm source permission, terms, robots rules and rate limits before enabling live sync.';
   }
