@@ -1,0 +1,44 @@
+{
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 9 * * *",
+      "one_time_date": null,
+      "timezone": "UTC",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "name": "Sync Features to GitHub",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "sync_features_to_github",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "sync_features": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "syncFeaturesToGitHub"
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Sync features to GitHub",
+            "description": "Post pending FeatureRequest records as issues"
+          }
+        }
+      }
+    ]
+  },
+  "description": "Daily batch \u2014 posts pending GameDay Roster FeatureRequest records as GitHub issues"
+}

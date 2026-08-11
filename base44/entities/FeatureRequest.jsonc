@@ -1,0 +1,95 @@
+{
+  "name": "FeatureRequest",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Short summary \u2014 becomes the GitHub issue title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed context for the feature or bug \u2014 becomes the GitHub issue body"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "enhancement",
+        "bug",
+        "new_feature",
+        "integration",
+        "other"
+      ],
+      "default": "new_feature"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "default": "medium"
+    },
+    "github_repo": {
+      "type": "string",
+      "description": "Target GitHub repo in 'owner/name' format. Overrides the GITHUB_DEFAULT_REPO secret for this feature."
+    },
+    "labels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Optional GitHub label names to attach \u2014 must already exist on the target repo or issue creation will 422"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending_sync",
+        "synced",
+        "failed",
+        "skipped"
+      ],
+      "default": "pending_sync"
+    },
+    "github_issue_number": {
+      "type": "integer"
+    },
+    "github_issue_url": {
+      "type": "string"
+    },
+    "github_synced_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "github_sync_error": {
+      "type": "string",
+      "description": "Last sync failure reason (truncated to ~500 chars) when status=failed or skipped"
+    }
+  },
+  "required": [
+    "title"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
