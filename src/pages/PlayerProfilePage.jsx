@@ -334,6 +334,45 @@ export default function PlayerProfilePage() {
         {/* Highlight Videos */}
         <PlayerVideos playerId={player.id} isOwner={isOwner} />
 
+        {/* Visible Perfect Game / player stats */}
+        {(hasStats || editing) && (
+          <div className="bg-white rounded-2xl border border-gray-100 p-5">
+            <div className="flex items-start justify-between gap-3 mb-4">
+              <div>
+                <h3 className="font-bold" style={{ color: '#0B1528' }}>Player Stats</h3>
+                <p className="text-xs mt-1" style={{ color: '#64748B' }}>
+                  {player.perfect_game_connection_status === 'connected' ? 'Connected to Perfect Game profile' : 'Manual stats now, Perfect Game sync-ready'}
+                </p>
+              </div>
+              {player.perfect_game_url && !editing && (
+                <a href={player.perfect_game_url} target="_blank" rel="noopener noreferrer" className="text-xs font-bold px-3 py-1.5 rounded-full" style={{ backgroundColor: '#FEFCE8', color: '#A16207' }}>
+                  PG
+                </a>
+              )}
+            </div>
+
+            {editing ? (
+              <div className="space-y-5">
+                <StatEditGroup title="Batting" stats={battingStats} editData={editData} setEditData={setEditData} />
+                <StatEditGroup title="Pitching" stats={pitchingStats} editData={editData} setEditData={setEditData} />
+                <StatEditGroup title="Measurables" stats={metricStats} editData={editData} setEditData={setEditData} />
+              </div>
+            ) : (
+              <div className="space-y-5">
+                <StatDisplayGroup title="Batting" stats={battingStats} />
+                <StatDisplayGroup title="Pitching" stats={pitchingStats} />
+                <StatDisplayGroup title="Measurables" stats={metricStats} />
+              </div>
+            )}
+
+            {player.pg_stats_last_synced_at && !editing && (
+              <p className="text-xs mt-4" style={{ color: '#94A3B8' }}>
+                Last updated {new Date(player.pg_stats_last_synced_at).toLocaleDateString()}
+              </p>
+            )}
+          </div>
+        )}
+
         {/* Player Info */}
         <div className="bg-white rounded-2xl border border-gray-100 p-5">
           <h3 className="font-bold mb-3" style={{ color: '#0B1528' }}>Player Info</h3>
