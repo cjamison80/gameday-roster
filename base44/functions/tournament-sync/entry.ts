@@ -5,7 +5,8 @@ import {
   parseTournamentHtml,
   normalizeTournamentRecord,
   buildTournamentKey,
-  fetchUsssaNationwideRecords
+  fetchUsssaNationwideRecords,
+  fetchTwoDSportsRecords
 } from '../../shared/scrape-core.js';
 
 const FETCH_TIMEOUT_MS = 15000;
@@ -221,6 +222,20 @@ async function runSourceInner(base44, source, opts) {
       console.log(`Fetching ${source.name} via USSSA nationwide API...`);
       const records = await fetchUsssaNationwideRecords({ fetchTimeoutMs: FETCH_TIMEOUT_MS });
       console.log(`${source.name} API returned ${records.length} records nationwide.`);
+      parsed = records
+        .filter(record => {
+          if (sportFilter && String(record.sport || '').toLowerCase() !== sportFilter.toLowerCase()) return false;
+          if (stateFilter && String(record.state || '').toUpperCase() !== stateFilter.toUpperCase()) return false;
+          return true;
+        })
+        .slice(0, maxEvents);
+    } else if (source.parser_key === '2d_sports') {
+      // 2D Sports: youth.2dsports.org, a separate non-CAPTCHA-protected session-
+      // based platform from the main site. See scrape-core.js for the session/
+      // pagination details recovered from its own frontend JS.
+      console.log(`Fetching ${source.name} via youth.2dsports.org session API...`);
+      const records = await fetchTwoDSportsRecords({ fetchTimeoutMs: FETCH_TIMEOUT_MS, maxPages: 5 });
+      console.log(`${source.name} returned ${records.length} real tournament records (season passes/memberships excluded).`);
       parsed = records
         .filter(record => {
           if (sportFilter && String(record.sport || '').toLowerCase() !== sportFilter.toLowerCase()) return false;
