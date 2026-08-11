@@ -638,3 +638,45 @@ export default function PlayerProfilePage() {
     </div>
   );
 }
+
+function StatDisplayGroup({ title, stats }) {
+  const shown = stats.filter(stat => stat.value !== '—');
+  if (shown.length === 0) return null;
+  return (
+    <div>
+      <h4 className="text-xs font-black uppercase tracking-wide mb-2" style={{ color: '#64748B' }}>{title}</h4>
+      <div className="grid grid-cols-3 gap-2">
+        {shown.map(stat => (
+          <div key={stat.key} className="rounded-2xl p-3 text-center" style={{ backgroundColor: '#F8FAFC' }}>
+            <p className="text-lg font-black" style={{ color: '#0B1528' }}>{stat.value}</p>
+            <p className="text-[10px] font-bold mt-0.5" style={{ color: '#64748B' }}>{stat.label}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function StatEditGroup({ title, stats, editData, setEditData }) {
+  return (
+    <div>
+      <h4 className="text-xs font-black uppercase tracking-wide mb-2" style={{ color: '#64748B' }}>{title}</h4>
+      <div className="grid grid-cols-3 gap-2">
+        {stats.map(stat => (
+          <label key={stat.key} className="block">
+            <span className="text-[10px] font-bold mb-1 block" style={{ color: '#64748B' }}>{stat.label}</span>
+            <input
+              type="number"
+              step="any"
+              value={editData[stat.key] ?? ''}
+              onChange={e => setEditData(d => ({ ...d, [stat.key]: e.target.value === '' ? '' : Number(e.target.value), pg_stats_last_synced_at: new Date().toISOString() }))}
+              placeholder={stat.placeholder}
+              className="w-full rounded-xl px-3 py-2.5 text-sm border border-gray-200 outline-none"
+              style={{ color: '#0B1528' }}
+            />
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+}
