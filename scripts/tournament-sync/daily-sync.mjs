@@ -270,6 +270,7 @@ async function runSourceInner(source) {
 
 async function main() {
   console.log(`Tournament sync config: max_events=${MAX_EVENTS_PER_SOURCE}, delay_ms=${REQUEST_DELAY_MS}, fetch_timeout_ms=${FETCH_TIMEOUT_MS}, source_timeout_ms=${SOURCE_TIMEOUT_MS}`);
+  console.log(`Auth diagnostic: app_id="${APP_ID}" (expected "6a7241ea32bb526f5d76609a"), app_base_url="${APP_BASE_URL}"`);
 
   try {
     // Temporary diagnostic: only reveals lengths/whitespace shape, never the actual
