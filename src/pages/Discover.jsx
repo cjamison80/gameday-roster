@@ -171,14 +171,14 @@ export default function Discover() {
 
       {/* Filter panel */}
       {showFilters && (
-        <div className="bg-white border-b border-gray-100 px-5 py-4 space-y-4">
+        <div className="mx-5 -mt-3 gdr-card px-4 py-4 space-y-4 relative z-10">
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-xs font-semibold uppercase tracking-wide mb-1 block" style={{ color: '#64748B' }}>Position</label>
               <select
                 value={filters.position}
                 onChange={e => setFilters(f => ({ ...f, position: e.target.value }))}
-                className="w-full rounded-xl px-3 py-2 text-sm border border-gray-200 outline-none"
+                className="gdr-select w-full px-3 py-2.5 text-sm outline-none"
                 style={{ color: '#0B1528' }}
               >
                 <option value="">All Positions</option>
@@ -190,7 +190,7 @@ export default function Discover() {
               <select
                 value={filters.age_division}
                 onChange={e => setFilters(f => ({ ...f, age_division: e.target.value }))}
-                className="w-full rounded-xl px-3 py-2 text-sm border border-gray-200 outline-none"
+                className="gdr-select w-full px-3 py-2.5 text-sm outline-none"
                 style={{ color: '#0B1528' }}
               >
                 <option value="">All Ages</option>
@@ -202,7 +202,7 @@ export default function Discover() {
               <select
                 value={filters.classification}
                 onChange={e => setFilters(f => ({ ...f, classification: e.target.value }))}
-                className="w-full rounded-xl px-3 py-2 text-sm border border-gray-200 outline-none"
+                className="gdr-select w-full px-3 py-2.5 text-sm outline-none"
                 style={{ color: '#0B1528' }}
               >
                 <option value="">All Classifications</option>
@@ -214,7 +214,7 @@ export default function Discover() {
               <select
                 value={filters.sport}
                 onChange={e => setFilters(f => ({ ...f, sport: e.target.value }))}
-                className="w-full rounded-xl px-3 py-2 text-sm border border-gray-200 outline-none"
+                className="gdr-select w-full px-3 py-2.5 text-sm outline-none"
                 style={{ color: '#0B1528' }}
               >
                 <option value="">All Sports</option>
@@ -227,7 +227,7 @@ export default function Discover() {
               <select
                 value={filters.sanctioning}
                 onChange={e => setFilters(f => ({ ...f, sanctioning: e.target.value }))}
-                className="w-full rounded-xl px-3 py-2 text-sm border border-gray-200 outline-none"
+                className="gdr-select w-full px-3 py-2.5 text-sm outline-none"
                 style={{ color: '#0B1528' }}
               >
                 <option value="">All Sanctions</option>
@@ -246,17 +246,12 @@ export default function Discover() {
       )}
 
       {/* Filter chips */}
-      <div className="flex gap-2 px-5 py-4 overflow-x-auto no-scrollbar">
+      <div className="flex gap-2 px-5 py-5 overflow-x-auto no-scrollbar">
         {filterChips.map(chip => (
           <button
             key={chip.id}
             onClick={() => setActiveFilter(chip.id)}
-            className="flex-shrink-0 px-4 py-2 rounded-full font-semibold text-sm transition-all"
-            style={{
-              backgroundColor: activeFilter === chip.id ? '#0B1528' : '#FFFFFF',
-              color: activeFilter === chip.id ? '#FFFFFF' : '#64748B',
-              border: `1.5px solid ${activeFilter === chip.id ? '#0B1528' : '#E2E8F0'}`
-            }}
+            className={`flex-shrink-0 px-4 py-2 rounded-full font-bold text-sm transition-all ${activeFilter === chip.id ? 'gdr-chip-active' : 'gdr-chip'}`}
           >
             {chip.label}
           </button>
@@ -273,9 +268,9 @@ export default function Discover() {
               { value: opportunities.filter(o => o.type === 'tryout').length, label: 'Tryouts' },
               { value: new Set(opportunities.map(o => o.city + o.state)).size, label: 'Locations' }
             ].map(stat => (
-              <div key={stat.label} className="bg-white rounded-2xl p-3 text-center border border-gray-100">
-                <div className="text-2xl font-black" style={{ color: '#0B1528' }}>{stat.value}</div>
-                <div className="text-xs font-medium mt-0.5" style={{ color: '#94A3B8' }}>{stat.label}</div>
+              <div key={stat.label} className="gdr-soft-card p-3 text-center">
+                <div className="text-2xl font-black tracking-[-0.04em]" style={{ color: '#0B1528' }}>{stat.value}</div>
+                <div className="text-xs font-bold mt-0.5" style={{ color: '#94A3B8' }}>{stat.label}</div>
               </div>
             ))}
           </div>
