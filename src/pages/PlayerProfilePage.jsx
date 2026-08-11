@@ -98,7 +98,9 @@ export default function PlayerProfilePage({ publicView = false }) {
 
   const extractPerfectGamePlayerId = (value = '') => {
     const normalized = normalizePerfectGameUrl(value);
-    const match = normalized.match(/[?&](?:player|playerID|PlayerID|id)=([^&]+)/) || normalized.match(/\/(?:players?|Player)\/?([0-9]+)/i);
+    const match =
+      normalized.match(/[?&](?:player|playerID|PlayerID|id|ID)=([^&]+)/i) ||
+      normalized.match(/\/(?:players?|Player)\/?([0-9]+)/i);
     return match?.[1] || '';
   };
 
@@ -107,19 +109,33 @@ export default function PlayerProfilePage({ publicView = false }) {
       toast({ title: 'Perfect Game URL needed', description: 'Paste the player Perfect Game profile URL first.' });
       return;
     }
+
     const url = normalizePerfectGameUrl(editData.perfect_game_url);
     if (!/perfectgame\.org/i.test(url)) {
       toast({ title: 'Check the link', description: 'Please use a PerfectGame.org player profile URL.', variant: 'destructive' });
       return;
     }
-    setEditData(d => ({
-      ...d,
+
+    const patch = {
       perfect_game_url: url,
       perfect_game_player_id: extractPerfectGamePlayerId(url),
       perfect_game_connection_status: 'connected',
       perfect_game_connected_at: new Date().toISOString()
-    }));
-    toast({ title: 'Perfect Game profile connected', description: 'Save changes to keep this link on the player profile.' });
+    };
+
+    setSaving(true);
+    try {
+      await base44.entities.PlayerProfile.update(id, patch);
+      setEditData(d => ({ ...d, ...patch }));
+      setPlayer(p => ({ ...p, ...patch }));
+      toast({ title: 'Perfect Game profile connected', description: 'The link has been saved to this player profile.' });
+    } catch (e) {
+      console.error(e);
+      setEditData(d => ({ ...d, ...patch, perfect_game_connection_status: 'needs_review' }));
+      toast({ title: 'Could not save Perfect Game link', description: e?.message || 'Please try again.', variant: 'destructive' });
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (loading) {
