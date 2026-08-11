@@ -32,7 +32,8 @@ jobs:
       - name: Run 2D Sports Arkansas baseball sync test
         env:
           BASE44_APP_ID: ${{ secrets.BASE44_APP_ID }}
-          BASE44_ACCESS_TOKEN: ${{ secrets.BASE44_ACCESS_TOKEN }}
+          BASE44_ADMIN_EMAIL: ${{ secrets.BASE44_ADMIN_EMAIL }}
+          BASE44_ADMIN_PASSWORD: ${{ secrets.BASE44_ADMIN_PASSWORD }}
           BASE44_APP_BASE_URL: https://gameday-roster-hub.base44.app
           BASE44_API_BASE_URL: https://gameday-roster-hub.base44.app
           MAX_EVENTS_PER_SOURCE: ${{ github.event.inputs.max_events }}
