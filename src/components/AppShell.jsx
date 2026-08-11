@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import BottomNav from './BottomNav';
 import { base44 } from '@/api/base44Client';
 
 export default function AppShell() {
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
-  const navigate = useNavigate();
 
   useEffect(() => {
     loadUnreadCounts();
-    // Subscribe to notifications
     const unsub = base44.entities.Notification.subscribe((event) => {
       if (event.type === 'create' && !event.data.is_read) {
         setUnreadNotifications(prev => prev + 1);
@@ -39,8 +37,8 @@ export default function AppShell() {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#F8FAFC' }}>
-      <div className="content-with-nav">
+    <div className="gdr-app-background min-h-screen">
+      <div className="content-with-nav max-w-xl mx-auto w-full">
         <Outlet />
       </div>
       <BottomNav unreadMessages={unreadMessages} unreadNotifications={unreadNotifications} />
