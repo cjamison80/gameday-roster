@@ -386,6 +386,66 @@ export default function PlayerProfilePage({ publicView = false }) {
           <AvailabilityCheckin user={user} playerId={id} onSaved={loadData} />
         )}
 
+        {/* Perfect Game profile — visible near top of page */}
+        {(pgProfileUrl || isOwner) && (
+          <div className="gdr-card p-5">
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <div>
+                <p className="gdr-editorial-kicker mb-1">External Profile</p>
+                <h3 className="font-semibold" style={{ color: '#0B1528' }}>Perfect Game Profile</h3>
+                <p className="text-xs mt-1" style={{ color: '#5B6475' }}>
+                  {pgProfileUrl ? 'This player has a Perfect Game profile linked.' : 'Link this player’s public Perfect Game profile.'}
+                </p>
+              </div>
+              {pgConnectionStatus === 'connected' && (
+                <span className="text-xs font-black px-2.5 py-1 uppercase tracking-[0.14em]" style={{ backgroundColor: '#E7EDE2', color: '#4F7A59' }}>
+                  Connected
+                </span>
+              )}
+            </div>
+
+            {editing ? (
+              <div>
+                <input
+                  value={editData.perfect_game_url || ''}
+                  onChange={e => setEditData(d => ({ ...d, perfect_game_url: e.target.value, perfect_game_connection_status: e.target.value ? 'needs_review' : 'not_connected' }))}
+                  placeholder="https://www.perfectgame.org/Players/Playerprofile.aspx?ID=..."
+                  className="w-full px-4 py-3 text-sm border border-gray-200 outline-none bg-white"
+                  style={{ color: '#0B1528' }}
+                />
+                <button
+                  type="button"
+                  onClick={handleConnectPerfectGame}
+                  disabled={saving}
+                  className="w-full mt-3 py-3 text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-60"
+                  style={{ backgroundColor: '#0B1528', color: '#FFFFFF' }}
+                >
+                  <ExternalLink size={15} />
+                  {saving ? 'Saving Perfect Game Link...' : 'Connect & Save Perfect Game Profile'}
+                </button>
+                {editData.perfect_game_player_id && (
+                  <p className="text-xs mt-2" style={{ color: '#8F0F1A' }}>Detected PG ID: {editData.perfect_game_player_id}</p>
+                )}
+              </div>
+            ) : pgProfileUrl ? (
+              <a
+                href={pgProfileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full py-3 text-sm font-bold"
+                style={{ backgroundColor: '#EFE6D6', color: '#8F0F1A' }}
+              >
+                <ExternalLink size={16} />
+                View {player.first_name} on Perfect Game
+              </a>
+            ) : (
+              <p className="text-sm" style={{ color: '#5B6475' }}>
+                Tap Edit to add this player’s Perfect Game profile URL.
+              </p>
+            )}
+          </div>
+        )}
+
         {/* Positions */}
         {player.positions?.length > 0 && (
           <div className="gdr-card p-5">
