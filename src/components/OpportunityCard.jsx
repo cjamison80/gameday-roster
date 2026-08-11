@@ -14,21 +14,20 @@ export default function OpportunityCard({ opportunity, matchScore, onSave, isSav
       className="gdr-card gdr-card-hover overflow-hidden cursor-pointer active:scale-[0.99]"
       onClick={onClick}
     >
-      <div className="relative px-4 py-3" style={{ background: 'linear-gradient(135deg, #0B1528 0%, #17233A 100%)' }}>
+      <div className="px-4 py-3 border-b" style={{ borderColor: 'rgba(220,214,204,0.82)' }}>
         <div className="flex items-center justify-between gap-3">
-          <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-black uppercase tracking-[0.16em]"
-            style={{ backgroundColor: 'rgba(37,99,235,0.16)', color: '#93C5FD', border: '1px solid rgba(147,197,253,0.18)' }}>
+          <span className="gdr-editorial-kicker">
             {typeLabel}
           </span>
           <div className="flex items-center gap-2">
-            <ArrowUpRight size={16} color="rgba(255,255,255,0.58)" />
+            <ArrowUpRight size={16} color="#A39A8E" />
             {isSaved !== undefined && (
               <button
                 onClick={e => { e.stopPropagation(); onSave?.(); }}
-                className="flex h-8 w-8 items-center justify-center rounded-full transition-colors"
-                style={{ backgroundColor: 'rgba(255,255,255,0.10)' }}
+                className="flex h-8 w-8 items-center justify-center transition-colors"
+                style={{ backgroundColor: '#F7F3EC', border: '1px solid rgba(220,214,204,0.9)' }}
               >
-                <Heart size={16} fill={isSaved ? '#DC2626' : 'none'} color={isSaved ? '#DC2626' : '#CBD5E1'} />
+                <Heart size={16} fill={isSaved ? '#B9232A' : 'none'} color={isSaved ? '#B9232A' : '#A39A8E'} />
               </button>
             )}
           </div>
@@ -38,32 +37,32 @@ export default function OpportunityCard({ opportunity, matchScore, onSave, isSav
       <div className="p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-3 flex-1 min-w-0">
-            <div className="relative w-14 h-14 rounded-2xl flex-shrink-0 flex items-center justify-center overflow-hidden ring-1 ring-slate-200"
-              style={{ background: 'linear-gradient(135deg, #EFF6FF 0%, #F8FAFC 100%)' }}>
+            <div className="w-14 h-14 flex-shrink-0 flex items-center justify-center overflow-hidden"
+              style={{ background: '#F0ECE3', border: '1px solid rgba(220,214,204,0.96)' }}>
               {teamLogo ? (
                 <Image src={teamLogo} alt={teamName} className="w-14 h-14" fittingType="fill" />
               ) : (
-                <span className="text-lg font-black" style={{ color: '#2563EB' }}>
+                <span className="text-lg font-black" style={{ color: '#151411', letterSpacing: '-0.04em' }}>
                   {teamName.split(' ').map(w => w[0]).join('').slice(0, 3)}
                 </span>
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-black text-[17px] leading-tight truncate tracking-[-0.03em]" style={{ color: '#0B1528' }}>
+              <h3 className="text-[20px] leading-[1.05] truncate" style={{ color: '#151411', fontFamily: 'ui-serif, Georgia, Cambria, Times New Roman, Times, serif', fontWeight: 500 }}>
                 {opportunity.title}
               </h3>
-              <p className="text-sm font-semibold mt-1 truncate" style={{ color: '#64748B' }}>{teamName}</p>
+              <p className="text-sm font-semibold mt-1.5 truncate" style={{ color: '#6F685E' }}>{teamName}</p>
 
               {opportunity.positions_needed?.length > 0 && (
                 <div className="flex flex-wrap gap-1.5 mt-3">
                   {opportunity.positions_needed.slice(0, 3).map(pos => (
-                    <span key={pos} className="text-xs font-black px-2.5 py-1 rounded-full"
-                      style={{ backgroundColor: '#EFF6FF', color: '#2563EB' }}>
+                    <span key={pos} className="text-[10px] font-black px-2.5 py-1 uppercase tracking-[0.16em]"
+                      style={{ backgroundColor: '#F7F3EC', color: '#151411', border: '1px solid rgba(220,214,204,0.88)' }}>
                       {pos}
                     </span>
                   ))}
                   {opportunity.positions_needed.length > 3 && (
-                    <span className="text-xs font-bold px-2.5 py-1 rounded-full" style={{ backgroundColor: '#F1F5F9', color: '#64748B' }}>
+                    <span className="text-[10px] font-black px-2.5 py-1 uppercase tracking-[0.16em]" style={{ backgroundColor: '#F0ECE3', color: '#6F685E' }}>
                       +{opportunity.positions_needed.length - 3}
                     </span>
                   )}
@@ -75,7 +74,7 @@ export default function OpportunityCard({ opportunity, matchScore, onSave, isSav
           {matchScore !== undefined && <MatchScoreBadge score={matchScore} size="md" />}
         </div>
 
-        <div className="mt-4 rounded-2xl p-3" style={{ backgroundColor: '#F8FAFC', border: '1px solid rgba(226,232,240,0.72)' }}>
+        <div className="mt-4 p-3" style={{ backgroundColor: '#F7F3EC', border: '1px solid rgba(220,214,204,0.78)' }}>
           <div className="grid grid-cols-2 gap-2">
             <Detail icon={Calendar} label={formatDateRange(opportunity.event_date_start, opportunity.event_date_end)} />
             <Detail icon={MapPin} label={`${opportunity.city}, ${opportunity.state}`} />
@@ -87,23 +86,23 @@ export default function OpportunityCard({ opportunity, matchScore, onSave, isSav
         <div className="mt-3 flex items-center justify-between gap-3">
           <div className="flex flex-wrap gap-2">
             {opportunity.age_division && (
-              <span className="text-xs font-black px-2.5 py-1 rounded-full" style={{ backgroundColor: '#F1F5F9', color: '#0B1528' }}>
+              <span className="text-[10px] font-black px-2.5 py-1 uppercase tracking-[0.16em]" style={{ backgroundColor: '#151411', color: '#FBF8F1' }}>
                 {opportunity.age_division}
               </span>
             )}
             {opportunity.classification && (
-              <span className="text-xs font-black px-2.5 py-1 rounded-full" style={{ backgroundColor: '#FEF3C7', color: '#A16207' }}>
+              <span className="text-[10px] font-black px-2.5 py-1 uppercase tracking-[0.16em]" style={{ backgroundColor: '#EFE6D6', color: '#765B34' }}>
                 {opportunity.classification}
               </span>
             )}
             {opportunity.sanctioning_body && (
-              <span className="text-xs font-black px-2.5 py-1 rounded-full" style={{ backgroundColor: '#FFF7ED', color: '#C2410C' }}>
+              <span className="text-[10px] font-black px-2.5 py-1 uppercase tracking-[0.16em]" style={{ backgroundColor: '#F0ECE3', color: '#6F685E' }}>
                 {opportunity.sanctioning_body}
               </span>
             )}
           </div>
           {opportunity.application_deadline && (
-            <span className="text-xs font-semibold whitespace-nowrap" style={{ color: '#94A3B8' }}>
+            <span className="text-xs font-semibold whitespace-nowrap" style={{ color: '#A39A8E' }}>
               Apply by {new Date(opportunity.application_deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
             </span>
           )}
@@ -116,8 +115,8 @@ export default function OpportunityCard({ opportunity, matchScore, onSave, isSav
 function Detail({ icon: Icon, label }) {
   return (
     <div className="flex items-center gap-1.5 min-w-0">
-      <Icon size={13} color="#94A3B8" />
-      <span className="text-xs font-semibold truncate" style={{ color: '#64748B' }}>{label}</span>
+      <Icon size={13} color="#A39A8E" />
+      <span className="text-xs font-semibold truncate" style={{ color: '#6F685E' }}>{label}</span>
     </div>
   );
 }
