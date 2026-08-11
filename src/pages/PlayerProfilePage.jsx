@@ -11,7 +11,7 @@ import { useFavorite } from '@/hooks/useFavorite';
 import { useToast } from '@/components/ui/use-toast';
 import PlayerVideos from '@/components/player/PlayerVideos';
 
-export default function PlayerProfilePage() {
+export default function PlayerProfilePage({ publicView = false }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const [player, setPlayer] = useState(null);
@@ -33,16 +33,25 @@ export default function PlayerProfilePage() {
 
   const loadData = async () => {
     try {
-      const [p, u] = await Promise.all([
-        base44.entities.PlayerProfile.get(id),
-        base44.auth.me()
-      ]);
+      const p = await base44.entities.PlayerProfile.get(id);
       setPlayer(p);
-      setUser(u);
       setEditData(p);
-      setIsOwner(p.parent_id === u.id);
-      const avail = await base44.entities.Availability.filter({ player_id: id }, '-week_start', 1);
-      if (avail.length > 0) setAvailability(avail[0]);
+
+      try {
+        const u = await base44.auth.me();
+        setUser(u);
+        setIsOwner(!publicView && p.parent_id === u.id);
+      } catch (authErr) {
+        setUser(null);
+        setIsOwner(false);
+      }
+
+      try {
+        const avail = await base44.entities.Availability.filter({ player_id: id }, '-week_start', 1);
+        if (avail.length > 0) setAvailability(avail[0]);
+      } catch (availabilityErr) {
+        setAvailability(null);
+      }
     } catch (e) {
       console.error(e);
     } finally {
