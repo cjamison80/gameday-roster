@@ -66,16 +66,26 @@ export default function Onboarding() {
 
   if (step === 'welcome') {
     return (
-      <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#0B1528' }}>
-        <div className="absolute inset-0 opacity-20"
-          style={{ backgroundImage: `url(https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=800)`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+      <div className="min-h-screen flex flex-col gdr-auth-ballpark relative overflow-hidden" style={{ backgroundColor: '#0B1528' }}>
+        <div className="gdr-diamond-scene" aria-hidden="true">
+          <div className="gdr-outfield-arc" />
+          <div className="gdr-foul-line gdr-left-line" />
+          <div className="gdr-foul-line gdr-right-line" />
+          <div className="gdr-baseball-diamond">
+            <span className="gdr-base gdr-home" />
+            <span className="gdr-base gdr-first" />
+            <span className="gdr-base gdr-second" />
+            <span className="gdr-base gdr-third" />
+            <span className="gdr-mound" />
+          </div>
+        </div>
         <div className="relative z-10 flex flex-col min-h-screen">
           <div className="flex-1 flex flex-col items-center justify-center px-6 pt-16 pb-8">
             <GameDayLogo size={56} showText={true} light={true} />
             <div className="mt-8 text-center">
               <h1 className="text-4xl font-black text-white leading-tight">
                 Connect.<br />Compete.<br />
-                <span style={{ color: '#A4A017' }}>Win Together.</span>
+                <span style={{ color: '#C1121F' }}>Win Together.</span>
               </h1>
               <p className="mt-4 text-lg" style={{ color: '#94A3B8' }}>The trusted network for travel sports.</p>
             </div>
@@ -83,7 +93,7 @@ export default function Onboarding() {
           <div className="px-6 pb-12 space-y-3">
             <button onClick={() => setStep('role')}
               className="w-full py-4 rounded-2xl font-bold text-white text-lg flex items-center justify-center gap-2 transition-transform active:scale-95"
-              style={{ backgroundColor: '#2563EB' }}>
+              style={{ background: 'linear-gradient(135deg, #C1121F, #8F0F1A)' }}>
               Get Started
               <ChevronRight size={20} />
             </button>
