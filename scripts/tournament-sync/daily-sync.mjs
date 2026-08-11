@@ -4,7 +4,8 @@ import { createClient } from '@base44/sdk';
 import { SCRAPE_ADAPTERS, normalizeTournamentRecord, parseTournamentHtml, buildTournamentKey } from './scrape-core.mjs';
 
 const APP_ID = process.env.BASE44_APP_ID || process.env.VITE_BASE44_APP_ID;
-const ACCESS_TOKEN = process.env.BASE44_ACCESS_TOKEN || process.env.BASE44_TOKEN || process.env.VITE_BASE44_ACCESS_TOKEN;
+const ADMIN_EMAIL = process.env.BASE44_ADMIN_EMAIL;
+const ADMIN_PASSWORD = process.env.BASE44_ADMIN_PASSWORD;
 const APP_BASE_URL = process.env.BASE44_APP_BASE_URL || process.env.VITE_BASE44_APP_BASE_URL;
 const API_BASE_URL = process.env.BASE44_API_BASE_URL || APP_BASE_URL;
 const DRY_RUN = process.env.DRY_RUN === 'true';
@@ -24,8 +25,8 @@ if (!APP_ID) {
   process.exit(1);
 }
 
-if (!ACCESS_TOKEN) {
-  console.error('Missing BASE44_ACCESS_TOKEN. Set BASE44_ACCESS_TOKEN as an environment variable or repository secret with permission to read/write app entities.');
+if (!ADMIN_EMAIL || !ADMIN_PASSWORD) {
+  console.error('Missing BASE44_ADMIN_EMAIL / BASE44_ADMIN_PASSWORD. This script logs in fresh each run (Base44 has no long-lived external access token) using an account with the admin role, since Tournament/TournamentSyncJob/TournamentSource writes require it.');
   process.exit(1);
 }
 
@@ -36,7 +37,6 @@ if (!API_BASE_URL || !/^https?:\/\//i.test(API_BASE_URL)) {
 
 const base44 = createClient({
   appId: APP_ID,
-  token: ACCESS_TOKEN,
   appBaseUrl: APP_BASE_URL,
   requiresAuth: false,
   serverUrl: API_BASE_URL
@@ -270,6 +270,19 @@ async function runSourceInner(source) {
 
 async function main() {
   console.log(`Tournament sync config: max_events=${MAX_EVENTS_PER_SOURCE}, delay_ms=${REQUEST_DELAY_MS}, fetch_timeout_ms=${FETCH_TIMEOUT_MS}, source_timeout_ms=${SOURCE_TIMEOUT_MS}`);
+
+  try {
+    const { user } = await withTimeout(base44.auth.loginViaEmailPassword(ADMIN_EMAIL, ADMIN_PASSWORD), 15000, 'Base44 admin login');
+    if (user?.role !== 'admin') {
+      console.error(`Logged in as ${user?.email || ADMIN_EMAIL}, but role is "${user?.role}", not "admin". Tournament/TournamentSyncJob/TournamentSource writes require the admin role. Update the account's role or point BASE44_ADMIN_EMAIL at the admin account.`);
+      process.exit(1);
+    }
+    console.log(`Authenticated as ${user.email} (role: ${user.role}).`);
+  } catch (err) {
+    console.error('Base44 admin login failed. Check BASE44_ADMIN_EMAIL / BASE44_ADMIN_PASSWORD.', err.message);
+    process.exit(1);
+  }
+
   const sources = await withTimeout(base44.entities.TournamentSource.list('-created_date', 100), 15000, 'List TournamentSource');
   const parserKeys = (SOURCE_FILTER || 'usssa,2d_sports,perfect_game')
     .split(',')
