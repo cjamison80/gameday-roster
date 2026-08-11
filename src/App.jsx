@@ -39,6 +39,8 @@ import TournamentSourcesAdmin from '@/pages/TournamentSourcesAdmin';
 const AuthenticatedApp = () => {
   const location = useLocation();
   const isPublicRoute = location.pathname.startsWith('/public/');
+  const isAuthRoute = ['/login', '/register', '/forgot-password', '/reset-password'].includes(location.pathname);
+  const isUnprotectedRoute = isPublicRoute || isAuthRoute;
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
   if (isLoadingPublicSettings || isLoadingAuth) {
