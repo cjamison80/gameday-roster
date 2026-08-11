@@ -69,19 +69,24 @@ async function createJob(source, status = 'running', notes = '') {
     return { id: `dry-run-${Date.now()}` };
   }
 
-  return await base44.entities.TournamentSyncJob.create({
-    source_id: source.id,
-    source_name: source.name,
-    association: source.association,
-    status,
-    started_at: new Date().toISOString(),
-    run_type: RUN_TYPE,
-    records_found: 0,
-    records_created: 0,
-    records_updated: 0,
-    records_skipped: 0,
-    notes
-  });
+  try {
+    return await base44.entities.TournamentSyncJob.create({
+      source_id: source.id,
+      source_name: source.name,
+      association: source.association,
+      status,
+      started_at: new Date().toISOString(),
+      run_type: RUN_TYPE,
+      records_found: 0,
+      records_created: 0,
+      records_updated: 0,
+      records_skipped: 0,
+      notes
+    });
+  } catch (err) {
+    console.warn(`Could not create TournamentSyncJob for ${source.name}. Continuing without sync log.`, err.message);
+    return { id: `no-sync-log-${source.id || Date.now()}`, noSyncLog: true };
+  }
 }
 
 async function finishJob(job, source, patch) {
