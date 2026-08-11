@@ -20,6 +20,7 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,6 +32,7 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
+        timeout-minutes: 5
         run: npm ci
 
       - name: Run USSSA Arkansas sync (dry run)
