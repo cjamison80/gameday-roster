@@ -138,22 +138,39 @@ export default function PlayerProfilePage({ publicView = false }) {
       return;
     }
 
-    const patch = {
+    const connectedAt = new Date().toISOString();
+    const playerPatch = {
       perfect_game_url: url,
       perfect_game_player_id: extractPerfectGamePlayerId(url),
       perfect_game_connection_status: 'connected',
-      perfect_game_connected_at: new Date().toISOString()
+      perfect_game_connected_at: connectedAt
+    };
+    const externalPatch = {
+      player_id: id,
+      parent_id: player?.parent_id,
+      provider: 'perfect_game',
+      provider_label: 'Perfect Game',
+      url,
+      external_id: playerPatch.perfect_game_player_id,
+      connection_status: 'connected',
+      connected_at: connectedAt
     };
 
     setSaving(true);
     try {
-      await base44.entities.PlayerProfile.update(id, patch);
-      setEditData(d => ({ ...d, ...patch }));
-      setPlayer(p => ({ ...p, ...patch }));
+      const existing = await base44.entities.PlayerExternalProfile.filter({ player_id: id, provider: 'perfect_game' }, '-created_date', 1);
+      const savedLink = existing.length > 0
+        ? await base44.entities.PlayerExternalProfile.update(existing[0].id, externalPatch)
+        : await base44.entities.PlayerExternalProfile.create(externalPatch);
+
+      setPgProfile(savedLink);
+      setExternalProfiles(prev => [savedLink, ...prev.filter(link => link.id !== savedLink.id)]);
+      setEditData(d => ({ ...d, ...playerPatch }));
+      setPlayer(p => ({ ...p, ...playerPatch }));
       toast({ title: 'Perfect Game profile connected', description: 'The link has been saved to this player profile.' });
     } catch (e) {
       console.error(e);
-      setEditData(d => ({ ...d, ...patch, perfect_game_connection_status: 'needs_review' }));
+      setEditData(d => ({ ...d, ...playerPatch, perfect_game_connection_status: 'needs_review' }));
       toast({ title: 'Could not save Perfect Game link', description: e?.message || 'Please try again.', variant: 'destructive' });
     } finally {
       setSaving(false);
