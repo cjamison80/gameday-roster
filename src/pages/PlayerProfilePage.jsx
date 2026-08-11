@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-// Player profile view — publicView renders the read-only shareable version..
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Edit, Share, MapPin, Trophy, MessageCircle, ExternalLink, Heart, ShieldCheck, Camera } from 'lucide-react';
+import { ArrowLeft, Edit, Share, MapPin, MessageCircle, ExternalLink, Heart, ShieldCheck, Camera } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import VerifiedBadge from '@/components/VerifiedBadge';
 import AvailabilityChip from '@/components/AvailabilityChip';
@@ -158,7 +157,6 @@ export default function PlayerProfilePage({ publicView = false }) {
 
     setSaving(true);
     try {
-      // Save directly to PlayerProfile first. This is the source used by the public profile.
       await base44.entities.PlayerProfile.update(id, playerPatch);
 
       let savedLink = null;
@@ -168,7 +166,6 @@ export default function PlayerProfilePage({ publicView = false }) {
           ? await base44.entities.PlayerExternalProfile.update(existing[0].id, externalPatch)
           : await base44.entities.PlayerExternalProfile.create(externalPatch);
       } catch (externalErr) {
-        // ExternalProfile is helpful for future integrations, but it should never block saving the visible PG link.
         console.warn('Perfect Game external profile mirror failed. PlayerProfile link was still saved.', externalErr);
       }
 
