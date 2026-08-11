@@ -15,10 +15,10 @@ export default function BottomNav({ unreadMessages = 0, unreadNotifications = 0 
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 px-3 pb-3 pointer-events-none"
+      className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-3 pointer-events-none"
       style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 12px)' }}
     >
-      <div className="gdr-bottom-nav pointer-events-auto mx-auto max-w-md rounded-[28px] px-2 py-2">
+      <div className="gdr-bottom-nav pointer-events-auto mx-auto max-w-md rounded-none px-2 py-2">
         <div className="flex items-center justify-around gap-1 h-full">
           {navItems.map(({ path, icon: Icon, label }) => {
             const isActive = location.pathname === path || (path === '/discover' && location.pathname === '/');
@@ -28,38 +28,35 @@ export default function BottomNav({ unreadMessages = 0, unreadNotifications = 0 
               <Link
                 key={path}
                 to={path}
-                className="relative flex flex-1 flex-col items-center justify-center gap-1 rounded-2xl px-1 py-2 transition-all duration-200"
-                style={{
-                  minHeight: 54,
-                  background: isActive ? 'linear-gradient(135deg, rgba(37,99,235,0.12), rgba(212,160,23,0.10))' : 'transparent'
-                }}
+                className="relative flex flex-1 flex-col items-center justify-center gap-1 px-1 py-2 transition-all duration-200"
+                style={{ minHeight: 54 }}
               >
                 <div className="relative flex items-center justify-center">
                   <div
-                    className="flex h-8 w-8 items-center justify-center rounded-2xl transition-all duration-200"
+                    className="flex h-8 w-8 items-center justify-center transition-all duration-200"
                     style={{
-                      backgroundColor: isActive ? '#0B1528' : 'transparent',
-                      boxShadow: isActive ? '0 10px 22px rgba(11,21,40,0.22)' : 'none'
+                      backgroundColor: isActive ? '#25231F' : 'transparent',
+                      border: isActive ? '1px solid #25231F' : '1px solid transparent'
                     }}
                   >
                     <Icon
-                      size={19}
-                      color={isActive ? '#FFFFFF' : '#94A3B8'}
-                      strokeWidth={isActive ? 2.6 : 1.9}
+                      size={18}
+                      color={isActive ? '#F5F1EA' : '#7C7368'}
+                      strokeWidth={isActive ? 2.3 : 1.7}
                     />
                   </div>
                   {badge > 0 && (
                     <span
-                      className="absolute -top-1.5 -right-1.5 flex items-center justify-center rounded-full text-white font-black ring-2 ring-white"
-                      style={{ backgroundColor: '#DC2626', fontSize: 9, minWidth: 17, height: 17, padding: '0 4px' }}
+                      className="absolute -top-1.5 -right-1.5 flex items-center justify-center rounded-full text-white font-black ring-2"
+                      style={{ backgroundColor: '#8A3324', ringColor: '#F5F1EA', fontSize: 9, minWidth: 17, height: 17, padding: '0 4px' }}
                     >
                       {badge > 99 ? '99+' : badge}
                     </span>
                   )}
                 </div>
                 <span
-                  className="text-center font-bold leading-none"
-                  style={{ fontSize: 10, color: isActive ? '#0B1528' : '#94A3B8', letterSpacing: '-0.015em' }}
+                  className="text-center font-bold leading-none uppercase"
+                  style={{ fontSize: 9, color: isActive ? '#1C1B19' : '#7C7368', letterSpacing: '0.12em' }}
                 >
                   {label}
                 </span>
