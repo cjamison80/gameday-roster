@@ -1,0 +1,44 @@
+{
+  "name": "Tournament Sync",
+  "description": "Daily scheduled run of the tournament-sync backend function to import/refresh tournament data from approved TournamentSource feeds",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "30 6 * * *",
+      "one_time_date": null,
+      "timezone": "UTC",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "tournament_sync",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "sync_tournaments": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "tournament-sync"
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Sync tournament data",
+            "description": "Runs the tournament-sync backend function across all enabled daily sources"
+          }
+        }
+      }
+    ]
+  }
+}

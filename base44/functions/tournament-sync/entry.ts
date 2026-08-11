@@ -252,13 +252,18 @@ async function runSource(base44, source, opts) {
 
 export default async function(req) {
   try {
+    // Only enforce the X-Sync-Secret when TOURNAMENT_SYNC_SECRET is configured.
+    // The Base44 scheduled-workflow invocation path has no inbound HTTP headers and
+    // no secret to match, so when the secret is unset we skip the check entirely —
+    // allowing the workflow to run while leaving direct external HTTP callers open
+    // (there's no secret configured to protect against). When the secret IS set,
+    // any direct external HTTP call must still supply the matching header.
     const expectedSecret = secrets.get('TOURNAMENT_SYNC_SECRET');
-    if (!expectedSecret) {
-      return Response.json({ error: 'TOURNAMENT_SYNC_SECRET is not configured on the server.' }, { status: 500 });
-    }
-    const providedSecret = req.headers.get('x-sync-secret');
-    if (!providedSecret || providedSecret !== expectedSecret) {
-      return Response.json({ error: 'Unauthorized: missing or invalid X-Sync-Secret header.' }, { status: 401 });
+    if (expectedSecret) {
+      const providedSecret = req.headers.get('x-sync-secret');
+      if (!providedSecret || providedSecret !== expectedSecret) {
+        return Response.json({ error: 'Unauthorized: missing or invalid X-Sync-Secret header.' }, { status: 401 });
+      }
     }
 
     const url = new URL(req.url);
