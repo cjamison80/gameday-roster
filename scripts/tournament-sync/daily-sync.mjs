@@ -100,10 +100,14 @@ async function finishJob(job, source, patch) {
     return;
   }
 
-  try {
-    await base44.entities.TournamentSyncJob.update(job.id, payload);
-  } catch (err) {
-    console.warn(`Could not update TournamentSyncJob ${job.id}. Continuing.`, err.message);
+  if (job.noSyncLog) {
+    console.warn(`Skipping TournamentSyncJob update for ${job.id}. No sync log was created.`);
+  } else {
+    try {
+      await base44.entities.TournamentSyncJob.update(job.id, payload);
+    } catch (err) {
+      console.warn(`Could not update TournamentSyncJob ${job.id}. Continuing.`, err.message);
+    }
   }
 
   try {
