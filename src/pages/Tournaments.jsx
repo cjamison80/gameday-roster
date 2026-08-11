@@ -71,6 +71,7 @@ export default function Tournaments() {
 
   const updateFilter = (key, value) => setFilters(f => ({ ...f, [key]: value }));
   const clearFilters = () => setFilters({ state: '', association: '', age: '', classification: '', radius: '', maxCost: '' });
+  const activeFilterCount = Object.values(filters).filter(Boolean).length;
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#F8FAFC' }}>
