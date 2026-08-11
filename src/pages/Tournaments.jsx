@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import TournamentCard from '@/components/TournamentCard';
 import { SkeletonCard } from '@/components/SkeletonCard';
+import { haversineMiles } from '@/lib/utils';
 
 const ASSOCIATIONS = ['Perfect Game', '2D Sports', 'USSSA', 'NSA', 'AAU', 'Ripken', 'Triple Crown', 'Other'];
 const STATES = [
@@ -15,6 +16,15 @@ const STATES = [
 const AGE_DIVISIONS = ['8U','9U','10U','11U','12U','13U','14U','15U','16U','17U','18U'];
 const CLASSIFICATIONS = ['Major','AAA','AA','A','Open'];
 const RADIUS_OPTIONS = [25, 50, 100, 150, 250, 500];
+
+async function geocodeZip(zip) {
+  const res = await fetch(`https://api.zippopotam.us/us/${encodeURIComponent(zip)}`);
+  if (!res.ok) throw new Error('ZIP code not found');
+  const data = await res.json();
+  const place = data.places?.[0];
+  if (!place) throw new Error('ZIP code not found');
+  return { lat: Number(place.latitude), lon: Number(place.longitude) };
+}
 
 export default function Tournaments() {
   const navigate = useNavigate();
@@ -29,13 +39,41 @@ export default function Tournaments() {
     association: '',
     age: searchParams.get('age') || '',
     classification: searchParams.get('classification') || '',
+    zip: '',
     radius: '',
     maxCost: ''
   });
+  const [zipCoords, setZipCoords] = useState(null);
+  const [geocoding, setGeocoding] = useState(false);
+  const [zipError, setZipError] = useState('');
 
   useEffect(() => {
     loadData();
   }, []);
+
+  // Debounced zip geocoding — waits for the user to stop typing before calling out.
+  useEffect(() => {
+    const zip = filters.zip.trim();
+    if (!/^\d{5}$/.test(zip)) {
+      setZipCoords(null);
+      setZipError('');
+      return;
+    }
+    setGeocoding(true);
+    setZipError('');
+    const timeout = setTimeout(async () => {
+      try {
+        const coords = await geocodeZip(zip);
+        setZipCoords(coords);
+      } catch (e) {
+        setZipCoords(null);
+        setZipError('ZIP code not found');
+      } finally {
+        setGeocoding(false);
+      }
+    }, 500);
+    return () => clearTimeout(timeout);
+  }, [filters.zip]);
 
   const loadData = async () => {
     try {
@@ -54,6 +92,8 @@ export default function Tournaments() {
     }
   };
 
+  const radiusActive = Boolean(filters.radius && zipCoords);
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return tournaments.filter(t => {
@@ -67,16 +107,22 @@ export default function Tournaments() {
       if (filters.classification && !(t.classifications || []).includes(filters.classification)) return false;
       if (filters.maxCost && Number(t.cost || 0) > Number(filters.maxCost)) return false;
 
-      // MVP radius proxy: until geocoding is connected, radius prioritizes matching state.
-      // When latitude/longitude are populated from a permitted data provider, this can become true distance math.
-      if (filters.radius && userLocation.state && Number(filters.radius) <= 250 && t.state !== userLocation.state) return false;
+      if (radiusActive) {
+        if (t.latitude == null || t.longitude == null) return false; // no location data yet — can't confirm it's in range
+        const distance = haversineMiles(zipCoords.lat, zipCoords.lon, t.latitude, t.longitude);
+        if (distance == null || distance > Number(filters.radius)) return false;
+      }
       return true;
     });
-  }, [tournaments, query, filters, userLocation.state]);
+  }, [tournaments, query, filters, radiusActive, zipCoords]);
 
   const updateFilter = (key, value) => setFilters(f => ({ ...f, [key]: value }));
-  const clearFilters = () => setFilters({ state: '', association: '', age: '', classification: '', radius: '', maxCost: '' });
-  const activeFilterCount = Object.values(filters).filter(Boolean).length;
+  const clearFilters = () => {
+    setFilters({ state: '', association: '', age: '', classification: '', zip: '', radius: '', maxCost: '' });
+    setZipCoords(null);
+    setZipError('');
+  };
+  const activeFilterCount = Object.entries(filters).filter(([k, v]) => k !== 'radius' ? Boolean(v) : Boolean(v && filters.zip)).length;
 
   return (
     <div className="gdr-page" >
