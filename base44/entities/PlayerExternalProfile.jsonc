@@ -1,0 +1,91 @@
+{
+  "name": "PlayerExternalProfile",
+  "type": "object",
+  "properties": {
+    "player_id": {
+      "type": "string",
+      "description": "PlayerProfile ID this external profile belongs to"
+    },
+    "parent_id": {
+      "type": "string",
+      "description": "User ID of the parent/guardian who owns the player profile"
+    },
+    "provider": {
+      "type": "string",
+      "enum": [
+        "perfect_game",
+        "gamechanger",
+        "sideline_hd",
+        "other"
+      ],
+      "description": "External profile provider"
+    },
+    "provider_label": {
+      "type": "string",
+      "description": "Display label for the provider"
+    },
+    "url": {
+      "type": "string",
+      "description": "Public profile URL"
+    },
+    "external_id": {
+      "type": "string",
+      "description": "Provider-specific ID parsed from the URL when available"
+    },
+    "connection_status": {
+      "type": "string",
+      "enum": [
+        "connected",
+        "needs_review",
+        "error"
+      ],
+      "default": "connected"
+    },
+    "connected_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_checked_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "player_id",
+    "provider",
+    "url"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "parent_id": "{{user.id}}"
+    },
+    "update": {
+      "$or": [
+        {
+          "parent_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "parent_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

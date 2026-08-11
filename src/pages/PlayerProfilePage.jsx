@@ -22,6 +22,8 @@ export default function PlayerProfilePage({ publicView = false }) {
   const [isOwner, setIsOwner] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editData, setEditData] = useState({});
+  const [externalProfiles, setExternalProfiles] = useState([]);
+  const [pgProfile, setPgProfile] = useState(null);
   const [saving, setSaving] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const fileInputRef = useRef(null);
@@ -36,7 +38,27 @@ export default function PlayerProfilePage({ publicView = false }) {
     try {
       const p = await base44.entities.PlayerProfile.get(id);
       setPlayer(p);
-      setEditData(p);
+
+      let nextEditData = { ...p };
+      try {
+        const links = await base44.entities.PlayerExternalProfile.filter({ player_id: id, provider: 'perfect_game' }, '-created_date', 1);
+        setExternalProfiles(links);
+        const pg = links[0] || null;
+        setPgProfile(pg);
+        if (pg?.url) {
+          nextEditData = {
+            ...nextEditData,
+            perfect_game_url: pg.url,
+            perfect_game_player_id: pg.external_id || '',
+            perfect_game_connection_status: pg.connection_status || 'connected',
+            perfect_game_connected_at: pg.connected_at || ''
+          };
+        }
+      } catch (linkErr) {
+        setExternalProfiles([]);
+        setPgProfile(null);
+      }
+      setEditData(nextEditData);
 
       try {
         const u = await base44.auth.me();
