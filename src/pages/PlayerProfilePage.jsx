@@ -227,6 +227,8 @@ export default function PlayerProfilePage({ publicView = false }) {
   ];
   const visibleStats = [...battingStats, ...pitchingStats, ...metricStats];
   const hasStats = visibleStats.some(stat => stat.value !== '—');
+  const pgProfileUrl = pgProfile?.url || player.perfect_game_url || editData.perfect_game_url || '';
+  const pgConnectionStatus = pgProfile?.connection_status || player.perfect_game_connection_status || editData.perfect_game_connection_status;
   const publicProfileUrl = `${window.location.origin}/public/player/${id}`;
   const handleCopyPublicProfile = async () => {
     try {
