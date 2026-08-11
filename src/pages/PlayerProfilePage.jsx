@@ -200,14 +200,24 @@ export default function PlayerProfilePage({ publicView = false }) {
               </button>
             )}
             {isOwner && (
-              <button
-                onClick={() => setEditing(!editing)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold"
-                style={{ backgroundColor: '#1E293B', color: '#FFFFFF' }}
-              >
-                <Edit size={14} />
-                {editing ? 'Cancel' : 'Edit'}
-              </button>
+              <>
+                <button
+                  onClick={handleCopyPublicProfile}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold"
+                  style={{ backgroundColor: '#FEFCE8', color: '#A16207' }}
+                >
+                  <Share size={14} />
+                  Public Link
+                </button>
+                <button
+                  onClick={() => setEditing(!editing)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold"
+                  style={{ backgroundColor: '#1E293B', color: '#FFFFFF' }}
+                >
+                  <Edit size={14} />
+                  {editing ? 'Cancel' : 'Edit'}
+                </button>
+              </>
             )}
           </div>
         </div>
