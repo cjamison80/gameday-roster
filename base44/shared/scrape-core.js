@@ -192,3 +192,123 @@ export function buildTournamentKey(record = {}) {
     .map(v => String(v || '').trim().toLowerCase())
     .join('|');
 }
+
+// ---- USSSA nationwide JSON API ----
+// USSSA's Angular event search app calls a real JSON API rather than
+// server-rendering results. Endpoint, params, and the public search token
+// were recovered from USSSA's own published frontend code
+// (js/services/2_api.js, js/controllers/EventSearchResultsCtrl.js,
+// js/services/1_jsLib.js on usssa.com), so this mirrors exactly what a
+// site visitor's browser already sends. seasonID is computed the same way
+// USSSA's own jsLib.getSeasonID() computes it, so this doesn't go stale.
+const USSSA_API_URL = 'https://www.usssa.com/api/?action=eventSearchSimpleV11';
+const USSSA_SEARCH_TOKEN = 'eventSearchV4!!!Get';
+const USSSA_BASEBALL_SPORT_ID = 11;
+// Central-US zip with a large radius returns nationwide results in one call.
+const USSSA_DEFAULT_ZIP = '72118';
+const USSSA_DEFAULT_MILE_RADIUS = 2000;
+
+function usssaSeasonId(date = new Date()) {
+  // Mirrors jsLib.getSeasonID(): (year - 1996), +1 for sports other than
+  // sportID 17/34 (baseball is 11, so +1 applies).
+  return (date.getFullYear() - 1996) + 1;
+}
+
+function parseUsssaAgeDivisions(eventDivisionsAll = '') {
+  // Format: "10U%Open|AA|A#11U%AAA|AA|AA#..." — age before '%', classes after, '|'-joined per age.
+  const ages = new Set();
+  const classes = new Set();
+  for (const chunk of String(eventDivisionsAll).split('#')) {
+    const [age, classPart] = chunk.split('%');
+    if (age) ages.add(age.trim());
+    if (classPart) {
+      for (const c of classPart.split('|')) {
+        const trimmed = c.trim();
+        if (trimmed) classes.add(trimmed);
+      }
+    }
+  }
+  return { age_divisions: [...ages], classifications: [...classes] };
+}
+
+export async function fetchUsssaNationwideRecords({ fetchTimeoutMs = 15000, zip = USSSA_DEFAULT_ZIP, mile = USSSA_DEFAULT_MILE_RADIUS } = {}) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), fetchTimeoutMs);
+  const body = new URLSearchParams({
+    sportID: String(USSSA_BASEBALL_SPORT_ID),
+    seasonID: String(usssaSeasonId()),
+    age: '',
+    classID: '0',
+    stateID: '',
+    regionID: '',
+    zip,
+    mile: String(mile),
+    statureID: '',
+    startDate: '',
+    endDate: '',
+    director: '',
+    parkID: '',
+    token: USSSA_SEARCH_TOKEN
+  }).toString();
+
+  let res;
+  try {
+    res = await fetch(USSSA_API_URL, {
+      method: 'POST',
+      signal: controller.signal,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'User-Agent': 'GameDayRosterBot/0.1 (+tournament-discovery; contact app admin)',
+        'Accept': 'application/json'
+      },
+      body
+    });
+  } catch (err) {
+    if (err.name === 'AbortError') {
+      const timeoutErr = new Error(`USSSA API fetch timed out after ${fetchTimeoutMs}ms.`);
+      timeoutErr.blocked = true;
+      throw timeoutErr;
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeout);
+  }
+
+  if ([401, 403, 429].includes(res.status)) {
+    const err = new Error(`USSSA API returned ${res.status}. Stopping source sync.`);
+    err.blocked = true;
+    throw err;
+  }
+  if (!res.ok) {
+    throw new Error(`USSSA API fetch failed: ${res.status} ${res.statusText}`);
+  }
+
+  const data = await res.json();
+  const results = Array.isArray(data.results) ? data.results : [];
+
+  return results.map(r => {
+    const { age_divisions, classifications } = parseUsssaAgeDivisions(r.eventDivisionsAll);
+    const teamCount = Number(r.teamCount);
+    return {
+      name: r.event_name || 'Untitled Tournament',
+      association: 'USSSA',
+      sport: 'baseball',
+      age_divisions,
+      classifications,
+      start_date: String(r.start_date || '').slice(0, 10),
+      end_date: String(r.end_date || r.start_date || '').slice(0, 10),
+      city: r.city || '',
+      state: r.stateABR || '',
+      venue: r.eventLocation || '',
+      cost: 0,
+      currency: 'USD',
+      spots_available: null,
+      teams_entered_count: Number.isFinite(teamCount) ? teamCount : 0,
+      teams_entered: [],
+      registration_url: r.ID ? `https://www.usssa.com/baseball/event_home/?eventID=${r.ID}` : '',
+      source_url: r.ID ? `https://www.usssa.com/baseball/event_home/?eventID=${r.ID}` : '',
+      status: 'open',
+      description: [r.stature, r.eventType].filter(Boolean).join(' · ')
+    };
+  }).filter(r => r.name && r.source_url);
+}
