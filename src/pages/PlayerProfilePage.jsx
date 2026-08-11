@@ -80,6 +80,38 @@ export default function PlayerProfilePage() {
     }
   };
 
+  const normalizePerfectGameUrl = (value = '') => {
+    const trimmed = value.trim();
+    if (!trimmed) return '';
+    return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+  };
+
+  const extractPerfectGamePlayerId = (value = '') => {
+    const normalized = normalizePerfectGameUrl(value);
+    const match = normalized.match(/[?&](?:player|playerID|PlayerID|id)=([^&]+)/) || normalized.match(/\/(?:players?|Player)\/?([0-9]+)/i);
+    return match?.[1] || '';
+  };
+
+  const handleConnectPerfectGame = async () => {
+    if (!editData.perfect_game_url) {
+      toast({ title: 'Perfect Game URL needed', description: 'Paste the player Perfect Game profile URL first.' });
+      return;
+    }
+    const url = normalizePerfectGameUrl(editData.perfect_game_url);
+    if (!/perfectgame\.org/i.test(url)) {
+      toast({ title: 'Check the link', description: 'Please use a PerfectGame.org player profile URL.', variant: 'destructive' });
+      return;
+    }
+    setEditData(d => ({
+      ...d,
+      perfect_game_url: url,
+      perfect_game_player_id: extractPerfectGamePlayerId(url),
+      perfect_game_connection_status: 'connected',
+      perfect_game_connected_at: new Date().toISOString()
+    }));
+    toast({ title: 'Perfect Game profile connected', description: 'Save changes to keep this link on the player profile.' });
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F8FAFC' }}>
