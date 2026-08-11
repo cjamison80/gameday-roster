@@ -228,6 +228,138 @@
     text-transform: uppercase;
     color: var(--gdr-bronze);
   }
+
+  .gdr-auth-screen {
+    background:
+      radial-gradient(circle at 12% 0%, rgba(193, 18, 31, 0.16), transparent 30%),
+      radial-gradient(circle at 90% 8%, rgba(11, 21, 40, 0.14), transparent 28%),
+      linear-gradient(180deg, #F8FAFC 0%, #EEF2F7 100%);
+  }
+
+  .gdr-auth-shell {
+    background: #FFFFFF;
+    border: 1px solid rgba(203, 213, 225, 0.92);
+    box-shadow: 0 30px 80px rgba(11, 21, 40, 0.20);
+  }
+
+  .gdr-auth-form-card {
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 16px 44px rgba(11, 21, 40, 0.06);
+  }
+
+  .gdr-auth-ballpark {
+    background:
+      linear-gradient(180deg, rgba(8, 18, 38, 0.16), rgba(8, 18, 38, 0.72)),
+      radial-gradient(circle at 50% 88%, rgba(245, 158, 11, 0.38), transparent 13%),
+      radial-gradient(ellipse at 50% 82%, rgba(181, 109, 55, 0.95) 0%, rgba(181, 109, 55, 0.95) 10%, transparent 10.4%),
+      radial-gradient(ellipse at 50% 64%, rgba(34, 113, 68, 0.95) 0%, rgba(34, 113, 68, 0.95) 54%, transparent 54.4%),
+      repeating-linear-gradient(112deg, rgba(46, 125, 78, 0.90) 0 20px, rgba(38, 104, 68, 0.90) 20px 40px),
+      linear-gradient(135deg, #081226 0%, #0B1528 100%);
+    isolation: isolate;
+  }
+
+  .gdr-auth-ballpark::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(rgba(8,18,38,0.72), rgba(8,18,38,0.34)),
+      radial-gradient(circle at 50% 75%, transparent 0 23%, rgba(8,18,38,0.24) 23.3% 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .gdr-auth-ballpark::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 52px 52px;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .gdr-diamond-scene {
+    position: absolute;
+    left: 50%;
+    bottom: 10%;
+    width: min(78vw, 520px);
+    height: min(78vw, 520px);
+    transform: translateX(-50%);
+    z-index: 3;
+    opacity: 0.92;
+  }
+
+  .gdr-outfield-arc {
+    position: absolute;
+    inset: 2% 1% auto 1%;
+    height: 66%;
+    border: 2px solid rgba(248, 250, 252, 0.22);
+    border-bottom: 0;
+    border-radius: 50% 50% 0 0;
+  }
+
+  .gdr-baseball-diamond {
+    position: absolute;
+    left: 50%;
+    bottom: 13%;
+    width: 34%;
+    height: 34%;
+    transform: translateX(-50%) rotate(45deg);
+    background: linear-gradient(135deg, rgba(180, 104, 42, 0.95), rgba(229, 170, 104, 0.92));
+    border: 2px solid rgba(248, 250, 252, 0.52);
+    box-shadow: 0 18px 48px rgba(0,0,0,0.28);
+  }
+
+  .gdr-base {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #F8FAFC;
+    box-shadow: 0 0 14px rgba(248,250,252,0.6);
+  }
+
+  .gdr-home { left: 50%; bottom: -7px; transform: translateX(-50%); }
+  .gdr-first { right: -7px; top: 50%; transform: translateY(-50%); }
+  .gdr-second { left: 50%; top: -7px; transform: translateX(-50%); }
+  .gdr-third { left: -7px; top: 50%; transform: translateY(-50%); }
+
+  .gdr-mound {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #F0C083;
+    transform: translate(-50%, -50%);
+    border: 1px solid rgba(8,18,38,0.20);
+  }
+
+  .gdr-foul-line {
+    position: absolute;
+    left: 50%;
+    bottom: 18%;
+    width: 45%;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(248,250,252,0.76), transparent);
+    transform-origin: left center;
+  }
+
+  .gdr-left-line { transform: rotate(-45deg); }
+  .gdr-right-line { transform: rotate(-135deg); }
+
+  .gdr-auth-badge {
+    border: 1px solid rgba(248, 250, 252, 0.26);
+    background: rgba(193, 18, 31, 0.22);
+    color: #F8FAFC;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.18em;
+    padding: 8px 10px;
+  }
 }
 
 @layer utilities {
