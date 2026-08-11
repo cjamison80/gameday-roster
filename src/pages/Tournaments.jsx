@@ -6,7 +6,12 @@ import TournamentCard from '@/components/TournamentCard';
 import { SkeletonCard } from '@/components/SkeletonCard';
 
 const ASSOCIATIONS = ['Perfect Game', '2D Sports', 'USSSA', 'NSA', 'AAU', 'Ripken', 'Triple Crown', 'Other'];
-const STATES = ['AR', 'MO', 'OK', 'TX', 'TN', 'MS', 'LA', 'KS', 'AL', 'GA', 'FL'];
+const STATES = [
+  'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA',
+  'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
+  'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT',
+  'VA', 'WA', 'WV', 'WI', 'WY'
+];
 const AGE_DIVISIONS = ['8U','9U','10U','11U','12U','13U','14U','15U','16U','17U','18U'];
 const CLASSIFICATIONS = ['Major','AAA','AA','A','Open'];
 const RADIUS_OPTIONS = [25, 50, 100, 150, 250, 500];
