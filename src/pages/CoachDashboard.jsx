@@ -160,14 +160,6 @@ export default function CoachDashboard() {
             <Plus size={18} />
             Post New Opportunity
           </button>
-          <button
-            onClick={() => navigate(`/tournaments?state=${userProfile?.state || ''}${teams[0]?.age_division ? `&age=${teams[0].age_division}` : ''}${teams[0]?.classification ? `&classification=${teams[0].classification}` : ''}`)}
-            className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold border-2"
-            style={{ backgroundColor: '#FFFFFF', borderColor: '#E2E8F0', color: '#0B1528' }}
-          >
-            <Trophy size={18} color="#D4A017" />
-            Find Tournaments
-          </button>
         </div>
 
         {opportunities.length === 0 && teams.length === 0 && (
