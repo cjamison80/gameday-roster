@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+// Player profile view — publicView renders the read-only shareable version.
 import { ArrowLeft, Edit, Share, MapPin, MessageCircle, ExternalLink, Heart, ShieldCheck, Camera } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import VerifiedBadge from '@/components/VerifiedBadge';
@@ -12,7 +13,7 @@ import { useToast } from '@/components/ui/use-toast';
 import PlayerVideos from '@/components/player/PlayerVideos';
 
 export default function PlayerProfilePage({ publicView = false }) {
-  const { id } = useParams();
+  const playerId = useParams().id;
   const navigate = useNavigate();
   const [player, setPlayer] = useState(null);
   const [availability, setAvailability] = useState(null);
@@ -26,21 +27,21 @@ export default function PlayerProfilePage({ publicView = false }) {
   const [saving, setSaving] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const fileInputRef = useRef(null);
-  const { isFav, toggle: toggleFav } = useFavorite(id, 'player');
+  const { isFav, toggle: toggleFav } = useFavorite(playerId, 'player');
   const { toast } = useToast();
 
   useEffect(() => {
     loadData();
-  }, [id]);
+  }, [playerId]);
 
   const loadData = async () => {
     try {
-      const p = await base44.entities.PlayerProfile.get(id);
+      const p = await base44.entities.PlayerProfile.get(playerId);
       setPlayer(p);
 
       let nextEditData = { ...p };
       try {
-        const links = await base44.entities.PlayerExternalProfile.filter({ player_id: id, provider: 'perfect_game' }, '-created_date', 1);
+        const links = await base44.entities.PlayerExternalProfile.filter({ player_id: playerId, provider: 'perfect_game' }, '-created_date', 1);
         setExternalProfiles(links);
         const pg = links[0] || null;
         setPgProfile(pg);
@@ -85,7 +86,7 @@ export default function PlayerProfilePage({ publicView = false }) {
     setSaving(true);
     try {
       const { id: _id, created_date: _cd, updated_date: _ud, created_by_id: _cb, ...payload } = editData;
-      await base44.entities.PlayerProfile.update(id, payload);
+      await base44.entities.PlayerProfile.update(playerId, payload);
       toast({ title: 'Changes saved', description: 'Player profile updated.' });
       navigate('/profile');
     } catch (e) {
@@ -145,7 +146,7 @@ export default function PlayerProfilePage({ publicView = false }) {
       perfect_game_connected_at: connectedAt
     };
     const externalPatch = {
-      player_id: id,
+      player_id: playerId,
       parent_id: user?.id,
       provider: 'perfect_game',
       provider_label: 'Perfect Game',
@@ -157,11 +158,11 @@ export default function PlayerProfilePage({ publicView = false }) {
 
     setSaving(true);
     try {
-      await base44.entities.PlayerProfile.update(id, playerPatch);
+      await base44.entities.PlayerProfile.update(playerId, playerPatch);
 
       let savedLink = null;
       try {
-        const existing = await base44.entities.PlayerExternalProfile.filter({ player_id: id, provider: 'perfect_game' }, '-created_date', 1);
+        const existing = await base44.entities.PlayerExternalProfile.filter({ player_id: playerId, provider: 'perfect_game' }, '-created_date', 1);
         savedLink = existing.length > 0
           ? await base44.entities.PlayerExternalProfile.update(existing[0].id, externalPatch)
           : await base44.entities.PlayerExternalProfile.create(externalPatch);
@@ -239,7 +240,7 @@ export default function PlayerProfilePage({ publicView = false }) {
   const hasStats = visibleStats.some(stat => stat.value !== '—');
   const pgProfileUrl = pgProfile?.url || player.perfect_game_url || editData.perfect_game_url || '';
   const pgConnectionStatus = pgProfile?.connection_status || player.perfect_game_connection_status || editData.perfect_game_connection_status;
-  const publicProfileUrl = `${window.location.origin}/public/player/${id}`;
+  const publicProfileUrl = `${window.location.origin}/public/player/${playerId}`;
   const handleCopyPublicProfile = async () => {
     try {
       await navigator.clipboard.writeText(publicProfileUrl);
@@ -390,7 +391,7 @@ export default function PlayerProfilePage({ publicView = false }) {
 
         {/* Weekly availability check-in (owner only) */}
         {isOwner && (
-          <AvailabilityCheckin user={user} playerId={id} onSaved={loadData} />
+          <AvailabilityCheckin user={user} playerId={playerId} onSaved={loadData} />
         )}
 
         {/* Self-reported player stats */}
