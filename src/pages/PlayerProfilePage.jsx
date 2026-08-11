@@ -579,11 +579,12 @@ export default function PlayerProfilePage({ publicView = false }) {
                     <button
                       type="button"
                       onClick={handleConnectPerfectGame}
-                      className="w-full mt-3 py-3  text-sm font-bold flex items-center justify-center gap-2"
+                      disabled={saving}
+                      className="w-full mt-3 py-3  text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-60"
                       style={{ backgroundColor: '#0B1528', color: '#FFFFFF' }}
                     >
                       <ExternalLink size={15} />
-                      Connect Perfect Game Profile
+                      {saving ? 'Saving Perfect Game Link...' : 'Connect & Save Perfect Game Profile'}
                     </button>
                     {editData.perfect_game_player_id && (
                       <p className="text-xs mt-2" style={{ color: '#8F0F1A' }}>Detected PG ID: {editData.perfect_game_player_id}</p>
