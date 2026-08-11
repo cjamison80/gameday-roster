@@ -263,9 +263,9 @@ function parseTwoDSportsBlock(block = '') {
   const endMatch = block.match(/itemprop="endDate" content="([^"]+)"/);
   const cityMatch = block.match(/itemprop="addressLocality" content="([^"]+)"/);
   const stateMatch = block.match(/itemprop="addressRegion" content="([^"]+)"/);
-  const hrefMatch = [...block.matchAll(/href="(https:\/\/youth\.2dsports\.org\/events\/[^"\/]+(?:-[^"\/]+)*)"/g)]
-    .map(m => m[1])
-    .find(href => !href.endsWith('/teams'));
+  const eventHrefs = [...block.matchAll(/href="(https:\/\/youth\.2dsports\.org\/events\/[^"]+)"/g)].map(m => m[1]);
+  const hrefMatch = eventHrefs.find(href => !href.endsWith('/teams'));
+  const teamsHrefMatch = eventHrefs.find(href => href.endsWith('/teams'));
 
   if (!nameMatch || !startMatch || !hrefMatch) return null;
 
@@ -297,6 +297,7 @@ function parseTwoDSportsBlock(block = '') {
     teams_entered: [],
     registration_url: hrefMatch,
     source_url: hrefMatch,
+    teams_url: teamsHrefMatch || '',
     status: 'open',
     description: ''
   };
