@@ -436,11 +436,56 @@ export default function PlayerProfilePage() {
           </div>
         )}
 
-        {/* Linked profiles: GameChanger + Sideline HD */}
-        {(player.gamechanger_url || player.sidelinehd_url || (isOwner && editing)) && (
+        {/* Linked profiles: Perfect Game + GameChanger + Sideline HD */}
+        {(player.perfect_game_url || player.gamechanger_url || player.sidelinehd_url || (isOwner && editing)) && (
           <div className="bg-white rounded-2xl border border-gray-100 p-5">
             <h3 className="font-bold mb-3" style={{ color: '#0B1528' }}>Linked Profiles</h3>
             <div className="space-y-3">
+              <div>
+                {editing ? (
+                  <div className="rounded-2xl p-4" style={{ backgroundColor: '#FEFCE8', border: '1px solid #FEF08A' }}>
+                    <div className="flex items-center justify-between gap-3 mb-2">
+                      <div>
+                        <label className="text-xs font-semibold block" style={{ color: '#713F12' }}>Perfect Game Profile URL</label>
+                        <p className="text-xs mt-0.5" style={{ color: '#A16207' }}>Paste the player's public PerfectGame.org profile link.</p>
+                      </div>
+                      {editData.perfect_game_connection_status === 'connected' && (
+                        <span className="text-xs font-bold px-2 py-1 rounded-full" style={{ backgroundColor: '#DCFCE7', color: '#16A34A' }}>Connected</span>
+                      )}
+                    </div>
+                    <input
+                      value={editData.perfect_game_url || ''}
+                      onChange={e => setEditData(d => ({ ...d, perfect_game_url: e.target.value, perfect_game_connection_status: e.target.value ? 'needs_review' : 'not_connected' }))}
+                      placeholder="https://www.perfectgame.org/Players/Playerprofile.aspx?ID=..."
+                      className="w-full rounded-xl px-4 py-3 text-sm border border-yellow-200 outline-none bg-white"
+                      style={{ color: '#0B1528' }}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleConnectPerfectGame}
+                      className="w-full mt-3 py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2"
+                      style={{ backgroundColor: '#0B1528', color: '#FFFFFF' }}
+                    >
+                      <ExternalLink size={15} />
+                      Connect Perfect Game Profile
+                    </button>
+                    {editData.perfect_game_player_id && (
+                      <p className="text-xs mt-2" style={{ color: '#A16207' }}>Detected PG ID: {editData.perfect_game_player_id}</p>
+                    )}
+                  </div>
+                ) : player.perfect_game_url && (
+                  <a
+                    href={player.perfect_game_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-bold"
+                    style={{ backgroundColor: '#FEFCE8', color: '#A16207' }}
+                  >
+                    <ExternalLink size={16} />
+                    View {player.first_name} on Perfect Game
+                  </a>
+                )}
+              </div>
               <div>
                 {editing ? (
                   <>
