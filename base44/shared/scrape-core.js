@@ -517,3 +517,147 @@ export async function fetchUsssaNationwideRecords({ fetchTimeoutMs = 15000, zip 
     };
   }).filter(r => r.name && r.source_url);
 }
+
+// ---- Perfect Game (perfectgame.org national schedule) ----
+// perfectgame.org/Schedule/Default.aspx?Type=Tournaments is a real server-
+// rendered ASP.NET RadGrid — no login or JS execution needed, unlike the
+// marketing pages under /Events/. Its own state-filter form is a full
+// ASP.NET postback (view state + event validation), which a lightweight
+// fetch() can't replicate, so this fetches the default national listing and
+// filters by state client-side, same pattern as other sources.
+//
+// The tricky part is structural: each "tournament" is a group of per-age-
+// division rows (schema.org-free, Telerik RadGrid grouping). The readable
+// name/location/teams-link live ONLY on the group header row; the reliable
+// exact dates live only on the individual (visually hidden, but present in
+// the HTML) sub-rows, tagged with the same hfEventScheduleGroupID. So this
+// does two passes — aggregate sub-row dates per group ID, then merge with
+// each group header — rather than trying to parse either row type alone.
+const PERFECT_GAME_SCHEDULE_URL = 'https://www.perfectgame.org/Schedule/Default.aspx?Type=Tournaments';
+const PERFECT_GAME_USER_AGENT = 'GameDayRosterBot/0.1 (+tournament-discovery; contact app admin)';
+// Real weekend/week-long tournaments run a few days. Season-long leagues
+// (e.g. "PG New England League 2026", Mar-Aug) show up as groups too but
+// aren't a single tournament a coach can register for as one event.
+const PERFECT_GAME_MAX_GROUP_DAYS = 14;
+
+function stripHtmlTags(s = '') {
+  return s.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
+}
+
+function parsePerfectGameSubRows(html) {
+  const rowBlocks = html.split(/(?=<tr class="rg(?:Row|AltRow)")/).slice(1);
+  const byGid = new Map();
+  for (const block of rowBlocks) {
+    const gidMatch = block.match(/hfEventScheduleGroupID"[^>]*value="(\d+)"/);
+    const startMatch = block.match(/hfStartDate"[^>]*value="([^"]+)"/);
+    const endMatch = block.match(/hfEndDate"[^>]*value="([^"]+)"/);
+    const ageMatch = block.match(/hfAgeDivision"[^>]*value="([^"]+)"/);
+    const locMatch = block.match(/lblLocation"[^>]*>([^<]*)<br\s*\/?>([^<]*)<\/span>/);
+    if (!gidMatch || !startMatch) continue;
+
+    const gid = gidMatch[1];
+    if (!byGid.has(gid)) byGid.set(gid, { starts: [], ends: [], ages: new Set(), venue: '' });
+    const entry = byGid.get(gid);
+    const startDate = new Date(startMatch[1]);
+    if (!Number.isNaN(startDate.getTime())) entry.starts.push(startDate);
+    if (endMatch) {
+      const endDate = new Date(endMatch[1]);
+      if (!Number.isNaN(endDate.getTime())) entry.ends.push(endDate);
+    }
+    if (ageMatch) entry.ages.add(ageMatch[1].trim());
+    if (!entry.venue && locMatch) entry.venue = locMatch[1].trim();
+  }
+  return byGid;
+}
+
+function parsePerfectGameGroupHeaders(html) {
+  const blocks = html.match(/<td class="rgGroupCol"[\s\S]*?<\/table><\/td>/g) || [];
+  const groups = [];
+  for (const block of blocks) {
+    const gidMatch = block.match(/GroupedEvents\.aspx\?gid=(\d+)/);
+    if (!gidMatch) continue;
+    const gid = gidMatch[1];
+    const nameMatch = block.match(/GroupedEvents\.aspx\?gid=\d+'[^>]*>\s*<span[^>]*>([^<]+)<\/span>/);
+    const name = nameMatch ? nameMatch[1].trim() : '';
+    if (!name) continue;
+    const teamCountMatch = block.match(/TournamentTeamsGroup\.aspx\?gid=\d+'>(\d+)</);
+    const tailText = stripHtmlTags(block.split('col-md-2').slice(1).join('col-md-2'));
+    const cityStateMatch = tailText.match(/([A-Za-z .'\/-]+),\s*([A-Za-z]{2})\b/);
+    groups.push({
+      gid,
+      name,
+      city: cityStateMatch ? cityStateMatch[1].trim() : '',
+      state: cityStateMatch ? cityStateMatch[2].toUpperCase() : '',
+      team_count: teamCountMatch ? Number(teamCountMatch[1]) : 0
+    });
+  }
+  return groups;
+}
+
+export async function fetchPerfectGameRecords({ fetchTimeoutMs = 15000 } = {}) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), fetchTimeoutMs);
+  let res;
+  try {
+    res = await fetch(PERFECT_GAME_SCHEDULE_URL, {
+      signal: controller.signal,
+      headers: {
+        'User-Agent': PERFECT_GAME_USER_AGENT,
+        'Accept': 'text/html,application/xhtml+xml'
+      }
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
+
+  if ([401, 403, 429, 503].includes(res.status)) {
+    const err = new Error(`Perfect Game schedule page returned ${res.status}. Stopping source sync.`);
+    err.blocked = true;
+    throw err;
+  }
+  if (!res.ok) {
+    throw new Error(`Perfect Game schedule fetch failed: ${res.status} ${res.statusText}`);
+  }
+
+  const html = await res.text();
+  const subRowsByGid = parsePerfectGameSubRows(html);
+  const groups = parsePerfectGameGroupHeaders(html);
+
+  const records = [];
+  for (const g of groups) {
+    const sub = subRowsByGid.get(g.gid);
+    if (!sub || sub.starts.length === 0) continue;
+
+    const minStart = new Date(Math.min(...sub.starts.map(d => d.getTime())));
+    const maxEnd = sub.ends.length ? new Date(Math.max(...sub.ends.map(d => d.getTime()))) : minStart;
+    const durationDays = Math.round((maxEnd - minStart) / 86400000);
+    if (durationDays > PERFECT_GAME_MAX_GROUP_DAYS) continue; // season-long league, not a single tournament
+
+    const toIso = d => d.toISOString().slice(0, 10);
+
+    records.push({
+      name: g.name,
+      association: 'Perfect Game',
+      sport: 'baseball',
+      age_divisions: [...sub.ages],
+      classifications: [],
+      start_date: toIso(minStart),
+      end_date: toIso(maxEnd),
+      city: g.city,
+      state: g.state,
+      venue: sub.venue || g.city,
+      cost: 0,
+      currency: 'USD',
+      spots_available: null,
+      teams_entered_count: g.team_count,
+      teams_entered: [],
+      registration_url: `https://www.perfectgame.org/Schedule/GroupedEvents.aspx?gid=${g.gid}`,
+      source_url: `https://www.perfectgame.org/Schedule/GroupedEvents.aspx?gid=${g.gid}`,
+      teams_url: `https://www.perfectgame.org/events/TournamentTeamsGroup.aspx?gid=${g.gid}`,
+      status: 'open',
+      description: ''
+    });
+  }
+
+  return records;
+}
