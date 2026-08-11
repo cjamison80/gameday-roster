@@ -125,6 +125,17 @@ export default function TournamentDetail() {
                 </div>
               ))}
             </div>
+          ) : tournament.teams_url ? (
+            <a
+              href={tournament.teams_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full py-4 text-sm font-bold"
+              style={{ backgroundColor: '#F5F7FB', color: '#C1121F' }}
+            >
+              <ExternalLink size={16} />
+              View {tournament.teams_entered_count || 'entered'} teams on {tournament.association}
+            </a>
           ) : (
             <div className=" p-6 text-center" >
               <p className="font-semibold" style={{ color: '#0B1528' }}>No entered teams imported yet</p>
