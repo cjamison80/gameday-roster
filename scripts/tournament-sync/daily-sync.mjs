@@ -272,7 +272,14 @@ async function main() {
   console.log(`Tournament sync config: max_events=${MAX_EVENTS_PER_SOURCE}, delay_ms=${REQUEST_DELAY_MS}, fetch_timeout_ms=${FETCH_TIMEOUT_MS}, source_timeout_ms=${SOURCE_TIMEOUT_MS}`);
 
   try {
-    const { user } = await withTimeout(base44.auth.loginViaEmailPassword(ADMIN_EMAIL, ADMIN_PASSWORD), 15000, 'Base44 admin login');
+    // Temporary diagnostic: only reveals lengths/whitespace shape, never the actual
+    // secret values, to help distinguish a bad credential from a copy-paste artifact
+    // (trailing space/newline) in the GitHub secret. Safe to remove once login works.
+    const emailHasWhitespace = ADMIN_EMAIL !== ADMIN_EMAIL.trim();
+    const passwordHasWhitespace = ADMIN_PASSWORD !== ADMIN_PASSWORD.trim();
+    console.log(`Auth diagnostic: email_length=${ADMIN_EMAIL.length}, email_has_leading_or_trailing_whitespace=${emailHasWhitespace}, password_length=${ADMIN_PASSWORD.length}, password_has_leading_or_trailing_whitespace=${passwordHasWhitespace}`);
+
+    const { user } = await withTimeout(base44.auth.loginViaEmailPassword(ADMIN_EMAIL.trim(), ADMIN_PASSWORD.trim()), 15000, 'Base44 admin login');
     if (user?.role !== 'admin') {
       console.error(`Logged in as ${user?.email || ADMIN_EMAIL}, but role is "${user?.role}", not "admin". Tournament/TournamentSyncJob/TournamentSource writes require the admin role. Update the account's role or point BASE44_ADMIN_EMAIL at the admin account.`);
       process.exit(1);
