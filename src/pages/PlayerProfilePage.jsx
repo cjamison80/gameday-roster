@@ -396,6 +396,117 @@ export default function PlayerProfilePage({ publicView = false }) {
           <AvailabilityCheckin user={user} playerId={id} onSaved={loadData} />
         )}
 
+        {/* Self-reported player stats */}
+        {(isOwner || player.batting_avg || player.era || player.exit_velo_mph || player.arm_velo_mph) && (
+          <div className="gdr-card p-5">
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <div>
+                <p className="gdr-editorial-kicker mb-1">Player Stats</p>
+                <h3 className="font-semibold" style={{ color: '#0B1528' }}>Performance Numbers</h3>
+                <p className="text-xs mt-1" style={{ color: '#5B6475' }}>Self-reported by the player/parent — not pulled from Perfect Game.</p>
+              </div>
+            </div>
+
+            {editing ? (
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wide" style={{ color: '#5B6475' }}>Batting AVG</label>
+                  <input
+                    type="number"
+                    step="0.001"
+                    value={editData.batting_avg ?? ''}
+                    onChange={e => setEditData(d => ({ ...d, batting_avg: e.target.value === '' ? '' : Number(e.target.value) }))}
+                    placeholder="0.412"
+                    className="w-full mt-1 px-3 py-2 text-sm border border-gray-200 outline-none bg-white"
+                    style={{ color: '#0B1528' }}
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wide" style={{ color: '#5B6475' }}>ERA</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={editData.era ?? ''}
+                    onChange={e => setEditData(d => ({ ...d, era: e.target.value === '' ? '' : Number(e.target.value) }))}
+                    placeholder="2.15"
+                    className="w-full mt-1 px-3 py-2 text-sm border border-gray-200 outline-none bg-white"
+                    style={{ color: '#0B1528' }}
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wide" style={{ color: '#5B6475' }}>Exit Velo (mph)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={editData.exit_velo_mph ?? ''}
+                    onChange={e => setEditData(d => ({ ...d, exit_velo_mph: e.target.value === '' ? '' : Number(e.target.value) }))}
+                    placeholder="88.5"
+                    className="w-full mt-1 px-3 py-2 text-sm border border-gray-200 outline-none bg-white"
+                    style={{ color: '#0B1528' }}
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wide" style={{ color: '#5B6475' }}>Arm Velo (mph)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={editData.arm_velo_mph ?? ''}
+                    onChange={e => setEditData(d => ({ ...d, arm_velo_mph: e.target.value === '' ? '' : Number(e.target.value) }))}
+                    placeholder="78.0"
+                    className="w-full mt-1 px-3 py-2 text-sm border border-gray-200 outline-none bg-white"
+                    style={{ color: '#0B1528' }}
+                  />
+                </div>
+                <div className="col-span-2">
+                  <label className="text-xs font-bold uppercase tracking-wide" style={{ color: '#5B6475' }}>Stats As Of</label>
+                  <input
+                    type="date"
+                    value={editData.stats_updated_at || ''}
+                    onChange={e => setEditData(d => ({ ...d, stats_updated_at: e.target.value }))}
+                    className="w-full mt-1 px-3 py-2 text-sm border border-gray-200 outline-none bg-white"
+                    style={{ color: '#0B1528' }}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div>
+                <div className="grid grid-cols-2 gap-3">
+                  {player.batting_avg != null && player.batting_avg !== '' && (
+                    <div className="px-3 py-2" style={{ backgroundColor: '#F5F7FB' }}>
+                      <p className="text-xs font-bold uppercase tracking-wide" style={{ color: '#5B6475' }}>AVG</p>
+                      <p className="text-lg font-black" style={{ color: '#0B1528' }}>{Number(player.batting_avg).toFixed(3)}</p>
+                    </div>
+                  )}
+                  {player.era != null && player.era !== '' && (
+                    <div className="px-3 py-2" style={{ backgroundColor: '#F5F7FB' }}>
+                      <p className="text-xs font-bold uppercase tracking-wide" style={{ color: '#5B6475' }}>ERA</p>
+                      <p className="text-lg font-black" style={{ color: '#0B1528' }}>{Number(player.era).toFixed(2)}</p>
+                    </div>
+                  )}
+                  {player.exit_velo_mph != null && player.exit_velo_mph !== '' && (
+                    <div className="px-3 py-2" style={{ backgroundColor: '#F5F7FB' }}>
+                      <p className="text-xs font-bold uppercase tracking-wide" style={{ color: '#5B6475' }}>Exit Velo</p>
+                      <p className="text-lg font-black" style={{ color: '#0B1528' }}>{player.exit_velo_mph} mph</p>
+                    </div>
+                  )}
+                  {player.arm_velo_mph != null && player.arm_velo_mph !== '' && (
+                    <div className="px-3 py-2" style={{ backgroundColor: '#F5F7FB' }}>
+                      <p className="text-xs font-bold uppercase tracking-wide" style={{ color: '#5B6475' }}>Arm Velo</p>
+                      <p className="text-lg font-black" style={{ color: '#0B1528' }}>{player.arm_velo_mph} mph</p>
+                    </div>
+                  )}
+                </div>
+                {!(player.batting_avg || player.era || player.exit_velo_mph || player.arm_velo_mph) && (
+                  <p className="text-sm" style={{ color: '#5B6475' }}>Tap Edit to add this player’s stats.</p>
+                )}
+                {player.stats_updated_at && (
+                  <p className="text-xs mt-3" style={{ color: '#5B6475' }}>As of {player.stats_updated_at}</p>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Perfect Game profile — visible near top of page */}
         {(pgProfileUrl || isOwner) && (
           <div className="gdr-card p-5">
