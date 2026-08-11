@@ -130,6 +130,38 @@ export default function PlayerProfilePage() {
   }
 
   const fullName = `${player.first_name} ${player.last_name}`;
+  const formatDecimalStat = (value, digits = 3) => {
+    if (value === null || value === undefined || value === '') return '—';
+    const num = Number(value);
+    if (Number.isNaN(num)) return '—';
+    return num < 1 ? num.toFixed(digits).replace(/^0/, '') : num.toFixed(digits);
+  };
+  const formatNumberStat = (value, suffix = '') => {
+    if (value === null || value === undefined || value === '') return '—';
+    const num = Number(value);
+    if (Number.isNaN(num)) return '—';
+    return `${num}${suffix}`;
+  };
+  const battingStats = [
+    { key: 'pg_batting_average', label: 'AVG', value: formatDecimalStat(player.pg_batting_average), placeholder: '.412' },
+    { key: 'pg_on_base_percentage', label: 'OBP', value: formatDecimalStat(player.pg_on_base_percentage), placeholder: '.515' },
+    { key: 'pg_ops', label: 'OPS', value: formatDecimalStat(player.pg_ops), placeholder: '1.103' },
+    { key: 'pg_hits', label: 'H', value: formatNumberStat(player.pg_hits), placeholder: '21' },
+    { key: 'pg_rbis', label: 'RBI', value: formatNumberStat(player.pg_rbis), placeholder: '17' },
+    { key: 'pg_runs', label: 'R', value: formatNumberStat(player.pg_runs), placeholder: '24' }
+  ];
+  const pitchingStats = [
+    { key: 'pg_era', label: 'ERA', value: formatDecimalStat(player.pg_era, 2), placeholder: '2.10' },
+    { key: 'pg_innings_pitched', label: 'IP', value: formatNumberStat(player.pg_innings_pitched), placeholder: '20.1' },
+    { key: 'pg_strikeouts', label: 'K', value: formatNumberStat(player.pg_strikeouts), placeholder: '32' }
+  ];
+  const metricStats = [
+    { key: 'pg_fastball_velocity', label: 'FB Velo', value: formatNumberStat(player.pg_fastball_velocity, ' mph'), placeholder: '68' },
+    { key: 'pg_exit_velocity', label: 'Exit Velo', value: formatNumberStat(player.pg_exit_velocity, ' mph'), placeholder: '74' },
+    { key: 'pg_sixty_yard_dash', label: '60 Yard', value: formatNumberStat(player.pg_sixty_yard_dash, ' sec'), placeholder: '7.80' }
+  ];
+  const visibleStats = [...battingStats, ...pitchingStats, ...metricStats];
+  const hasStats = visibleStats.some(stat => stat.value !== '—');
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#F8FAFC' }}>
