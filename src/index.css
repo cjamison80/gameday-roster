@@ -42,8 +42,8 @@
     --card-foreground: 40 10% 8%;
     --popover: 42 100% 99%;
     --popover-foreground: 40 10% 8%;
-    --primary: 36 39% 48%;
-    --primary-foreground: 40 47% 97%;
+    --primary: 355 83% 41%;
+    --primary-foreground: 210 40% 98%;
     --secondary: 38 24% 91%;
     --secondary-foreground: 40 10% 8%;
     --muted: 38 24% 91%;
@@ -54,7 +54,7 @@
     --destructive-foreground: 40 47% 97%;
     --border: 38 22% 84%;
     --input: 38 22% 84%;
-    --ring: 36 39% 48%;
+    --ring: 355 83% 41%;
     --radius: 0.95rem;
 
     --font-heading: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
@@ -87,9 +87,9 @@
     @apply bg-background text-foreground font-body antialiased;
     font-family: var(--font-body);
     background:
-      radial-gradient(circle at 8% -10%, rgba(169, 130, 74, 0.16), transparent 32%),
-      radial-gradient(circle at 96% 3%, rgba(21, 20, 17, 0.08), transparent 28%),
-      linear-gradient(180deg, #F8FAFC 0%, #F5F7FB 50%, #EFE8DC 100%);
+      radial-gradient(circle at 8% -10%, rgba(193, 18, 31, 0.12), transparent 32%),
+      radial-gradient(circle at 96% 3%, rgba(11, 21, 40, 0.10), transparent 28%),
+      linear-gradient(180deg, #F8FAFC 0%, #F5F7FB 50%, #EEF2F7 100%);
     color: var(--gdr-ink);
   }
 
@@ -105,9 +105,9 @@
   .gdr-app-background {
     min-height: 100vh;
     background:
-      radial-gradient(circle at 12% -8%, rgba(169, 130, 74, 0.14), transparent 30%),
-      radial-gradient(circle at 92% 0%, rgba(21, 20, 17, 0.08), transparent 24%),
-      linear-gradient(180deg, #F8FAFC 0%, #F5F7FB 54%, #EFE8DC 100%);
+      radial-gradient(circle at 12% -8%, rgba(193, 18, 31, 0.12), transparent 30%),
+      radial-gradient(circle at 92% 0%, rgba(11, 21, 40, 0.10), transparent 24%),
+      linear-gradient(180deg, #F8FAFC 0%, #F5F7FB 54%, #EEF2F7 100%);
   }
 
   .gdr-page {
@@ -119,9 +119,9 @@
     position: relative;
     overflow: hidden;
     background:
-      linear-gradient(rgba(21, 20, 17, 0.88), rgba(21, 20, 17, 0.94)),
-      radial-gradient(circle at 18% 10%, rgba(169, 130, 74, 0.28), transparent 32%),
-      linear-gradient(135deg, #0B1528 0%, #15213A 58%, #091326 100%);
+      linear-gradient(rgba(11, 21, 40, 0.90), rgba(11, 21, 40, 0.96)),
+      radial-gradient(circle at 18% 10%, rgba(193, 18, 31, 0.34), transparent 32%),
+      linear-gradient(135deg, #081226 0%, #0B1528 52%, #17233A 100%);
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     box-shadow: none;
@@ -144,7 +144,7 @@
     position: absolute;
     inset: auto 24px 0 24px;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(169,130,74,0.72), transparent);
+    background: linear-gradient(90deg, transparent, rgba(193,18,31,0.72), transparent);
     pointer-events: none;
   }
 
@@ -169,7 +169,7 @@
 
   .gdr-card-hover:hover {
     transform: translateY(-2px);
-    border-color: rgba(169, 130, 74, 0.44);
+    border-color: rgba(193, 18, 31, 0.35);
     box-shadow: 0 24px 56px rgba(21, 20, 17, 0.10);
   }
 
