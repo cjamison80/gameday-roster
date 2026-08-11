@@ -43,7 +43,22 @@ export default function TournamentCard({ tournament, onClick }) {
               <Detail icon={Calendar} text={formatDateRange(tournament.start_date, tournament.end_date)} />
               <Detail icon={MapPin} text={`${tournament.city}, ${tournament.state}`} />
               <Detail icon={DollarSign} text={formatCost(tournament.cost)} />
-              <Detail icon={Users} text={`${tournament.teams_entered_count || tournament.teams_entered?.length || 0} teams entered`} />
+              {tournament.teams_url ? (
+                <a
+                  href={tournament.teams_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={e => e.stopPropagation()}
+                  className="flex items-center gap-1.5 min-w-0"
+                >
+                  <Users size={13} color="#C1121F" className="flex-shrink-0" />
+                  <span className="text-xs font-semibold truncate underline" style={{ color: '#C1121F' }}>
+                    {tournament.teams_entered_count || tournament.teams_entered?.length || 0} teams entered
+                  </span>
+                </a>
+              ) : (
+                <Detail icon={Users} text={`${tournament.teams_entered_count || tournament.teams_entered?.length || 0} teams entered`} />
+              )}
             </div>
           </div>
 
