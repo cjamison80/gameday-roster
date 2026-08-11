@@ -9,6 +9,11 @@ const APP_BASE_URL = process.env.BASE44_APP_BASE_URL || process.env.VITE_BASE44_
 const DRY_RUN = process.env.DRY_RUN === 'true';
 const MAX_EVENTS_PER_SOURCE = Number(process.env.MAX_EVENTS_PER_SOURCE || 75);
 const REQUEST_DELAY_MS = Number(process.env.REQUEST_DELAY_MS || 1500);
+const SOURCE_FILTER = process.env.SOURCE_FILTER || process.env.PARSER_KEY_FILTER || '';
+const STATE_FILTER = process.env.STATE_FILTER || '';
+const DEFAULT_STATE = process.env.DEFAULT_STATE || '';
+const SPORT_FILTER = process.env.SPORT_FILTER || '';
+const RUN_TYPE = process.env.RUN_TYPE || 'scheduled';
 
 if (!APP_ID) {
   console.error('Missing BASE44_APP_ID. Set BASE44_APP_ID as an environment variable or repository secret.');
@@ -64,7 +69,7 @@ async function createJob(source, status = 'running', notes = '') {
     association: source.association,
     status,
     started_at: new Date().toISOString(),
-    run_type: 'scheduled',
+    run_type: RUN_TYPE,
     records_found: 0,
     records_created: 0,
     records_updated: 0,
@@ -142,7 +147,18 @@ async function runSource(source) {
     }
 
     const html = await fetchText(source.events_url, source.name);
-    const parsed = parseTournamentHtml(html, source, adapter).slice(0, MAX_EVENTS_PER_SOURCE);
+    const parsed = parseTournamentHtml(html, source, adapter)
+      .map(record => ({
+        ...record,
+        sport: record.sport || SPORT_FILTER || 'baseball',
+        state: record.state || DEFAULT_STATE || ''
+      }))
+      .filter(record => {
+        if (SPORT_FILTER && String(record.sport || '').toLowerCase() !== SPORT_FILTER.toLowerCase()) return false;
+        if (STATE_FILTER && String(record.state || '').toUpperCase() !== STATE_FILTER.toUpperCase()) return false;
+        return true;
+      })
+      .slice(0, MAX_EVENTS_PER_SOURCE);
     recordsFound = parsed.length;
 
     for (const record of parsed) {
@@ -180,13 +196,20 @@ async function runSource(source) {
 
 async function main() {
   const sources = await base44.entities.TournamentSource.list('-created_date', 100);
+  const parserKeys = (SOURCE_FILTER || 'usssa,2d_sports,perfect_game')
+    .split(',')
+    .map(key => key.trim())
+    .filter(Boolean);
   const dailySources = sources.filter(source =>
     source.sync_enabled &&
     source.sync_frequency === 'daily' &&
-    ['usssa', '2d_sports', 'perfect_game'].includes(source.parser_key)
+    parserKeys.includes(source.parser_key)
   );
 
-  console.log(`Daily tournament sync starting. Sources: ${dailySources.map(s => s.name).join(', ') || 'none'}`);
+  console.log(`Tournament sync starting. Sources: ${dailySources.map(s => s.name).join(', ') || 'none'}`);
+  if (STATE_FILTER || SPORT_FILTER) {
+    console.log(`Filters: state=${STATE_FILTER || 'any'}, sport=${SPORT_FILTER || 'any'}`);
+  }
 
   for (const source of dailySources) {
     await runSource(source);
