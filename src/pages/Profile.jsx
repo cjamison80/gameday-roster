@@ -67,7 +67,7 @@ export default function Profile() {
   if (loading) {
     return (
       <div className="gdr-page flex items-center justify-center" >
-        <div className="w-8 h-8 border-4 rounded-full animate-spin" style={{ borderColor: '#DCD6CC', borderTopColor: '#A9824A' }} />
+        <div className="w-8 h-8 border-4 rounded-full animate-spin" style={{ borderColor: '#CBD5E1', borderTopColor: '#C1121F' }} />
       </div>
     );
   }
@@ -83,9 +83,9 @@ export default function Profile() {
             aria-label="Account Settings"
             onClick={() => navigate('/settings')}
             className="w-10 h-10 rounded-full flex items-center justify-center"
-            style={{ backgroundColor: '#2E2B26' }}
+            style={{ backgroundColor: '#17233A' }}
           >
-            <Settings size={20} color="#A39A8E" />
+            <Settings size={20} color="#8B95A7" />
           </button>
         </div>
 
@@ -93,23 +93,23 @@ export default function Profile() {
         <div className="flex items-center gap-4">
           <div className="relative">
             <div className="w-20 h-20  overflow-hidden flex items-center justify-center flex-shrink-0"
-              style={{ backgroundColor: '#2E2B26' }}>
+              style={{ backgroundColor: '#17233A' }}>
               <span className="text-3xl font-black text-white">
                 {getInitials(user?.full_name || '?')}
               </span>
             </div>
             <button className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full flex items-center justify-center"
-              style={{ backgroundColor: '#A9824A' }}>
+              style={{ backgroundColor: '#C1121F' }}>
               <Camera size={13} color="white" />
             </button>
           </div>
           <div>
             <h2 className="text-2xl text-white">{user?.full_name}</h2>
-            <p className="text-sm mt-0.5" style={{ color: '#6F685E' }}>
+            <p className="text-sm mt-0.5" style={{ color: '#5B6475' }}>
               {roleLabel[userProfile?.role] || 'Parent Account'}
             </p>
             {userProfile?.city && (
-              <p className="text-sm mt-0.5" style={{ color: '#6F685E' }}>
+              <p className="text-sm mt-0.5" style={{ color: '#5B6475' }}>
                 📍 {userProfile.city}, {userProfile.state}
               </p>
             )}
@@ -124,31 +124,31 @@ export default function Profile() {
             <button
               onClick={() => navigate('/coach-dashboard')}
               className="w-full flex items-center gap-3 p-4  text-left"
-              style={{ backgroundColor: '#151411' }}
+              style={{ backgroundColor: '#0B1528' }}
             >
-              <div className="w-11 h-11  flex items-center justify-center" style={{ backgroundColor: '#A9824A' }}>
+              <div className="w-11 h-11  flex items-center justify-center" style={{ backgroundColor: '#C1121F' }}>
                 <ClipboardList size={20} color="white" />
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold text-white">Coach Dashboard</h3>
-                <p className="text-xs mt-0.5" style={{ color: '#A39A8E' }}>Manage teams, posts & applicants</p>
+                <p className="text-xs mt-0.5" style={{ color: '#8B95A7' }}>Manage teams, posts & applicants</p>
               </div>
-              <ChevronRight size={18} color="#A39A8E" />
+              <ChevronRight size={18} color="#8B95A7" />
             </button>
 
             <button
               onClick={() => navigate(`/tournaments?state=${userProfile?.state || ''}`)}
               className="w-full flex items-center gap-3 p-4  text-left border border-gray-100"
-              style={{ backgroundColor: '#FFFDF8' }}
+              style={{ backgroundColor: '#FFFFFF' }}
             >
               <div className="w-11 h-11  flex items-center justify-center" style={{ backgroundColor: '#EFE6D6' }}>
-                <Trophy size={20} color="#A9824A" />
+                <Trophy size={20} color="#C1121F" />
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold" style={{ color: '#151411' }}>Find Tournaments</h3>
-                <p className="text-xs mt-0.5" style={{ color: '#6F685E' }}>Search USSSA, 2D, Perfect Game and more</p>
+                <h3 className="font-semibold" style={{ color: '#0B1528' }}>Find Tournaments</h3>
+                <p className="text-xs mt-0.5" style={{ color: '#5B6475' }}>Search USSSA, 2D, Perfect Game and more</p>
               </div>
-              <ChevronRight size={18} color="#A39A8E" />
+              <ChevronRight size={18} color="#8B95A7" />
             </button>
           </div>
         )}
@@ -157,11 +157,11 @@ export default function Profile() {
         {(!userProfile?.role || userProfile?.role === 'parent' || userProfile?.role === 'player') && (
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-2xl" style={{ color: '#151411' }}>My Players</h2>
+              <h2 className="text-2xl" style={{ color: '#0B1528' }}>My Players</h2>
               <button
                 onClick={() => setShowCreatePlayer(true)}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold text-white"
-                style={{ backgroundColor: '#A9824A' }}
+                style={{ backgroundColor: '#C1121F' }}
               >
                 <Plus size={14} />
                 Add Player
@@ -172,14 +172,14 @@ export default function Profile() {
               <div
                 onClick={() => setShowCreatePlayer(true)}
                 className="gdr-card border-2 border-dashed p-8 flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 transition-colors"
-                style={{ borderColor: '#DCD6CC' }}
+                style={{ borderColor: '#CBD5E1' }}
               >
                 <div className="w-14 h-14  flex items-center justify-center mb-3"
-                  style={{ backgroundColor: '#F7F3EC' }}>
-                  <Plus size={24} color="#A9824A" />
+                  style={{ backgroundColor: '#F5F7FB' }}>
+                  <Plus size={24} color="#C1121F" />
                 </div>
-                <p className="font-semibold" style={{ color: '#151411' }}>Add Your First Player</p>
-                <p className="text-sm mt-1 text-center" style={{ color: '#A39A8E' }}>
+                <p className="font-semibold" style={{ color: '#0B1528' }}>Add Your First Player</p>
+                <p className="text-sm mt-1 text-center" style={{ color: '#8B95A7' }}>
                   Create a player profile to start applying to opportunities
                 </p>
               </div>
@@ -190,29 +190,29 @@ export default function Profile() {
                     className="gdr-card p-4 flex items-center gap-3 cursor-pointer hover:shadow-md transition-shadow"
                     onClick={() => navigate(`/player/${player.id}`)}>
                     <div className="w-14 h-14  flex-shrink-0 flex items-center justify-center overflow-hidden"
-                      style={{ backgroundColor: '#F7F3EC' }}>
+                      style={{ backgroundColor: '#F5F7FB' }}>
                       {player.photo_url ? (
                         <Image src={player.photo_url} alt={player.first_name} className="w-14 h-14" fittingType="fill" />
                       ) : (
-                        <span className="text-xl font-black" style={{ color: '#A9824A' }}>
+                        <span className="text-xl font-black" style={{ color: '#C1121F' }}>
                           {player.first_name?.[0]}{player.last_name?.[0]}
                         </span>
                       )}
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-semibold" style={{ color: '#151411' }}>
+                        <h3 className="font-semibold" style={{ color: '#0B1528' }}>
                           {player.first_name} {player.last_name}
                         </h3>
                         {player.is_verified && <VerifiedBadge type="player" size={12} />}
                       </div>
-                      <p className="text-sm mt-0.5" style={{ color: '#6F685E' }}>
+                      <p className="text-sm mt-0.5" style={{ color: '#5B6475' }}>
                         {player.positions?.slice(0, 2).join(', ') || 'No positions set'}
                         {player.age_division ? ` · ${player.age_division}` : ''}
                         {player.classification ? ` · ${player.classification}` : ''}
                       </p>
                     </div>
-                    <ChevronRight size={16} color="#A39A8E" />
+                    <ChevronRight size={16} color="#8B95A7" />
                   </div>
                 ))}
               </div>
@@ -223,7 +223,7 @@ export default function Profile() {
         {/* Favorites */}
         {(favorites.teams.length > 0 || favorites.players.length > 0) && (
           <div>
-            <h2 className="text-2xl mb-3" style={{ color: '#151411' }}>Favorites</h2>
+            <h2 className="text-2xl mb-3" style={{ color: '#0B1528' }}>Favorites</h2>
             <div className="space-y-3">
               {favorites.players.map(p => (
                 <FavoritesRow
@@ -261,10 +261,10 @@ export default function Profile() {
               className="w-full flex items-center gap-3 px-5 py-4 border-b border-gray-50 text-left hover:bg-gray-50 transition-colors last:border-b-0"
             >
               <div className="w-9 h-9  flex items-center justify-center" >
-                <Icon size={18} color="#6F685E" />
+                <Icon size={18} color="#5B6475" />
               </div>
-              <span className="flex-1 font-medium" style={{ color: '#151411' }}>{label}</span>
-              <ChevronRight size={16} color="#A39A8E" />
+              <span className="flex-1 font-medium" style={{ color: '#0B1528' }}>{label}</span>
+              <ChevronRight size={16} color="#8B95A7" />
             </button>
           ))}
           <button
@@ -284,7 +284,7 @@ export default function Profile() {
         <div className="fixed inset-0 z-[60] flex items-end" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
           <div className="w-full bg-white rounded-t-3xl p-6 pb-10 max-h-[92vh] overflow-y-auto">
             <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto" />
-            <h2 className="text-xl font-black" style={{ color: '#151411' }}>Add Player</h2>
+            <h2 className="text-xl font-black" style={{ color: '#0B1528' }}>Add Player</h2>
             <PlayerCreateForm
               user={user}
               onCreated={(p) => { if (p?.id) setPlayers(prev => [...prev, p]); setShowCreatePlayer(false); }}
@@ -307,10 +307,10 @@ function FavoritesRow({ title, sub, onClick }) {
         <Heart size={18} color="#B9232A" fill="#B9232A" />
       </div>
       <div className="flex-1 min-w-0">
-        <h3 className="font-semibold truncate" style={{ color: '#151411' }}>{title}</h3>
-        <p className="text-sm truncate" style={{ color: '#6F685E' }}>{sub}</p>
+        <h3 className="font-semibold truncate" style={{ color: '#0B1528' }}>{title}</h3>
+        <p className="text-sm truncate" style={{ color: '#5B6475' }}>{sub}</p>
       </div>
-      <ChevronRight size={16} color="#A39A8E" />
+      <ChevronRight size={16} color="#8B95A7" />
     </div>
   );
 }

@@ -162,7 +162,7 @@ export default function Discover() {
           <button
             onClick={() => setShowFilters(!showFilters)}
             className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all"
-            style={{ background: showFilters ? '#A9824A' : 'rgba(255,253,248,0.08)', border: '1px solid rgba(255,253,248,0.18)' }}
+            style={{ background: showFilters ? '#C1121F' : 'rgba(255,253,248,0.08)', border: '1px solid rgba(255,253,248,0.18)' }}
           >
             <SlidersHorizontal size={20} color={showFilters ? '#FFFFFF' : '#94A3B8'} />
           </button>
@@ -238,7 +238,7 @@ export default function Discover() {
           <button
             onClick={() => setFilters({ position: '', age_division: '', classification: '', sport: '', sanctioning: '' })}
             className="text-sm font-semibold"
-            style={{ color: '#A9824A' }}
+            style={{ color: '#C1121F' }}
           >
             Clear Filters
           </button>
@@ -278,7 +278,7 @@ export default function Discover() {
 
         {/* Section header */}
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl" style={{ color: '#151411', fontFamily: 'ui-serif, Georgia, Cambria, Times New Roman, Times, serif', fontWeight: 500 }}>
+          <h2 className="text-2xl" style={{ color: '#0B1528', fontFamily: 'ui-serif, Georgia, Cambria, Times New Roman, Times, serif', fontWeight: 500 }}>
             {activeFilter === 'all' ? 'Recommended for You' :
              activeFilter === 'this_weekend' ? 'This Weekend' :
              activeFilter === 'nearby' ? 'Near You' : 'Tryouts'}

@@ -52,8 +52,8 @@ export default function TeamProfilePage() {
   if (!team) {
     return (
       <div className="gdr-page flex flex-col items-center justify-center" >
-        <p className="font-semibold" style={{ color: '#151411' }}>Team not found</p>
-        <button onClick={() => navigate(-1)} className="mt-3 text-sm font-semibold" style={{ color: '#A9824A' }}>Go back</button>
+        <p className="font-semibold" style={{ color: '#0B1528' }}>Team not found</p>
+        <button onClick={() => navigate(-1)} className="mt-3 text-sm font-semibold" style={{ color: '#C1121F' }}>Go back</button>
       </div>
     );
   }
@@ -71,15 +71,15 @@ export default function TeamProfilePage() {
           <button
             onClick={toggleFav}
             className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-bold"
-            style={{ backgroundColor: isFav ? '#B9232A' : '#A9824A', color: '#FFFDF8' }}
+            style={{ backgroundColor: isFav ? '#B9232A' : '#C1121F', color: '#FFFFFF' }}
           >
-            <Heart size={14} fill={isFav ? '#FFFDF8' : 'none'} />
+            <Heart size={14} fill={isFav ? '#FFFFFF' : 'none'} />
             {isFav ? 'Favorited' : 'Favorite'}
           </button>
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="w-20 h-20  overflow-hidden flex-shrink-0 flex items-center justify-center" style={{ backgroundColor: '#2E2B26' }}>
+          <div className="w-20 h-20  overflow-hidden flex-shrink-0 flex items-center justify-center" style={{ backgroundColor: '#17233A' }}>
             {team.logo_url ? (
               <Image src={team.logo_url} alt={team.name} className="w-20 h-20" fittingType="fill" />
             ) : (
@@ -93,18 +93,18 @@ export default function TeamProfilePage() {
             </div>
             {team.city && (
               <div className="flex items-center gap-1 mt-1">
-                <MapPin size={12} color="#6F685E" />
-                <span className="text-sm" style={{ color: '#6F685E' }}>{team.city}, {team.state}</span>
+                <MapPin size={12} color="#5B6475" />
+                <span className="text-sm" style={{ color: '#5B6475' }}>{team.city}, {team.state}</span>
               </div>
             )}
             <div className="flex flex-wrap gap-2 mt-2">
               {team.sport && (
-                <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: '#2E2B26', color: '#A39A8E' }}>
+                <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: '#17233A', color: '#8B95A7' }}>
                   {team.sport}
                 </span>
               )}
               {team.age_division && (
-                <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: '#2E2B26', color: '#FFFDF8' }}>
+                <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: '#17233A', color: '#FFFFFF' }}>
                   {team.age_division}
                 </span>
               )}
@@ -114,7 +114,7 @@ export default function TeamProfilePage() {
                 </span>
               )}
               {team.sanctioning_body && (
-                <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: '#2E2B26', color: '#FDE68A' }}>
+                <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: '#17233A', color: '#FDE68A' }}>
                   {team.sanctioning_body}
                 </span>
               )}
@@ -138,45 +138,45 @@ export default function TeamProfilePage() {
         >
           <div className="flex items-center gap-3">
             <div className="w-12 h-12  flex items-center justify-center" style={{ backgroundColor: '#EFE6D6' }}>
-              <Trophy size={22} color="#A9824A" />
+              <Trophy size={22} color="#C1121F" />
             </div>
             <div>
-              <h3 className="font-semibold" style={{ color: '#151411' }}>Find Tournaments</h3>
-              <p className="text-sm" style={{ color: '#6F685E' }}>Search by mileage, state, association, cost and entered teams.</p>
+              <h3 className="font-semibold" style={{ color: '#0B1528' }}>Find Tournaments</h3>
+              <p className="text-sm" style={{ color: '#5B6475' }}>Search by mileage, state, association, cost and entered teams.</p>
             </div>
           </div>
-          <ExternalLink size={18} color="#A39A8E" />
+          <ExternalLink size={18} color="#8B95A7" />
         </button>
 
         {/* Bio */}
         {team.bio && (
           <div className="gdr-card p-5">
-            <h3 className="font-semibold mb-2" style={{ color: '#151411' }}>About {team.name}</h3>
-            <p className="text-sm leading-relaxed" style={{ color: '#6F685E' }}>{team.bio}</p>
+            <h3 className="font-semibold mb-2" style={{ color: '#0B1528' }}>About {team.name}</h3>
+            <p className="text-sm leading-relaxed" style={{ color: '#5B6475' }}>{team.bio}</p>
           </div>
         )}
 
         {/* Coach */}
         {coach && (
           <div className="gdr-card p-4 flex items-center gap-3">
-            <div className="w-14 h-14  flex-shrink-0 flex items-center justify-center overflow-hidden" style={{ backgroundColor: '#F7F3EC' }}>
+            <div className="w-14 h-14  flex-shrink-0 flex items-center justify-center overflow-hidden" style={{ backgroundColor: '#F5F7FB' }}>
               {coach.photo_url ? (
                 <Image src={coach.photo_url} alt={coach.first_name} className="w-14 h-14" fittingType="fill" />
               ) : (
-                <span className="text-xl font-black" style={{ color: '#A9824A' }}>{coach.first_name?.[0]}{coach.last_name?.[0]}</span>
+                <span className="text-xl font-black" style={{ color: '#C1121F' }}>{coach.first_name?.[0]}{coach.last_name?.[0]}</span>
               )}
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <h3 className="font-semibold" style={{ color: '#151411' }}>{coach.first_name} {coach.last_name}</h3>
+                <h3 className="font-semibold" style={{ color: '#0B1528' }}>{coach.first_name} {coach.last_name}</h3>
                 {coach.is_verified && <VerifiedBadge type="coach" size={12} />}
               </div>
-              <p className="text-sm mt-0.5" style={{ color: '#6F685E' }}>Head Coach{coach.years_coaching ? ` · ${coach.years_coaching} yrs` : ''}</p>
+              <p className="text-sm mt-0.5" style={{ color: '#5B6475' }}>Head Coach{coach.years_coaching ? ` · ${coach.years_coaching} yrs` : ''}</p>
             </div>
             <button
               onClick={() => navigate('/messages')}
               className="flex items-center gap-1.5 px-3 py-2  text-sm font-bold"
-              style={{ backgroundColor: '#151411', color: '#FFFDF8' }}
+              style={{ backgroundColor: '#0B1528', color: '#FFFFFF' }}
             >
               <MessageCircle size={14} />
               Message
@@ -193,7 +193,7 @@ export default function TeamProfilePage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 w-full py-3.5  text-sm font-bold"
-                style={{ backgroundColor: '#F7F3EC', color: '#A9824A' }}
+                style={{ backgroundColor: '#F5F7FB', color: '#C1121F' }}
               >
                 <ExternalLink size={16} />
                 View {team.name} on GameChanger
@@ -216,7 +216,7 @@ export default function TeamProfilePage() {
 
         {/* Active Opportunities */}
         <div>
-          <h2 className="text-2xl mb-3" style={{ color: '#151411' }}>Active Opportunities</h2>
+          <h2 className="text-2xl mb-3" style={{ color: '#0B1528' }}>Active Opportunities</h2>
           {opportunities.length > 0 ? (
             <div className="space-y-3">
               {opportunities.map(opp => (
@@ -230,8 +230,8 @@ export default function TeamProfilePage() {
             </div>
           ) : (
             <div className="gdr-card p-8 text-center">
-              <p className="font-semibold" style={{ color: '#151411' }}>No active opportunities</p>
-              <p className="text-sm mt-1" style={{ color: '#A39A8E' }}>This team isn't recruiting right now.</p>
+              <p className="font-semibold" style={{ color: '#0B1528' }}>No active opportunities</p>
+              <p className="text-sm mt-1" style={{ color: '#8B95A7' }}>This team isn't recruiting right now.</p>
             </div>
           )}
         </div>
@@ -243,9 +243,9 @@ export default function TeamProfilePage() {
 function StatCard({ icon: Icon, label, value }) {
   return (
     <div className="gdr-card p-4 text-center">
-      <Icon size={18} color="#A9824A" className="mx-auto mb-1" />
-      <p className="text-xl font-black" style={{ color: '#151411' }}>{value}</p>
-      <p className="text-xs mt-0.5" style={{ color: '#6F685E' }}>{label}</p>
+      <Icon size={18} color="#C1121F" className="mx-auto mb-1" />
+      <p className="text-xl font-black" style={{ color: '#0B1528' }}>{value}</p>
+      <p className="text-xs mt-0.5" style={{ color: '#5B6475' }}>{label}</p>
     </div>
   );
 }

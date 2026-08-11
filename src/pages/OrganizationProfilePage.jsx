@@ -41,8 +41,8 @@ export default function OrganizationProfilePage() {
   if (!org) {
     return (
       <div className="gdr-page flex flex-col items-center justify-center" >
-        <p className="font-semibold" style={{ color: '#151411' }}>Organization not found</p>
-        <button onClick={() => navigate(-1)} className="mt-3 text-sm font-semibold" style={{ color: '#A9824A' }}>Go back</button>
+        <p className="font-semibold" style={{ color: '#0B1528' }}>Organization not found</p>
+        <button onClick={() => navigate(-1)} className="mt-3 text-sm font-semibold" style={{ color: '#C1121F' }}>Go back</button>
       </div>
     );
   }
@@ -57,11 +57,11 @@ export default function OrganizationProfilePage() {
         </button>
 
         <div className="flex items-center gap-4">
-          <div className="w-24 h-24  overflow-hidden flex-shrink-0 flex items-center justify-center" style={{ backgroundColor: '#2E2B26' }}>
+          <div className="w-24 h-24  overflow-hidden flex-shrink-0 flex items-center justify-center" style={{ backgroundColor: '#17233A' }}>
             {org.logo_url ? (
               <Image src={org.logo_url} alt={org.name} className="w-24 h-24" fittingType="fill" />
             ) : (
-              <span className="text-3xl font-black" style={{ color: '#A9824A' }}>{initials}</span>
+              <span className="text-3xl font-black" style={{ color: '#C1121F' }}>{initials}</span>
             )}
           </div>
           <div className="flex-1">
@@ -71,27 +71,27 @@ export default function OrganizationProfilePage() {
             </div>
             {org.city && (
               <div className="flex items-center gap-1 mt-1">
-                <MapPin size={12} color="#6F685E" />
-                <span className="text-sm" style={{ color: '#6F685E' }}>{org.city}, {org.state}</span>
+                <MapPin size={12} color="#5B6475" />
+                <span className="text-sm" style={{ color: '#5B6475' }}>{org.city}, {org.state}</span>
               </div>
             )}
             {org.website && (
               <a href={org.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 mt-1">
-                <Globe size={12} color="#A9824A" />
-                <span className="text-sm font-semibold" style={{ color: '#A9824A' }}>Website</span>
+                <Globe size={12} color="#C1121F" />
+                <span className="text-sm font-semibold" style={{ color: '#C1121F' }}>Website</span>
               </a>
             )}
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-3 mt-5">
-          <div className=" p-3 text-center" style={{ backgroundColor: '#2E2B26' }}>
+          <div className=" p-3 text-center" style={{ backgroundColor: '#17233A' }}>
             <p className="text-2xl text-white">{teams.length}</p>
-            <p className="text-xs mt-1" style={{ color: '#A39A8E' }}>Teams</p>
+            <p className="text-xs mt-1" style={{ color: '#8B95A7' }}>Teams</p>
           </div>
-          <div className=" p-3 text-center" style={{ backgroundColor: '#2E2B26' }}>
+          <div className=" p-3 text-center" style={{ backgroundColor: '#17233A' }}>
             <p className="text-2xl text-white">{teams.filter(t => t.is_recruiting).length}</p>
-            <p className="text-xs mt-1" style={{ color: '#A39A8E' }}>Recruiting</p>
+            <p className="text-xs mt-1" style={{ color: '#8B95A7' }}>Recruiting</p>
           </div>
         </div>
       </div>
@@ -104,21 +104,21 @@ export default function OrganizationProfilePage() {
         >
           <div className="flex items-center gap-3">
             <div className="w-12 h-12  flex items-center justify-center" style={{ backgroundColor: '#EFE6D6' }}>
-              <Trophy size={22} color="#A9824A" />
+              <Trophy size={22} color="#C1121F" />
             </div>
             <div>
-              <h3 className="font-semibold" style={{ color: '#151411' }}>Find Tournaments</h3>
-              <p className="text-sm" style={{ color: '#6F685E' }}>Browse events across all organization teams by association, state, mileage, age and cost.</p>
+              <h3 className="font-semibold" style={{ color: '#0B1528' }}>Find Tournaments</h3>
+              <p className="text-sm" style={{ color: '#5B6475' }}>Browse events across all organization teams by association, state, mileage, age and cost.</p>
             </div>
           </div>
-          <ExternalLink size={18} color="#A39A8E" />
+          <ExternalLink size={18} color="#8B95A7" />
         </button>
 
         {/* Description */}
         {org.description && (
           <div className="gdr-card p-5">
-            <h3 className="font-semibold mb-2" style={{ color: '#151411' }}>About {org.name}</h3>
-            <p className="text-sm leading-relaxed" style={{ color: '#6F685E' }}>{org.description}</p>
+            <h3 className="font-semibold mb-2" style={{ color: '#0B1528' }}>About {org.name}</h3>
+            <p className="text-sm leading-relaxed" style={{ color: '#5B6475' }}>{org.description}</p>
           </div>
         )}
 
@@ -126,41 +126,41 @@ export default function OrganizationProfilePage() {
         {org.sports?.length > 0 && (
           <div className="flex flex-wrap gap-2">
             {org.sports.map(s => (
-              <span key={s} className="px-3 py-1.5  text-sm font-bold capitalize" style={{ backgroundColor: '#F7F3EC', color: '#A9824A' }}>{s}</span>
+              <span key={s} className="px-3 py-1.5  text-sm font-bold capitalize" style={{ backgroundColor: '#F5F7FB', color: '#C1121F' }}>{s}</span>
             ))}
           </div>
         )}
 
         {/* Teams */}
         <div>
-          <h2 className="text-2xl mb-3" style={{ color: '#151411' }}>Teams</h2>
+          <h2 className="text-2xl mb-3" style={{ color: '#0B1528' }}>Teams</h2>
           {teams.length > 0 ? (
             <div className="space-y-3">
               {teams.map(team => (
                 <div key={team.id}
                   onClick={() => navigate(`/team/${team.id}`)}
                   className="gdr-card p-4 flex items-center gap-3 cursor-pointer hover:shadow-md transition-shadow">
-                  <div className="w-12 h-12  flex-shrink-0 flex items-center justify-center" style={{ backgroundColor: '#F7F3EC' }}>
-                    <span className="font-semibold" style={{ color: '#A9824A' }}>
+                  <div className="w-12 h-12  flex-shrink-0 flex items-center justify-center" style={{ backgroundColor: '#F5F7FB' }}>
+                    <span className="font-semibold" style={{ color: '#C1121F' }}>
                       {team.name?.split(' ').map(w => w[0]).join('').slice(0, 3)}
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold truncate" style={{ color: '#151411' }}>{team.name}</h3>
-                    <p className="text-sm" style={{ color: '#6F685E' }}>
+                    <h3 className="font-semibold truncate" style={{ color: '#0B1528' }}>{team.name}</h3>
+                    <p className="text-sm" style={{ color: '#5B6475' }}>
                       {team.age_division || '—'}{team.classification ? ` · ${team.classification}` : ''}
                     </p>
                   </div>
                   {team.is_recruiting && (
-                    <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: '#F7F3EC', color: '#A9824A' }}>Recruiting</span>
+                    <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: '#F5F7FB', color: '#C1121F' }}>Recruiting</span>
                   )}
                 </div>
               ))}
             </div>
           ) : (
             <div className="gdr-card p-8 text-center">
-              <p className="font-semibold" style={{ color: '#151411' }}>No teams yet</p>
-              <p className="text-sm mt-1" style={{ color: '#A39A8E' }}>This organization hasn't added any teams.</p>
+              <p className="font-semibold" style={{ color: '#0B1528' }}>No teams yet</p>
+              <p className="text-sm mt-1" style={{ color: '#8B95A7' }}>This organization hasn't added any teams.</p>
             </div>
           )}
         </div>

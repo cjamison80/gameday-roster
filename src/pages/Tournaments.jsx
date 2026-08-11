@@ -82,22 +82,22 @@ export default function Tournaments() {
           </button>
           <div>
             <h1 className="text-3xl text-white">Tournament Finder</h1>
-            <p className="text-sm" style={{ color: '#A39A8E' }}>
+            <p className="text-sm" style={{ color: '#8B95A7' }}>
               Find events by location, association, age, cost and entered teams.
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2  px-4 py-3" style={{ backgroundColor: '#2E2B26' }}>
-          <Search size={18} color="#6F685E" />
+        <div className="flex items-center gap-2  px-4 py-3" style={{ backgroundColor: '#17233A' }}>
+          <Search size={18} color="#5B6475" />
           <input
             value={query}
             onChange={e => setQuery(e.target.value)}
             placeholder="Search tournaments, venues, cities..."
             className="flex-1 bg-transparent text-sm outline-none placeholder-gray-500"
-            style={{ color: '#F7F3EC' }}
+            style={{ color: '#F5F7FB' }}
           />
-          {query && <button onClick={() => setQuery('')}><X size={16} color="#6F685E" /></button>}
+          {query && <button onClick={() => setQuery('')}><X size={16} color="#5B6475" /></button>}
         </div>
       </div>
 
@@ -106,18 +106,18 @@ export default function Tournaments() {
           <button
             onClick={() => setShowFilters(v => !v)}
             className="flex items-center gap-2 px-4 py-2.5 font-black uppercase tracking-[0.16em] text-xs gdr-chip"
-            style={{ backgroundColor: '#FFFDF8', color: '#151411', border: '1px solid #DCD6CC' }}
+            style={{ backgroundColor: '#FFFFFF', color: '#0B1528', border: '1px solid #CBD5E1' }}
           >
             <SlidersHorizontal size={16} />
             Filters
             {activeFilterCount > 0 && (
-              <span className="ml-1 px-2 py-0.5 rounded-full text-xs font-black text-white" style={{ backgroundColor: '#A9824A' }}>
+              <span className="ml-1 px-2 py-0.5 rounded-full text-xs font-black text-white" style={{ backgroundColor: '#C1121F' }}>
                 {activeFilterCount}
               </span>
             )}
           </button>
           {userLocation.state && (
-            <div className="flex items-center gap-1 text-xs font-semibold" style={{ color: '#6F685E' }}>
+            <div className="flex items-center gap-1 text-xs font-semibold" style={{ color: '#5B6475' }}>
               <MapPin size={13} /> Based near {userLocation.city ? `${userLocation.city}, ` : ''}{userLocation.state}
             </div>
           )}
@@ -132,14 +132,14 @@ export default function Tournaments() {
               <Select label="Class" value={filters.classification} onChange={v => updateFilter('classification', v)} options={CLASSIFICATIONS} />
               <Select label="Radius" value={filters.radius} onChange={v => updateFilter('radius', v)} options={RADIUS_OPTIONS.map(String)} suffix="miles" />
               <div>
-                <label className="text-xs font-bold mb-1.5 block" style={{ color: '#6F685E' }}>Max Cost</label>
+                <label className="text-xs font-bold mb-1.5 block" style={{ color: '#5B6475' }}>Max Cost</label>
                 <input
                   type="number"
                   value={filters.maxCost}
                   onChange={e => updateFilter('maxCost', e.target.value)}
                   placeholder="No limit"
                   className="gdr-select w-full px-3 py-2.5 text-sm outline-none"
-                  style={{ color: '#151411' }}
+                  style={{ color: '#0B1528' }}
                 />
               </div>
             </div>
@@ -147,27 +147,27 @@ export default function Tournaments() {
               <button
                 onClick={clearFilters}
                 className="py-3  text-sm font-bold border-2"
-                style={{ color: '#6F685E', borderColor: '#DCD6CC' }}
+                style={{ color: '#5B6475', borderColor: '#CBD5E1' }}
               >
                 Clear Filters
               </button>
               <button
                 onClick={() => setShowFilters(false)}
                 className="py-3  text-sm font-bold text-white"
-                style={{ backgroundColor: '#A9824A' }}
+                style={{ backgroundColor: '#C1121F' }}
               >
                 Apply Filters · {filtered.length}
               </button>
             </div>
-            <p className="text-xs leading-relaxed" style={{ color: '#A39A8E' }}>
+            <p className="text-xs leading-relaxed" style={{ color: '#8B95A7' }}>
               Radius filtering is currently a state-level MVP proxy until latitude/longitude data is synced from approved tournament sources.
             </p>
           </div>
         )}
 
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl" style={{ color: '#151411' }}>{filtered.length} tournaments</h2>
-          <span className="text-xs font-semibold" style={{ color: '#A39A8E' }}>Imported / synced listings</span>
+          <h2 className="text-2xl" style={{ color: '#0B1528' }}>{filtered.length} tournaments</h2>
+          <span className="text-xs font-semibold" style={{ color: '#8B95A7' }}>Imported / synced listings</span>
         </div>
 
         {loading ? (
@@ -181,8 +181,8 @@ export default function Tournaments() {
         ) : (
           <div className="gdr-card p-8 text-center">
             <div className="text-5xl mb-3">🏆</div>
-            <p className="font-semibold" style={{ color: '#151411' }}>No tournaments found</p>
-            <p className="text-sm mt-1" style={{ color: '#A39A8E' }}>Try clearing filters or expanding your search radius.</p>
+            <p className="font-semibold" style={{ color: '#0B1528' }}>No tournaments found</p>
+            <p className="text-sm mt-1" style={{ color: '#8B95A7' }}>Try clearing filters or expanding your search radius.</p>
           </div>
         )}
       </div>
@@ -193,12 +193,12 @@ export default function Tournaments() {
 function Select({ label, value, onChange, options, suffix }) {
   return (
     <div>
-      <label className="text-xs font-bold mb-1.5 block" style={{ color: '#6F685E' }}>{label}</label>
+      <label className="text-xs font-bold mb-1.5 block" style={{ color: '#5B6475' }}>{label}</label>
       <select
         value={value}
         onChange={e => onChange(e.target.value)}
         className="gdr-select w-full px-3 py-2.5 text-sm outline-none"
-        style={{ color: '#151411' }}
+        style={{ color: '#0B1528' }}
       >
         <option value="">All</option>
         {options.map(o => <option key={o} value={o}>{o}{suffix ? ` ${suffix}` : ''}</option>)}

@@ -129,7 +129,7 @@ export default function CoachDashboard() {
       {/* Header */}
       <div className="gdr-hero px-5 pt-14 pb-8">
         <h1 className="text-2xl font-black text-white mb-1">Coach Dashboard</h1>
-        <p className="text-sm" style={{ color: '#6F685E' }}>
+        <p className="text-sm" style={{ color: '#5B6475' }}>
           {coach ? `${coach.first_name} ${coach.last_name}` : user?.full_name}
         </p>
 
@@ -142,9 +142,9 @@ export default function CoachDashboard() {
         <button
           onClick={() => navigate(`/tournaments?state=${userProfile?.state || ''}${teams[0]?.age_division ? `&age=${teams[0].age_division}` : ''}${teams[0]?.classification ? `&classification=${teams[0].classification}` : ''}`)}
           className="w-full flex items-center justify-center gap-2 mt-5 py-3.5 font-black uppercase tracking-[0.16em] text-xs"
-          style={{ backgroundColor: '#EFE6D6', color: '#151411' }}
+          style={{ backgroundColor: '#EFE6D6', color: '#0B1528' }}
         >
-          <Trophy size={18} color="#A9824A" />
+          <Trophy size={18} color="#C1121F" />
           Find Tournaments
         </button>
       </div>
@@ -155,7 +155,7 @@ export default function CoachDashboard() {
           <button
             onClick={() => navigate('/create-opportunity')}
             className="w-full flex items-center justify-center gap-2 py-4 font-black uppercase tracking-[0.16em] text-xs text-white"
-            style={{ backgroundColor: '#A9824A' }}
+            style={{ backgroundColor: '#C1121F' }}
           >
             <Plus size={18} />
             Post New Opportunity
@@ -164,15 +164,15 @@ export default function CoachDashboard() {
 
         {opportunities.length === 0 && teams.length === 0 && (
           <div className="gdr-card p-8 text-center">
-            <p className="font-semibold" style={{ color: '#151411' }}>Your roster starts here</p>
-            <p className="text-sm mt-1" style={{ color: '#A39A8E' }}>Create a team and post your first pickup opportunity.</p>
+            <p className="font-semibold" style={{ color: '#0B1528' }}>Your roster starts here</p>
+            <p className="text-sm mt-1" style={{ color: '#8B95A7' }}>Create a team and post your first pickup opportunity.</p>
           </div>
         )}
 
         {/* My Teams */}
         {teams.length > 0 && (
           <div>
-            <h2 className="text-2xl mb-3" style={{ color: '#151411' }}>My Teams</h2>
+            <h2 className="text-2xl mb-3" style={{ color: '#0B1528' }}>My Teams</h2>
             <div className="space-y-3">
               {teams.map(team => (
                 <div
@@ -180,25 +180,25 @@ export default function CoachDashboard() {
                   onClick={() => navigate(`/team/${team.id}`)}
                   className="gdr-card p-4 flex items-center gap-3 cursor-pointer hover:shadow-md transition-shadow"
                 >
-                  <div className="w-12 h-12  flex-shrink-0 flex items-center justify-center" style={{ backgroundColor: '#F7F3EC' }}>
-                    <span className="font-semibold" style={{ color: '#A9824A' }}>
+                  <div className="w-12 h-12  flex-shrink-0 flex items-center justify-center" style={{ backgroundColor: '#F5F7FB' }}>
+                    <span className="font-semibold" style={{ color: '#C1121F' }}>
                       {team.name?.split(' ').map(w => w[0]).join('').slice(0, 3)}
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold truncate" style={{ color: '#151411' }}>{team.name}</h3>
+                    <h3 className="font-semibold truncate" style={{ color: '#0B1528' }}>{team.name}</h3>
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="text-sm" style={{ color: '#6F685E' }}>
+                      <span className="text-sm" style={{ color: '#5B6475' }}>
                         {team.age_division || '—'}{team.classification ? ` · ${team.classification}` : ''}
                       </span>
                       {team.sanctioning_body && (
-                        <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: '#EFE6D6', color: '#A9824A' }}>
+                        <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: '#EFE6D6', color: '#C1121F' }}>
                           {team.sanctioning_body}
                         </span>
                       )}
                     </div>
                   </div>
-                  <ChevronRight size={16} color="#A39A8E" />
+                  <ChevronRight size={16} color="#8B95A7" />
                 </div>
               ))}
             </div>
@@ -208,11 +208,11 @@ export default function CoachDashboard() {
         {/* Applicants */}
         {isCoach ? (
           <div>
-            <h2 className="text-2xl mb-3" style={{ color: '#151411' }}>Applicants</h2>
+            <h2 className="text-2xl mb-3" style={{ color: '#0B1528' }}>Applicants</h2>
             {applications.length === 0 ? (
               <div className="gdr-card p-8 text-center">
-                <p className="font-semibold" style={{ color: '#151411' }}>No applications yet</p>
-                <p className="text-sm mt-1" style={{ color: '#A39A8E' }}>Applicants will appear here once parents apply to your opportunities.</p>
+                <p className="font-semibold" style={{ color: '#0B1528' }}>No applications yet</p>
+                <p className="text-sm mt-1" style={{ color: '#8B95A7' }}>Applicants will appear here once parents apply to your opportunities.</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -222,8 +222,8 @@ export default function CoachDashboard() {
                   return (
                     <div key={opp.id} className="gdr-card p-4">
                       <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-semibold text-sm" style={{ color: '#151411' }}>{opp.title}</h3>
-                        <button onClick={() => navigate(`/opportunity/${opp.id}`)} className="text-xs font-semibold" style={{ color: '#A9824A' }}>View</button>
+                        <h3 className="font-semibold text-sm" style={{ color: '#0B1528' }}>{opp.title}</h3>
+                        <button onClick={() => navigate(`/opportunity/${opp.id}`)} className="text-xs font-semibold" style={{ color: '#C1121F' }}>View</button>
                       </div>
                       <div className="space-y-3">
                         {oppApps.map(app => {
@@ -231,23 +231,23 @@ export default function CoachDashboard() {
                           const score = player ? calculateMatchScore({ player, opportunity: opp }) : 0;
                           return (
                             <div key={app.id} className="flex items-center gap-3 py-2 border-t border-gray-50 first:border-0">
-                              <div className="w-11 h-11  flex-shrink-0 flex items-center justify-center overflow-hidden" style={{ backgroundColor: '#F7F3EC' }}>
+                              <div className="w-11 h-11  flex-shrink-0 flex items-center justify-center overflow-hidden" style={{ backgroundColor: '#F5F7FB' }}>
                                 {player?.photo_url ? (
                                   <Image src={player.photo_url} alt={player.first_name} className="w-11 h-11" fittingType="fill" />
                                 ) : (
-                                  <span className="font-semibold" style={{ color: '#A9824A' }}>
+                                  <span className="font-semibold" style={{ color: '#C1121F' }}>
                                     {player ? `${player.first_name[0]}${player.last_name[0]}` : '?'}
                                   </span>
                                 )}
                               </div>
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2">
-                                  <button onClick={() => navigate(`/player/${app.player_id}`)} className="font-semibold text-sm truncate" style={{ color: '#151411' }}>
+                                  <button onClick={() => navigate(`/player/${app.player_id}`)} className="font-semibold text-sm truncate" style={{ color: '#0B1528' }}>
                                     {player ? `${player.first_name} ${player.last_name}` : 'Unknown player'}
                                   </button>
                                   {player?.is_verified && <VerifiedBadge type="player" size={11} />}
                                 </div>
-                                <p className="text-xs" style={{ color: '#6F685E' }}>
+                                <p className="text-xs" style={{ color: '#5B6475' }}>
                                   {player?.positions?.join(', ') || 'No positions'}{player?.age_division ? ` · ${player.age_division}` : ''}
                                 </p>
                                 <p className="text-xs mt-0.5" style={{ color: getMatchScoreColor(score) }}>
@@ -282,7 +282,7 @@ export default function CoachDashboard() {
                                 <button
                                   onClick={() => navigate('/messages')}
                                   className="w-9 h-9  flex items-center justify-center"
-                                  style={{ backgroundColor: '#151411' }}
+                                  style={{ backgroundColor: '#0B1528' }}
                                   title="Open messages"
                                 >
                                   <MessageCircle size={16} color="white" />
@@ -300,8 +300,8 @@ export default function CoachDashboard() {
           </div>
         ) : (
           <div className="gdr-card p-8 text-center">
-            <p className="font-semibold" style={{ color: '#151411' }}>Coach tools</p>
-            <p className="text-sm mt-1" style={{ color: '#A39A8E' }}>This dashboard is for coach accounts. Switch your role in onboarding to access these tools.</p>
+            <p className="font-semibold" style={{ color: '#0B1528' }}>Coach tools</p>
+            <p className="text-sm mt-1" style={{ color: '#8B95A7' }}>This dashboard is for coach accounts. Switch your role in onboarding to access these tools.</p>
           </div>
         )}
       </div>
@@ -311,20 +311,20 @@ export default function CoachDashboard() {
 
 function HeaderStat({ icon: Icon, value, label }) {
   return (
-    <div className=" p-3 text-center" style={{ backgroundColor: '#2E2B26' }}>
-      <Icon size={16} color="#A39A8E" className="mx-auto mb-1" />
+    <div className=" p-3 text-center" style={{ backgroundColor: '#17233A' }}>
+      <Icon size={16} color="#8B95A7" className="mx-auto mb-1" />
       <p className="text-2xl text-white">{value}</p>
-      <p className="text-xs" style={{ color: '#A39A8E' }}>{label}</p>
+      <p className="text-xs" style={{ color: '#8B95A7' }}>{label}</p>
     </div>
   );
 }
 
 function StatusPill({ status }) {
   const map = {
-    pending: { bg: '#EFE6D6', color: '#765B34', label: 'Pending' },
+    pending: { bg: '#EFE6D6', color: '#8F0F1A', label: 'Pending' },
     accepted: { bg: '#E7EDE2', color: '#4F7A59', label: 'Accepted' },
     declined: { bg: '#F1DADA', color: '#B9232A', label: 'Declined' },
-    withdrawn: { bg: '#F0ECE3', color: '#6F685E', label: 'Withdrawn' }
+    withdrawn: { bg: '#EEF2F7', color: '#5B6475', label: 'Withdrawn' }
   };
   const c = map[status] || map.pending;
   return (

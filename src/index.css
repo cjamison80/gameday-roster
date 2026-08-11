@@ -5,35 +5,35 @@
 @layer base {
   :root {
     /* GameDay Roster — Modern Editorial Luxury System */
-    --gdr-ink: #151411;
-    --gdr-charcoal: #22201B;
-    --gdr-graphite: #2E2B26;
-    --gdr-stone: #6F685E;
-    --gdr-taupe: #A39A8E;
-    --gdr-line: #DCD6CC;
-    --gdr-line-soft: #E9E4DB;
-    --gdr-ivory: #F7F3EC;
-    --gdr-cream: #FBF8F1;
-    --gdr-card: #FFFDF8;
-    --gdr-bronze: #A9824A;
-    --gdr-bronze-dark: #765B34;
+    --gdr-ink: #0B1528;
+    --gdr-charcoal: #111C34;
+    --gdr-graphite: #17233A;
+    --gdr-stone: #5B6475;
+    --gdr-taupe: #8B95A7;
+    --gdr-line: #CBD5E1;
+    --gdr-line-soft: #E2E8F0;
+    --gdr-ivory: #F5F7FB;
+    --gdr-cream: #F8FAFC;
+    --gdr-card: #FFFFFF;
+    --gdr-bronze: #C1121F;
+    --gdr-bronze-dark: #8F0F1A;
     --gdr-red: #B9232A;
     --gdr-blue: #1E3A5F;
     --gdr-green: #4F7A59;
 
     /* Legacy brand vars retained for compatibility */
-    --midnight-navy: #151411;
+    --midnight-navy: #0B1528;
     --electric-blue: #1E3A5F;
     --victory-red: #B9232A;
     --field-green: #4F7A59;
-    --championship-gold: #A9824A;
+    --championship-gold: #C1121F;
     --elite-purple: #6B5B7A;
-    --ink: #151411;
-    --muted-ink: #6F685E;
-    --soft-line: #DCD6CC;
-    --surface: #FFFDF8;
-    --surface-soft: #F7F3EC;
-    --surface-tint: #F0ECE3;
+    --ink: #0B1528;
+    --muted-ink: #5B6475;
+    --soft-line: #CBD5E1;
+    --surface: #FFFFFF;
+    --surface-soft: #F5F7FB;
+    --surface-tint: #EEF2F7;
 
     /* shadcn tokens mapped to editorial palette */
     --background: 38 35% 95%;
@@ -89,7 +89,7 @@
     background:
       radial-gradient(circle at 8% -10%, rgba(169, 130, 74, 0.16), transparent 32%),
       radial-gradient(circle at 96% 3%, rgba(21, 20, 17, 0.08), transparent 28%),
-      linear-gradient(180deg, #FBF8F1 0%, #F7F3EC 50%, #EFE8DC 100%);
+      linear-gradient(180deg, #F8FAFC 0%, #F5F7FB 50%, #EFE8DC 100%);
     color: var(--gdr-ink);
   }
 
@@ -107,7 +107,7 @@
     background:
       radial-gradient(circle at 12% -8%, rgba(169, 130, 74, 0.14), transparent 30%),
       radial-gradient(circle at 92% 0%, rgba(21, 20, 17, 0.08), transparent 24%),
-      linear-gradient(180deg, #FBF8F1 0%, #F7F3EC 54%, #EFE8DC 100%);
+      linear-gradient(180deg, #F8FAFC 0%, #F5F7FB 54%, #EFE8DC 100%);
   }
 
   .gdr-page {
@@ -121,7 +121,7 @@
     background:
       linear-gradient(rgba(21, 20, 17, 0.88), rgba(21, 20, 17, 0.94)),
       radial-gradient(circle at 18% 10%, rgba(169, 130, 74, 0.28), transparent 32%),
-      linear-gradient(135deg, #151411 0%, #26231D 58%, #171613 100%);
+      linear-gradient(135deg, #0B1528 0%, #15213A 58%, #091326 100%);
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     box-shadow: none;
@@ -194,7 +194,7 @@
     border-radius: 0;
     border-color: var(--gdr-ink);
     background: var(--gdr-ink);
-    color: #FBF8F1;
+    color: #F8FAFC;
     box-shadow: none;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -211,7 +211,7 @@
   .gdr-input-dark {
     background: rgba(255, 253, 248, 0.08);
     border: 1px solid rgba(255, 253, 248, 0.18);
-    color: #FBF8F1;
+    color: #F8FAFC;
     backdrop-filter: blur(18px);
   }
 

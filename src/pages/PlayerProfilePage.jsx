@@ -125,7 +125,7 @@ export default function PlayerProfilePage({ publicView = false }) {
   if (loading) {
     return (
       <div className="gdr-page flex items-center justify-center" >
-        <div className="w-8 h-8 border-4 rounded-full animate-spin" style={{ borderColor: '#DCD6CC', borderTopColor: '#A9824A' }} />
+        <div className="w-8 h-8 border-4 rounded-full animate-spin" style={{ borderColor: '#CBD5E1', borderTopColor: '#C1121F' }} />
       </div>
     );
   }
@@ -133,8 +133,8 @@ export default function PlayerProfilePage({ publicView = false }) {
   if (!player) {
     return (
       <div className="gdr-page flex flex-col items-center justify-center" >
-        <p className="font-semibold" style={{ color: '#151411' }}>Player not found</p>
-        <button onClick={() => navigate(-1)} className="mt-3 text-sm font-semibold" style={{ color: '#A9824A' }}>Go back</button>
+        <p className="font-semibold" style={{ color: '#0B1528' }}>Player not found</p>
+        <button onClick={() => navigate(-1)} className="mt-3 text-sm font-semibold" style={{ color: '#C1121F' }}>Go back</button>
       </div>
     );
   }
@@ -195,9 +195,9 @@ export default function PlayerProfilePage({ publicView = false }) {
               <button
                 onClick={toggleFav}
                 className="w-9 h-9 rounded-full flex items-center justify-center"
-                style={{ backgroundColor: '#2E2B26' }}
+                style={{ backgroundColor: '#17233A' }}
               >
-                <Heart size={18} fill={isFav ? '#B9232A' : 'none'} color={isFav ? '#B9232A' : '#FFFDF8'} />
+                <Heart size={18} fill={isFav ? '#B9232A' : 'none'} color={isFav ? '#B9232A' : '#FFFFFF'} />
               </button>
             )}
             {isOwner && (
@@ -205,7 +205,7 @@ export default function PlayerProfilePage({ publicView = false }) {
                 <button
                   onClick={handleCopyPublicProfile}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold"
-                  style={{ backgroundColor: '#EFE6D6', color: '#765B34' }}
+                  style={{ backgroundColor: '#EFE6D6', color: '#8F0F1A' }}
                 >
                   <Share size={14} />
                   Public Link
@@ -213,7 +213,7 @@ export default function PlayerProfilePage({ publicView = false }) {
                 <button
                   onClick={() => setEditing(!editing)}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold"
-                  style={{ backgroundColor: '#2E2B26', color: '#FFFDF8' }}
+                  style={{ backgroundColor: '#17233A', color: '#FFFFFF' }}
                 >
                   <Edit size={14} />
                   {editing ? 'Cancel' : 'Edit'}
@@ -226,7 +226,7 @@ export default function PlayerProfilePage({ publicView = false }) {
         {/* Player hero */}
         <div className="flex items-center gap-4">
           <div className="relative">
-            <div className="w-24 h-24  overflow-hidden flex-shrink-0" style={{ backgroundColor: '#2E2B26' }}>
+            <div className="w-24 h-24  overflow-hidden flex-shrink-0" style={{ backgroundColor: '#17233A' }}>
               {(editing ? editData.photo_url : player.photo_url) ? (
                 <Image src={editing ? editData.photo_url : player.photo_url} alt={fullName} className="w-24 h-24" fittingType="fill" />
               ) : (
@@ -244,7 +244,7 @@ export default function PlayerProfilePage({ publicView = false }) {
                 style={{ backgroundColor: uploadingPhoto ? 'rgba(11,21,40,0.7)' : 'rgba(11,21,40,0.5)' }}
               >
                 {uploadingPhoto ? (
-                  <div className="w-6 h-6 border-2 rounded-full animate-spin" style={{ borderColor: 'rgba(255,255,255,0.3)', borderTopColor: '#FFFDF8' }} />
+                  <div className="w-6 h-6 border-2 rounded-full animate-spin" style={{ borderColor: 'rgba(255,255,255,0.3)', borderTopColor: '#FFFFFF' }} />
                 ) : (
                   <Camera size={22} color="white" />
                 )}
@@ -262,20 +262,20 @@ export default function PlayerProfilePage({ publicView = false }) {
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-3xl text-white">{fullName}</h1>
               {player.is_verified && (
-                <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: '#A9824A' }}>
+                <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: '#C1121F' }}>
                   <span className="text-white text-xs font-black">✓</span>
                 </div>
               )}
             </div>
-            <p className="text-sm mt-1" style={{ color: '#6F685E' }}>
+            <p className="text-sm mt-1" style={{ color: '#5B6475' }}>
               {player.bats && player.throws ? `B: ${player.bats} / T: ${player.throws}` : ''}
               {player.height_inches ? ` · ${Math.floor(player.height_inches/12)}'${player.height_inches%12}"` : ''}
               {player.weight_lbs ? ` · ${player.weight_lbs} lbs` : ''}
             </p>
             {player.city && (
               <div className="flex items-center gap-1 mt-1">
-                <MapPin size={12} color="#6F685E" />
-                <span className="text-sm" style={{ color: '#6F685E' }}>{player.city}, {player.state}</span>
+                <MapPin size={12} color="#5B6475" />
+                <span className="text-sm" style={{ color: '#5B6475' }}>{player.city}, {player.state}</span>
               </div>
             )}
           </div>
@@ -285,8 +285,8 @@ export default function PlayerProfilePage({ publicView = false }) {
       <div className="px-5 py-5 space-y-5">
         {editing && (
           <div className="gdr-card p-4">
-            <label htmlFor="pp-photo-url" className="text-sm font-semibold mb-1.5 block" style={{ color: '#151411' }}>Profile Photo</label>
-            <p className="text-xs mb-2" style={{ color: '#6F685E' }}>Upload via the camera icon on the avatar, or paste an image URL below.</p>
+            <label htmlFor="pp-photo-url" className="text-sm font-semibold mb-1.5 block" style={{ color: '#0B1528' }}>Profile Photo</label>
+            <p className="text-xs mb-2" style={{ color: '#5B6475' }}>Upload via the camera icon on the avatar, or paste an image URL below.</p>
             <input
               id="pp-photo-url"
               type="url"
@@ -294,13 +294,13 @@ export default function PlayerProfilePage({ publicView = false }) {
               onChange={e => setEditData(d => ({ ...d, photo_url: e.target.value }))}
               placeholder="https://.../photo.jpg"
               className="w-full  px-4 py-3 text-sm border border-gray-200 outline-none"
-              style={{ color: '#151411' }}
+              style={{ color: '#0B1528' }}
             />
           </div>
         )}
         {/* Parent/guardian-run disclaimer */}
-        <div className="flex items-start gap-2  p-4" style={{ backgroundColor: '#F7F3EC', border: '1px solid #DBEAFE' }}>
-          <ShieldCheck size={18} color="#A9824A" className="flex-shrink-0 mt-0.5" />
+        <div className="flex items-start gap-2  p-4" style={{ backgroundColor: '#F5F7FB', border: '1px solid #DBEAFE' }}>
+          <ShieldCheck size={18} color="#C1121F" className="flex-shrink-0 mt-0.5" />
           <p className="text-xs leading-relaxed font-semibold" style={{ color: '#1E3A8A' }}>
             This player page is created and managed by {player.guardian_name ? player.guardian_name : 'a parent or legal guardian'}{player.guardian_relationship ? ` (${player.guardian_relationship})` : ''}. Player profiles on GameDay Roster are parent/guardian-run.
           </p>
@@ -310,12 +310,12 @@ export default function PlayerProfilePage({ publicView = false }) {
         <div className="flex gap-3">
           <AvailabilityChip status={availability?.status || 'not_set'} />
           {player.age_division && (
-            <span className="px-3 py-1 rounded-full text-sm font-bold" style={{ backgroundColor: '#F0ECE3', color: '#151411' }}>
+            <span className="px-3 py-1 rounded-full text-sm font-bold" style={{ backgroundColor: '#EEF2F7', color: '#0B1528' }}>
               {player.age_division}
             </span>
           )}
           {player.classification && (
-            <span className="px-3 py-1 rounded-full text-sm font-bold" style={{ backgroundColor: '#EFE6D6', color: '#A9824A' }}>
+            <span className="px-3 py-1 rounded-full text-sm font-bold" style={{ backgroundColor: '#EFE6D6', color: '#C1121F' }}>
               {player.classification}
             </span>
           )}
@@ -329,11 +329,11 @@ export default function PlayerProfilePage({ publicView = false }) {
         {/* Positions */}
         {player.positions?.length > 0 && (
           <div className="gdr-card p-5">
-            <h3 className="font-semibold mb-3" style={{ color: '#151411' }}>Positions</h3>
+            <h3 className="font-semibold mb-3" style={{ color: '#0B1528' }}>Positions</h3>
             <div className="flex flex-wrap gap-2">
               {player.positions.map(pos => (
                 <span key={pos} className="px-3 py-1.5  text-sm font-bold"
-                  style={{ backgroundColor: '#F7F3EC', color: '#A9824A' }}>
+                  style={{ backgroundColor: '#F5F7FB', color: '#C1121F' }}>
                   {pos}
                 </span>
               ))}
@@ -344,7 +344,7 @@ export default function PlayerProfilePage({ publicView = false }) {
         {/* Bio */}
         {(player.bio || editing) && (
           <div className="gdr-card p-5">
-            <h3 className="font-semibold mb-2" style={{ color: '#151411' }}>About {player.first_name}</h3>
+            <h3 className="font-semibold mb-2" style={{ color: '#0B1528' }}>About {player.first_name}</h3>
             {editing ? (
               <textarea
                 value={editData.bio || ''}
@@ -352,10 +352,10 @@ export default function PlayerProfilePage({ publicView = false }) {
                 rows={4}
                 placeholder="Tell coaches about this player..."
                 className="w-full  px-4 py-3 text-sm border border-gray-200 outline-none resize-none"
-                style={{ color: '#151411' }}
+                style={{ color: '#0B1528' }}
               />
             ) : (
-              <p className="text-sm leading-relaxed" style={{ color: '#6F685E' }}>{player.bio}</p>
+              <p className="text-sm leading-relaxed" style={{ color: '#5B6475' }}>{player.bio}</p>
             )}
           </div>
         )}
@@ -368,13 +368,13 @@ export default function PlayerProfilePage({ publicView = false }) {
           <div className="gdr-card p-5">
             <div className="flex items-start justify-between gap-3 mb-4">
               <div>
-                <h3 className="font-semibold" style={{ color: '#151411' }}>Player Stats</h3>
-                <p className="text-xs mt-1" style={{ color: '#6F685E' }}>
+                <h3 className="font-semibold" style={{ color: '#0B1528' }}>Player Stats</h3>
+                <p className="text-xs mt-1" style={{ color: '#5B6475' }}>
                   {player.perfect_game_connection_status === 'connected' ? 'Connected to Perfect Game profile' : 'Manual stats now, Perfect Game sync-ready'}
                 </p>
               </div>
               {player.perfect_game_url && !editing && (
-                <a href={player.perfect_game_url} target="_blank" rel="noopener noreferrer" className="text-xs font-bold px-3 py-1.5 rounded-full" style={{ backgroundColor: '#EFE6D6', color: '#765B34' }}>
+                <a href={player.perfect_game_url} target="_blank" rel="noopener noreferrer" className="text-xs font-bold px-3 py-1.5 rounded-full" style={{ backgroundColor: '#EFE6D6', color: '#8F0F1A' }}>
                   PG
                 </a>
               )}
@@ -395,7 +395,7 @@ export default function PlayerProfilePage({ publicView = false }) {
             )}
 
             {player.pg_stats_last_synced_at && !editing && (
-              <p className="text-xs mt-4" style={{ color: '#A39A8E' }}>
+              <p className="text-xs mt-4" style={{ color: '#8B95A7' }}>
                 Last updated {new Date(player.pg_stats_last_synced_at).toLocaleDateString()}
               </p>
             )}
@@ -404,11 +404,11 @@ export default function PlayerProfilePage({ publicView = false }) {
 
         {/* Player Info */}
         <div className="gdr-card p-5">
-          <h3 className="font-semibold mb-3" style={{ color: '#151411' }}>Player Info</h3>
+          <h3 className="font-semibold mb-3" style={{ color: '#0B1528' }}>Player Info</h3>
           <div className="space-y-2">
             {editing ? (
               <div className="py-2 border-b border-gray-50">
-                <span className="text-sm font-semibold block mb-2" style={{ color: '#151411' }}>Bats</span>
+                <span className="text-sm font-semibold block mb-2" style={{ color: '#0B1528' }}>Bats</span>
                 <div className="grid grid-cols-3 gap-2">
                   {['Right', 'Left', 'Switch'].map(b => (
                     <button
@@ -417,16 +417,16 @@ export default function PlayerProfilePage({ publicView = false }) {
                       onClick={() => setEditData(d => ({ ...d, bats: d.bats === b ? '' : b }))}
                       className="py-2  border-2 text-sm font-bold transition-all active:scale-[0.98]"
                       style={{
-                        borderColor: editData.bats === b ? '#A9824A' : '#DCD6CC',
-                        backgroundColor: editData.bats === b ? '#F7F3EC' : '#FFFDF8',
-                        color: editData.bats === b ? '#A9824A' : '#6F685E'
+                        borderColor: editData.bats === b ? '#C1121F' : '#CBD5E1',
+                        backgroundColor: editData.bats === b ? '#F5F7FB' : '#FFFFFF',
+                        color: editData.bats === b ? '#C1121F' : '#5B6475'
                       }}
                     >
                       {b}
                     </button>
                   ))}
                 </div>
-                <span className="text-sm font-semibold block mt-3 mb-2" style={{ color: '#151411' }}>Throws</span>
+                <span className="text-sm font-semibold block mt-3 mb-2" style={{ color: '#0B1528' }}>Throws</span>
                 <div className="grid grid-cols-2 gap-2">
                   {['Right', 'Left'].map(t => (
                     <button
@@ -435,9 +435,9 @@ export default function PlayerProfilePage({ publicView = false }) {
                       onClick={() => setEditData(d => ({ ...d, throws: d.throws === t ? '' : t }))}
                       className="py-2  border-2 text-sm font-bold transition-all active:scale-[0.98]"
                       style={{
-                        borderColor: editData.throws === t ? '#A9824A' : '#DCD6CC',
-                        backgroundColor: editData.throws === t ? '#F7F3EC' : '#FFFDF8',
-                        color: editData.throws === t ? '#A9824A' : '#6F685E'
+                        borderColor: editData.throws === t ? '#C1121F' : '#CBD5E1',
+                        backgroundColor: editData.throws === t ? '#F5F7FB' : '#FFFFFF',
+                        color: editData.throws === t ? '#C1121F' : '#5B6475'
                       }}
                     >
                       {t}
@@ -447,8 +447,8 @@ export default function PlayerProfilePage({ publicView = false }) {
               </div>
             ) : (
               <div className="flex items-center justify-between py-2 border-b border-gray-50">
-                <span className="text-sm" style={{ color: '#6F685E' }}>Bats / Throws</span>
-                <span className="text-sm font-semibold" style={{ color: '#151411' }}>{player.bats && player.throws ? `${player.bats} / ${player.throws}` : 'Not set'}</span>
+                <span className="text-sm" style={{ color: '#5B6475' }}>Bats / Throws</span>
+                <span className="text-sm font-semibold" style={{ color: '#0B1528' }}>{player.bats && player.throws ? `${player.bats} / ${player.throws}` : 'Not set'}</span>
               </div>
             )}
             {[
@@ -458,8 +458,8 @@ export default function PlayerProfilePage({ publicView = false }) {
               { label: 'Current Team', value: player.current_team_name || 'Not set' }
             ].map(({ label, value }) => (
               <div key={label} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
-                <span className="text-sm" style={{ color: '#6F685E' }}>{label}</span>
-                <span className="text-sm font-semibold" style={{ color: '#151411' }}>{value}</span>
+                <span className="text-sm" style={{ color: '#5B6475' }}>{label}</span>
+                <span className="text-sm font-semibold" style={{ color: '#0B1528' }}>{value}</span>
               </div>
             ))}
           </div>
@@ -468,66 +468,66 @@ export default function PlayerProfilePage({ publicView = false }) {
         {/* Parent / Guardian info */}
         {(player.guardian_name || player.guardian_relationship || isOwner) && (
           <div className="gdr-card p-5">
-            <h3 className="font-semibold mb-3" style={{ color: '#151411' }}>Parent / Guardian</h3>
+            <h3 className="font-semibold mb-3" style={{ color: '#0B1528' }}>Parent / Guardian</h3>
             <div className="space-y-2">
               <div className="flex items-center justify-between py-2 border-b border-gray-50">
-                <span className="text-sm" style={{ color: '#6F685E' }}>Name</span>
+                <span className="text-sm" style={{ color: '#5B6475' }}>Name</span>
                 {editing ? (
                   <input
                     value={editData.guardian_name || ''}
                     onChange={e => setEditData(d => ({ ...d, guardian_name: e.target.value }))}
                     placeholder="Parent / Guardian name"
                     className="rounded-lg px-3 py-1.5 text-sm border border-gray-200 outline-none text-right"
-                    style={{ color: '#151411' }}
+                    style={{ color: '#0B1528' }}
                   />
                 ) : (
-                  <span className="text-sm font-semibold" style={{ color: '#151411' }}>{player.guardian_name || 'Not provided'}</span>
+                  <span className="text-sm font-semibold" style={{ color: '#0B1528' }}>{player.guardian_name || 'Not provided'}</span>
                 )}
               </div>
               <div className="flex items-center justify-between py-2 border-b border-gray-50">
-                <span className="text-sm" style={{ color: '#6F685E' }}>Relationship</span>
+                <span className="text-sm" style={{ color: '#5B6475' }}>Relationship</span>
                 {editing ? (
                   <select
                     value={editData.guardian_relationship || ''}
                     onChange={e => setEditData(d => ({ ...d, guardian_relationship: e.target.value }))}
                     className="rounded-lg px-3 py-1.5 text-sm border border-gray-200 outline-none"
-                    style={{ color: '#151411' }}
+                    style={{ color: '#0B1528' }}
                   >
                     <option value="">Select</option>
                     {['Mother', 'Father', 'Legal Guardian', 'Grandparent', 'Other'].map(r => <option key={r} value={r}>{r}</option>)}
                   </select>
                 ) : (
-                  <span className="text-sm font-semibold" style={{ color: '#151411' }}>{player.guardian_relationship || 'Not provided'}</span>
+                  <span className="text-sm font-semibold" style={{ color: '#0B1528' }}>{player.guardian_relationship || 'Not provided'}</span>
                 )}
               </div>
               {isOwner && (
                 <>
                   <div className="flex items-center justify-between py-2 border-b border-gray-50">
-                    <span className="text-sm" style={{ color: '#6F685E' }}>Email</span>
+                    <span className="text-sm" style={{ color: '#5B6475' }}>Email</span>
                     {editing ? (
                       <input
                         value={editData.guardian_email || ''}
                         onChange={e => setEditData(d => ({ ...d, guardian_email: e.target.value }))}
                         placeholder="email@example.com"
                         className="rounded-lg px-3 py-1.5 text-sm border border-gray-200 outline-none text-right"
-                        style={{ color: '#151411' }}
+                        style={{ color: '#0B1528' }}
                       />
                     ) : (
-                      <span className="text-sm font-semibold" style={{ color: '#151411' }}>{player.guardian_email || 'Not provided'}</span>
+                      <span className="text-sm font-semibold" style={{ color: '#0B1528' }}>{player.guardian_email || 'Not provided'}</span>
                     )}
                   </div>
                   <div className="flex items-center justify-between py-2">
-                    <span className="text-sm" style={{ color: '#6F685E' }}>Phone</span>
+                    <span className="text-sm" style={{ color: '#5B6475' }}>Phone</span>
                     {editing ? (
                       <input
                         value={editData.guardian_phone || ''}
                         onChange={e => setEditData(d => ({ ...d, guardian_phone: e.target.value }))}
                         placeholder="(555) 123-4567"
                         className="rounded-lg px-3 py-1.5 text-sm border border-gray-200 outline-none text-right"
-                        style={{ color: '#151411' }}
+                        style={{ color: '#0B1528' }}
                       />
                     ) : (
-                      <span className="text-sm font-semibold" style={{ color: '#151411' }}>{player.guardian_phone || 'Not provided'}</span>
+                      <span className="text-sm font-semibold" style={{ color: '#0B1528' }}>{player.guardian_phone || 'Not provided'}</span>
                     )}
                   </div>
                 </>
@@ -539,7 +539,7 @@ export default function PlayerProfilePage({ publicView = false }) {
         {/* Linked profiles: Perfect Game + GameChanger + Sideline HD */}
         {(player.perfect_game_url || player.gamechanger_url || player.sidelinehd_url || (isOwner && editing)) && (
           <div className="gdr-card p-5">
-            <h3 className="font-semibold mb-3" style={{ color: '#151411' }}>Linked Profiles</h3>
+            <h3 className="font-semibold mb-3" style={{ color: '#0B1528' }}>Linked Profiles</h3>
             <div className="space-y-3">
               <div>
                 {editing ? (
@@ -547,7 +547,7 @@ export default function PlayerProfilePage({ publicView = false }) {
                     <div className="flex items-center justify-between gap-3 mb-2">
                       <div>
                         <label className="text-xs font-semibold block" style={{ color: '#713F12' }}>Perfect Game Profile URL</label>
-                        <p className="text-xs mt-0.5" style={{ color: '#765B34' }}>Paste the player's public PerfectGame.org profile link.</p>
+                        <p className="text-xs mt-0.5" style={{ color: '#8F0F1A' }}>Paste the player's public PerfectGame.org profile link.</p>
                       </div>
                       {editData.perfect_game_connection_status === 'connected' && (
                         <span className="text-xs font-bold px-2 py-1 rounded-full" style={{ backgroundColor: '#E7EDE2', color: '#4F7A59' }}>Connected</span>
@@ -558,19 +558,19 @@ export default function PlayerProfilePage({ publicView = false }) {
                       onChange={e => setEditData(d => ({ ...d, perfect_game_url: e.target.value, perfect_game_connection_status: e.target.value ? 'needs_review' : 'not_connected' }))}
                       placeholder="https://www.perfectgame.org/Players/Playerprofile.aspx?ID=..."
                       className="w-full  px-4 py-3 text-sm border border-yellow-200 outline-none bg-white"
-                      style={{ color: '#151411' }}
+                      style={{ color: '#0B1528' }}
                     />
                     <button
                       type="button"
                       onClick={handleConnectPerfectGame}
                       className="w-full mt-3 py-3  text-sm font-bold flex items-center justify-center gap-2"
-                      style={{ backgroundColor: '#151411', color: '#FFFDF8' }}
+                      style={{ backgroundColor: '#0B1528', color: '#FFFFFF' }}
                     >
                       <ExternalLink size={15} />
                       Connect Perfect Game Profile
                     </button>
                     {editData.perfect_game_player_id && (
-                      <p className="text-xs mt-2" style={{ color: '#765B34' }}>Detected PG ID: {editData.perfect_game_player_id}</p>
+                      <p className="text-xs mt-2" style={{ color: '#8F0F1A' }}>Detected PG ID: {editData.perfect_game_player_id}</p>
                     )}
                   </div>
                 ) : player.perfect_game_url && (
@@ -579,7 +579,7 @@ export default function PlayerProfilePage({ publicView = false }) {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-2 w-full py-3  text-sm font-bold"
-                    style={{ backgroundColor: '#EFE6D6', color: '#765B34' }}
+                    style={{ backgroundColor: '#EFE6D6', color: '#8F0F1A' }}
                   >
                     <ExternalLink size={16} />
                     View {player.first_name} on Perfect Game
@@ -589,13 +589,13 @@ export default function PlayerProfilePage({ publicView = false }) {
               <div>
                 {editing ? (
                   <>
-                    <label className="text-xs font-semibold block mb-1" style={{ color: '#6F685E' }}>GameChanger URL</label>
+                    <label className="text-xs font-semibold block mb-1" style={{ color: '#5B6475' }}>GameChanger URL</label>
                     <input
                       value={editData.gamechanger_url || ''}
                       onChange={e => setEditData(d => ({ ...d, gamechanger_url: e.target.value }))}
                       placeholder="https://www.gc.com/..."
                       className="w-full  px-4 py-3 text-sm border border-gray-200 outline-none"
-                      style={{ color: '#151411' }}
+                      style={{ color: '#0B1528' }}
                     />
                   </>
                 ) : player.gamechanger_url && (
@@ -604,7 +604,7 @@ export default function PlayerProfilePage({ publicView = false }) {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-2 w-full py-3  text-sm font-bold"
-                    style={{ backgroundColor: '#F7F3EC', color: '#A9824A' }}
+                    style={{ backgroundColor: '#F5F7FB', color: '#C1121F' }}
                   >
                     <ExternalLink size={16} />
                     View {player.first_name} on GameChanger
@@ -614,13 +614,13 @@ export default function PlayerProfilePage({ publicView = false }) {
               <div>
                 {editing ? (
                   <>
-                    <label className="text-xs font-semibold block mb-1" style={{ color: '#6F685E' }}>Sideline HD URL</label>
+                    <label className="text-xs font-semibold block mb-1" style={{ color: '#5B6475' }}>Sideline HD URL</label>
                     <input
                       value={editData.sidelinehd_url || ''}
                       onChange={e => setEditData(d => ({ ...d, sidelinehd_url: e.target.value }))}
                       placeholder="https://sidelinehd.com/..."
                       className="w-full  px-4 py-3 text-sm border border-gray-200 outline-none"
-                      style={{ color: '#151411' }}
+                      style={{ color: '#0B1528' }}
                     />
                   </>
                 ) : player.sidelinehd_url && (
@@ -646,7 +646,7 @@ export default function PlayerProfilePage({ publicView = false }) {
             onClick={handleSave}
             disabled={saving}
             className="w-full py-4  font-bold text-white"
-            style={{ backgroundColor: '#A9824A' }}
+            style={{ backgroundColor: '#C1121F' }}
           >
             {saving ? 'Saving...' : 'Save Changes'}
           </button>
@@ -657,7 +657,7 @@ export default function PlayerProfilePage({ publicView = false }) {
           <button
             onClick={() => navigate('/messages')}
             className="w-full py-4  font-bold flex items-center justify-center gap-2"
-            style={{ backgroundColor: '#151411', color: '#FFFDF8' }}
+            style={{ backgroundColor: '#0B1528', color: '#FFFFFF' }}
           >
             <MessageCircle size={18} />
             Send Message
@@ -673,12 +673,12 @@ function StatDisplayGroup({ title, stats }) {
   if (shown.length === 0) return null;
   return (
     <div>
-      <h4 className="text-xs font-black uppercase tracking-wide mb-2" style={{ color: '#6F685E' }}>{title}</h4>
+      <h4 className="text-xs font-black uppercase tracking-wide mb-2" style={{ color: '#5B6475' }}>{title}</h4>
       <div className="grid grid-cols-3 gap-2">
         {shown.map(stat => (
           <div key={stat.key} className=" p-3 text-center" >
-            <p className="text-2xl" style={{ color: '#151411' }}>{stat.value}</p>
-            <p className="text-[10px] font-bold mt-0.5" style={{ color: '#6F685E' }}>{stat.label}</p>
+            <p className="text-2xl" style={{ color: '#0B1528' }}>{stat.value}</p>
+            <p className="text-[10px] font-bold mt-0.5" style={{ color: '#5B6475' }}>{stat.label}</p>
           </div>
         ))}
       </div>
@@ -689,11 +689,11 @@ function StatDisplayGroup({ title, stats }) {
 function StatEditGroup({ title, stats, editData, setEditData }) {
   return (
     <div>
-      <h4 className="text-xs font-black uppercase tracking-wide mb-2" style={{ color: '#6F685E' }}>{title}</h4>
+      <h4 className="text-xs font-black uppercase tracking-wide mb-2" style={{ color: '#5B6475' }}>{title}</h4>
       <div className="grid grid-cols-3 gap-2">
         {stats.map(stat => (
           <label key={stat.key} className="block">
-            <span className="text-[10px] font-bold mb-1 block" style={{ color: '#6F685E' }}>{stat.label}</span>
+            <span className="text-[10px] font-bold mb-1 block" style={{ color: '#5B6475' }}>{stat.label}</span>
             <input
               type="number"
               step="any"
@@ -701,7 +701,7 @@ function StatEditGroup({ title, stats, editData, setEditData }) {
               onChange={e => setEditData(d => ({ ...d, [stat.key]: e.target.value === '' ? '' : Number(e.target.value), pg_stats_last_synced_at: new Date().toISOString() }))}
               placeholder={stat.placeholder}
               className="gdr-select w-full px-3 py-2.5 text-sm outline-none"
-              style={{ color: '#151411' }}
+              style={{ color: '#0B1528' }}
             />
           </label>
         ))}

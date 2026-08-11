@@ -31,18 +31,18 @@ export default function BottomNav({ unreadMessages = 0, unreadNotifications = 0 
                 className="relative flex flex-1 flex-col items-center justify-center gap-1 px-1 py-2 transition-all duration-200"
                 style={{
                   minHeight: 54,
-                  background: isActive ? '#151411' : 'transparent'
+                  background: isActive ? '#0B1528' : 'transparent'
                 }}
               >
                 <div className="relative flex items-center justify-center">
                   <Icon
                     size={19}
-                    color={isActive ? '#FBF8F1' : '#A39A8E'}
+                    color={isActive ? '#F8FAFC' : '#8B95A7'}
                     strokeWidth={isActive ? 2.5 : 1.8}
                   />
                   {badge > 0 && (
                     <span
-                      className="absolute -top-2 -right-2 flex items-center justify-center rounded-full text-white font-black ring-2 ring-[#FFFDF8]"
+                      className="absolute -top-2 -right-2 flex items-center justify-center rounded-full text-white font-black ring-2 ring-[#FFFFFF]"
                       style={{ backgroundColor: '#B9232A', fontSize: 9, minWidth: 17, height: 17, padding: '0 4px' }}
                     >
                       {badge > 99 ? '99+' : badge}
@@ -51,7 +51,7 @@ export default function BottomNav({ unreadMessages = 0, unreadNotifications = 0 
                 </div>
                 <span
                   className="text-center font-black leading-none uppercase"
-                  style={{ fontSize: 9, color: isActive ? '#FBF8F1' : '#A39A8E', letterSpacing: '0.12em' }}
+                  style={{ fontSize: 9, color: isActive ? '#F8FAFC' : '#8B95A7', letterSpacing: '0.12em' }}
                 >
                   {label}
                 </span>
