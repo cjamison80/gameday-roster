@@ -128,18 +128,17 @@ export default function Discover() {
   const firstName = user?.full_name?.split(' ')[0] || 'there';
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#F8FAFC' }}>
+    <div className="gdr-page">
       {/* Header */}
-      <div style={{ backgroundColor: '#0B1528' }} className="px-5 pt-14 pb-5">
+      <div className="gdr-hero px-5 pt-14 pb-6">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <p className="text-sm font-medium" style={{ color: '#64748B' }}>Good morning, {firstName} 👋</p>
+            <p className="text-sm font-semibold" style={{ color: '#94A3B8' }}>Good morning, {firstName} 👋</p>
             <GameDayLogo size={28} showText={true} light={true} />
           </div>
           <button
             onClick={() => navigate('/activity')}
-            className="w-10 h-10 rounded-full flex items-center justify-center relative"
-            style={{ backgroundColor: '#1E293B' }}
+            className="gdr-glass w-11 h-11 rounded-2xl flex items-center justify-center relative"
           >
             <Bell size={20} color="#94A3B8" />
           </button>
@@ -147,7 +146,7 @@ export default function Discover() {
 
         {/* Search bar */}
         <div className="flex items-center gap-2">
-          <div className="flex-1 flex items-center gap-2 rounded-xl px-4 py-3" style={{ backgroundColor: '#1E293B' }}>
+          <div className="gdr-input-dark flex-1 flex items-center gap-2 rounded-2xl px-4 py-3.5">
             <Search size={18} color="#64748B" />
             <input
               value={searchQuery}
@@ -162,8 +161,8 @@ export default function Discover() {
           </div>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="w-12 h-12 rounded-xl flex items-center justify-center"
-            style={{ backgroundColor: showFilters ? '#2563EB' : '#1E293B' }}
+            className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all"
+            style={{ background: showFilters ? 'linear-gradient(135deg, #2563EB, #1D4ED8)' : 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.14)' }}
           >
             <SlidersHorizontal size={20} color={showFilters ? '#FFFFFF' : '#94A3B8'} />
           </button>
