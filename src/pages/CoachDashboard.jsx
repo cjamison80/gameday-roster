@@ -138,6 +138,15 @@ export default function CoachDashboard() {
           <HeaderStat icon={ClipboardList} value={opportunities.length} label="Posts" />
           <HeaderStat icon={MessageCircle} value={pendingApps.length} label="Pending" />
         </div>
+
+        <button
+          onClick={() => navigate(`/tournaments?state=${userProfile?.state || ''}${teams[0]?.age_division ? `&age=${teams[0].age_division}` : ''}${teams[0]?.classification ? `&classification=${teams[0].classification}` : ''}`)}
+          className="w-full flex items-center justify-center gap-2 mt-5 py-3.5 rounded-2xl font-bold"
+          style={{ backgroundColor: '#FEFCE8', color: '#0B1528' }}
+        >
+          <Trophy size={18} color="#D4A017" />
+          Find Tournaments
+        </button>
       </div>
 
       <div className="px-5 py-5 space-y-5">
