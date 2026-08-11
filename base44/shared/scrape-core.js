@@ -193,6 +193,173 @@ export function buildTournamentKey(record = {}) {
     .join('|');
 }
 
+// ---- 2D Sports (youth.2dsports.org) ----
+// youth.2dsports.org is a separate, non-CAPTCHA-protected registration platform
+// (Playbook365-based) from the main 2dsports.org marketing site, which does
+// actively block bots. The homepage's "Latest Tournaments" list is loaded via
+// an authenticated-session AJAX call (Laravel CSRF cookie + token), recovered
+// from youth.2dsports.org's own frontend JS (assets/frontend/js/m-1006.js).
+// Individual event blocks use schema.org Event microdata (<meta itemprop=...>),
+// not JSON-LD, so they need their own extraction rather than extractJsonLd().
+const TWO_D_SPORTS_BASE = 'https://youth.2dsports.org';
+const TWO_D_SPORTS_USER_AGENT = 'GameDayRosterBot/0.1 (+tournament-discovery; contact app admin)';
+// Real weekend tournaments run 1–3 days. Season passes/memberships (the only
+// items shown before pagination kicks in) span months, so a duration cutoff
+// cleanly separates real tournaments from registration products without
+// relying on the (unreliable, always-set-to-online) eventStatus field.
+const TWO_D_SPORTS_MAX_EVENT_DAYS = 10;
+
+function parseTwoDSportsDate(mmddyyyy = '') {
+  const m = String(mmddyyyy).match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (!m) return null;
+  const [, mm, dd, yyyy] = m;
+  return new Date(`${yyyy}-${mm}-${dd}T00:00:00Z`);
+}
+
+function extractTwoDSportsEventBlocks(html = '') {
+  return html.split(/(?=<div class="block blogeBox)/).slice(1);
+}
+
+function parseTwoDSportsBlock(block = '') {
+  const nameMatch = block.match(/itemprop="name" content="([^"]+)"/);
+  const startMatch = block.match(/itemprop="startDate" content="([^"]+)"/);
+  const endMatch = block.match(/itemprop="endDate" content="([^"]+)"/);
+  const cityMatch = block.match(/itemprop="addressLocality" content="([^"]+)"/);
+  const stateMatch = block.match(/itemprop="addressRegion" content="([^"]+)"/);
+  const hrefMatch = [...block.matchAll(/href="(https:\/\/youth\.2dsports\.org\/events\/[^"\/]+(?:-[^"\/]+)*)"/g)]
+    .map(m => m[1])
+    .find(href => !href.endsWith('/teams'));
+
+  if (!nameMatch || !startMatch || !hrefMatch) return null;
+
+  const startDateObj = parseTwoDSportsDate(startMatch[1]);
+  const endDateObj = endMatch ? parseTwoDSportsDate(endMatch[1]) : startDateObj;
+  if (!startDateObj) return null;
+
+  const durationDays = endDateObj ? Math.round((endDateObj - startDateObj) / 86400000) : 0;
+  if (durationDays > TWO_D_SPORTS_MAX_EVENT_DAYS) return null; // season pass / membership, not a tournament
+  if (/membership|pricing|unlimited play/i.test(nameMatch[1])) return null;
+
+  const toIso = d => d.toISOString().slice(0, 10);
+
+  return {
+    name: nameMatch[1].trim(),
+    association: '2D Sports',
+    sport: 'baseball',
+    age_divisions: [],
+    classifications: [],
+    start_date: toIso(startDateObj),
+    end_date: toIso(endDateObj || startDateObj),
+    city: cityMatch ? cityMatch[1].trim() : '',
+    state: stateMatch ? stateMatch[1].trim() : '',
+    venue: cityMatch ? cityMatch[1].trim() : '',
+    cost: 0,
+    currency: 'USD',
+    spots_available: null,
+    teams_entered_count: 0,
+    teams_entered: [],
+    registration_url: hrefMatch,
+    source_url: hrefMatch,
+    status: 'open',
+    description: ''
+  };
+}
+
+async function twoDSportsSession(fetchTimeoutMs) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), fetchTimeoutMs);
+  let res;
+  try {
+    res = await fetch(`${TWO_D_SPORTS_BASE}/`, {
+      signal: controller.signal,
+      headers: { 'User-Agent': TWO_D_SPORTS_USER_AGENT }
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
+
+  if ([401, 403, 429, 503].includes(res.status)) {
+    const err = new Error(`2D Sports homepage returned ${res.status}. Stopping source sync.`);
+    err.blocked = true;
+    throw err;
+  }
+
+  const html = await res.text();
+  if (/sgcaptcha|cdn-cgi\/challenge-platform|Just a moment\.\.\./.test(html) && html.length < 8000) {
+    const err = new Error('2D Sports served a bot-challenge page. Stopping source sync.');
+    err.blocked = true;
+    throw err;
+  }
+
+  const tokenMatch = html.match(/<meta name="csrf-token" content="([^"]+)"/);
+  if (!tokenMatch) {
+    throw new Error('2D Sports: could not find csrf-token on homepage — site markup may have changed.');
+  }
+
+  const setCookies = typeof res.headers.getSetCookie === 'function'
+    ? res.headers.getSetCookie()
+    : [res.headers.get('set-cookie')].filter(Boolean);
+  const cookieHeader = setCookies.map(c => c.split(';')[0]).join('; ');
+
+  return { token: tokenMatch[1], cookieHeader };
+}
+
+async function fetchTwoDSportsPage(session, page, fetchTimeoutMs) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), fetchTimeoutMs);
+  let res;
+  try {
+    res = await fetch(`${TWO_D_SPORTS_BASE}/ajax-events`, {
+      method: 'POST',
+      signal: controller.signal,
+      headers: {
+        'User-Agent': TWO_D_SPORTS_USER_AGENT,
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Cookie': session.cookieHeader
+      },
+      body: new URLSearchParams({ page: String(page), layout: 'medium', past_events: '', _token: session.token }).toString()
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
+
+  if ([401, 403, 429, 503].includes(res.status)) {
+    const err = new Error(`2D Sports ajax-events returned ${res.status}. Stopping source sync.`);
+    err.blocked = true;
+    throw err;
+  }
+  if (!res.ok) {
+    throw new Error(`2D Sports ajax-events fetch failed: ${res.status} ${res.statusText}`);
+  }
+
+  const data = await res.json();
+  return typeof data.html === 'string' ? data.html : '';
+}
+
+export async function fetchTwoDSportsRecords({ fetchTimeoutMs = 15000, maxPages = 5 } = {}) {
+  const session = await twoDSportsSession(fetchTimeoutMs);
+  const records = [];
+
+  for (let page = 1; page <= maxPages; page++) {
+    const html = await fetchTwoDSportsPage(session, page, fetchTimeoutMs);
+    const blocks = extractTwoDSportsEventBlocks(html);
+    if (blocks.length === 0) break;
+
+    for (const block of blocks) {
+      const record = parseTwoDSportsBlock(block);
+      if (record) records.push(record);
+    }
+  }
+
+  const seen = new Set();
+  return records.filter(r => {
+    if (seen.has(r.source_url)) return false;
+    seen.add(r.source_url);
+    return true;
+  });
+}
+
 // ---- USSSA nationwide JSON API ----
 // USSSA's Angular event search app calls a real JSON API rather than
 // server-rendering results. Endpoint, params, and the public search token
