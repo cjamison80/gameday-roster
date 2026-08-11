@@ -571,17 +571,97 @@ export default function PlayerProfilePage({ publicView = false }) {
                 <span className="text-sm font-semibold" style={{ color: '#0B1528' }}>{player.bats && player.throws ? `${player.bats} / ${player.throws}` : 'Not set'}</span>
               </div>
             )}
-            {[
-              { label: 'Height', value: player.height_inches ? `${Math.floor(player.height_inches/12)}'${player.height_inches%12}"` : 'Not set' },
-              { label: 'Weight', value: player.weight_lbs ? `${player.weight_lbs} lbs` : 'Not set' },
-              { label: 'Travel Radius', value: player.travel_radius_miles ? `${player.travel_radius_miles} miles` : 'Not set' },
-              { label: 'Current Team', value: player.current_team_name || 'Not set' }
-            ].map(({ label, value }) => (
-              <div key={label} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
-                <span className="text-sm" style={{ color: '#5B6475' }}>{label}</span>
-                <span className="text-sm font-semibold" style={{ color: '#0B1528' }}>{value}</span>
-              </div>
-            ))}
+            {editing ? (
+              <>
+                <div className="grid grid-cols-2 gap-3 py-2 border-b border-gray-50">
+                  <div>
+                    <label className="text-xs font-semibold block mb-1" style={{ color: '#5B6475' }}>Height - Feet</label>
+                    <input
+                      type="number"
+                      min="3"
+                      max="7"
+                      value={editData.height_inches ? Math.floor(Number(editData.height_inches) / 12) : ''}
+                      onChange={e => {
+                        const feet = Number(e.target.value || 0);
+                        const inches = Number(editData.height_inches || 0) % 12;
+                        setEditData(d => ({ ...d, height_inches: e.target.value ? (feet * 12) + inches : null }));
+                      }}
+                      placeholder="4"
+                      className="w-full px-3 py-2 text-sm border border-gray-200 outline-none"
+                      style={{ color: '#0B1528' }}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold block mb-1" style={{ color: '#5B6475' }}>Height - Inches</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="11"
+                      value={editData.height_inches ? Number(editData.height_inches) % 12 : ''}
+                      onChange={e => {
+                        const feet = Math.floor(Number(editData.height_inches || 0) / 12);
+                        const inches = Math.max(0, Math.min(11, Number(e.target.value || 0)));
+                        setEditData(d => ({ ...d, height_inches: e.target.value || feet ? (feet * 12) + inches : null }));
+                      }}
+                      placeholder="10"
+                      className="w-full px-3 py-2 text-sm border border-gray-200 outline-none"
+                      style={{ color: '#0B1528' }}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 py-2 border-b border-gray-50">
+                  <div>
+                    <label className="text-xs font-semibold block mb-1" style={{ color: '#5B6475' }}>Weight - lbs</label>
+                    <input
+                      type="number"
+                      min="40"
+                      max="350"
+                      value={editData.weight_lbs || ''}
+                      onChange={e => setEditData(d => ({ ...d, weight_lbs: e.target.value ? Number(e.target.value) : null }))}
+                      placeholder="80"
+                      className="w-full px-3 py-2 text-sm border border-gray-200 outline-none"
+                      style={{ color: '#0B1528' }}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold block mb-1" style={{ color: '#5B6475' }}>Travel Radius</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={editData.travel_radius_miles || ''}
+                      onChange={e => setEditData(d => ({ ...d, travel_radius_miles: e.target.value ? Number(e.target.value) : null }))}
+                      placeholder="100"
+                      className="w-full px-3 py-2 text-sm border border-gray-200 outline-none"
+                      style={{ color: '#0B1528' }}
+                    />
+                  </div>
+                </div>
+
+                <div className="py-2">
+                  <label className="text-xs font-semibold block mb-1" style={{ color: '#5B6475' }}>Current Team</label>
+                  <input
+                    value={editData.current_team_name || ''}
+                    onChange={e => setEditData(d => ({ ...d, current_team_name: e.target.value }))}
+                    placeholder="Team name"
+                    className="w-full px-3 py-2 text-sm border border-gray-200 outline-none"
+                    style={{ color: '#0B1528' }}
+                  />
+                </div>
+              </>
+            ) : (
+              [
+                { label: 'Height', value: player.height_inches ? `${Math.floor(player.height_inches/12)}'${player.height_inches%12}\"` : 'Not set' },
+                { label: 'Weight', value: player.weight_lbs ? `${player.weight_lbs} lbs` : 'Not set' },
+                { label: 'Travel Radius', value: player.travel_radius_miles ? `${player.travel_radius_miles} miles` : 'Not set' },
+                { label: 'Current Team', value: player.current_team_name || 'Not set' }
+              ].map(({ label, value }) => (
+                <div key={label} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+                  <span className="text-sm" style={{ color: '#5B6475' }}>{label}</span>
+                  <span className="text-sm font-semibold" style={{ color: '#0B1528' }}>{value}</span>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
@@ -656,57 +736,11 @@ export default function PlayerProfilePage({ publicView = false }) {
           </div>
         )}
 
-        {/* Linked profiles: Perfect Game + GameChanger + Sideline HD */}
-        {(pgProfileUrl || player.gamechanger_url || player.sidelinehd_url || (isOwner && editing)) && (
+        {/* Linked profiles: GameChanger + Sideline HD */}
+        {(player.gamechanger_url || player.sidelinehd_url || (isOwner && editing)) && (
           <div className="gdr-card p-5">
             <h3 className="font-semibold mb-3" style={{ color: '#0B1528' }}>Linked Profiles</h3>
             <div className="space-y-3">
-              <div>
-                {editing ? (
-                  <div className=" p-4" style={{ backgroundColor: '#EFE6D6', border: '1px solid #FEF08A' }}>
-                    <div className="flex items-center justify-between gap-3 mb-2">
-                      <div>
-                        <label className="text-xs font-semibold block" style={{ color: '#713F12' }}>Perfect Game Profile URL</label>
-                        <p className="text-xs mt-0.5" style={{ color: '#8F0F1A' }}>Paste the player's public PerfectGame.org profile link.</p>
-                      </div>
-                      {editData.perfect_game_connection_status === 'connected' && (
-                        <span className="text-xs font-bold px-2 py-1 rounded-full" style={{ backgroundColor: '#E7EDE2', color: '#4F7A59' }}>Connected</span>
-                      )}
-                    </div>
-                    <input
-                      value={editData.perfect_game_url || ''}
-                      onChange={e => setEditData(d => ({ ...d, perfect_game_url: e.target.value, perfect_game_connection_status: e.target.value ? 'needs_review' : 'not_connected' }))}
-                      placeholder="https://www.perfectgame.org/Players/Playerprofile.aspx?ID=..."
-                      className="w-full  px-4 py-3 text-sm border border-yellow-200 outline-none bg-white"
-                      style={{ color: '#0B1528' }}
-                    />
-                    <button
-                      type="button"
-                      onClick={handleConnectPerfectGame}
-                      disabled={saving}
-                      className="w-full mt-3 py-3  text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-60"
-                      style={{ backgroundColor: '#0B1528', color: '#FFFFFF' }}
-                    >
-                      <ExternalLink size={15} />
-                      {saving ? 'Saving Perfect Game Link...' : 'Connect & Save Perfect Game Profile'}
-                    </button>
-                    {editData.perfect_game_player_id && (
-                      <p className="text-xs mt-2" style={{ color: '#8F0F1A' }}>Detected PG ID: {editData.perfect_game_player_id}</p>
-                    )}
-                  </div>
-                ) : pgProfileUrl && (
-                  <a
-                    href={pgProfileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 w-full py-3  text-sm font-bold"
-                    style={{ backgroundColor: '#EFE6D6', color: '#8F0F1A' }}
-                  >
-                    <ExternalLink size={16} />
-                    View {player.first_name} on Perfect Game
-                  </a>
-                )}
-              </div>
               <div>
                 {editing ? (
                   <>
