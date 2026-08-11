@@ -1,0 +1,68 @@
+name: Tournament Sync
+
+# Manual trigger only for now — USSSA and 2D Sports TournamentSource records
+# still have permission_status: "unknown". Switch to a scheduled `cron:` trigger
+# once that's resolved to "approved".
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Which sync to run"
+        required: true
+        default: "usssa-ar-dry-run"
+        type: choice
+        options:
+          - usssa-ar-dry-run
+          - usssa-ar
+          - 2d-ar-dry-run
+          - 2d-ar
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run USSSA Arkansas sync (dry run)
+        if: ${{ inputs.target == 'usssa-ar-dry-run' }}
+        env:
+          BASE44_APP_ID: ${{ secrets.BASE44_APP_ID }}
+          BASE44_ACCESS_TOKEN: ${{ secrets.BASE44_ACCESS_TOKEN }}
+          BASE44_APP_BASE_URL: ${{ secrets.BASE44_APP_BASE_URL }}
+          DRY_RUN: "true"
+        run: npm run sync:tournaments:usssa-ar
+
+      - name: Run USSSA Arkansas sync (live)
+        if: ${{ inputs.target == 'usssa-ar' }}
+        env:
+          BASE44_APP_ID: ${{ secrets.BASE44_APP_ID }}
+          BASE44_ACCESS_TOKEN: ${{ secrets.BASE44_ACCESS_TOKEN }}
+          BASE44_APP_BASE_URL: ${{ secrets.BASE44_APP_BASE_URL }}
+        run: npm run sync:tournaments:usssa-ar
+
+      - name: Run 2D Sports Arkansas sync (dry run)
+        if: ${{ inputs.target == '2d-ar-dry-run' }}
+        env:
+          BASE44_APP_ID: ${{ secrets.BASE44_APP_ID }}
+          BASE44_ACCESS_TOKEN: ${{ secrets.BASE44_ACCESS_TOKEN }}
+          BASE44_APP_BASE_URL: ${{ secrets.BASE44_APP_BASE_URL }}
+          DRY_RUN: "true"
+        run: npm run sync:tournaments:2d-ar
+
+      - name: Run 2D Sports Arkansas sync (live)
+        if: ${{ inputs.target == '2d-ar' }}
+        env:
+          BASE44_APP_ID: ${{ secrets.BASE44_APP_ID }}
+          BASE44_ACCESS_TOKEN: ${{ secrets.BASE44_ACCESS_TOKEN }}
+          BASE44_APP_BASE_URL: ${{ secrets.BASE44_APP_BASE_URL }}
+        run: npm run sync:tournaments:2d-ar
