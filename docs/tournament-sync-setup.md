@@ -12,8 +12,34 @@ The daily tournament sync runner has been added to the project.
 
 ```bash
 npm run sync:tournaments
+npm run sync:tournaments:usssa-ar
 npm run sync:tournaments:dry-run
 ```
+
+## First live-source test: USSSA Arkansas baseball
+
+Use this focused runner before enabling broader tournament sync:
+
+```bash
+npm run sync:tournaments:usssa-ar
+```
+
+This run sets:
+
+- `SOURCE_FILTER=usssa`
+- `STATE_FILTER=AR`
+- `DEFAULT_STATE=AR`
+- `SPORT_FILTER=baseball`
+- `RUN_TYPE=test`
+- `MAX_EVENTS_PER_SOURCE=50` by default
+
+The matching GitHub Actions workflow is:
+
+```text
+.github/workflows/usssa-arkansas-tournament-test.yml
+```
+
+Trigger it manually from GitHub Actions after the Base44 secrets are configured.
 
 ## Required secrets / environment variables
 
@@ -25,6 +51,11 @@ Set these in GitHub Actions secrets or the production scheduler environment:
 
 Optional runtime controls:
 
+- `SOURCE_FILTER` comma-separated parser keys, for example `usssa`
+- `STATE_FILTER` for focused tests, for example `AR`
+- `DEFAULT_STATE` to apply when a source page is already scoped but parsed records do not include a state
+- `SPORT_FILTER` for focused tests, for example `baseball`
+- `RUN_TYPE` default `scheduled`, use `test` for one-off validation runs
 - `MAX_EVENTS_PER_SOURCE` default `75`
 - `REQUEST_DELAY_MS` default `1500`
 - `DRY_RUN=true` for dry-run mode
