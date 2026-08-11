@@ -10,50 +10,52 @@ function formatCost(cost) {
 
 export default function TournamentCard({ tournament, onClick }) {
   const statusMap = {
-    open: { label: 'Open', bg: '#DCFCE7', color: '#16A34A' },
-    waitlist: { label: 'Waitlist', bg: '#FEF9C3', color: '#A16207' },
-    sold_out: { label: 'Sold Out', bg: '#FEE2E2', color: '#DC2626' },
-    closed: { label: 'Closed', bg: '#F1F5F9', color: '#64748B' },
-    unknown: { label: 'Status TBD', bg: '#F1F5F9', color: '#64748B' }
+    open: { label: 'Open', bg: '#E7EDE2', color: '#4F7A59' },
+    waitlist: { label: 'Waitlist', bg: '#EFE6D6', color: '#765B34' },
+    sold_out: { label: 'Sold Out', bg: '#F1DADA', color: '#B9232A' },
+    closed: { label: 'Closed', bg: '#F0ECE3', color: '#6F685E' },
+    unknown: { label: 'Status TBD', bg: '#F0ECE3', color: '#6F685E' }
   };
   const status = statusMap[tournament.status] || statusMap.unknown;
 
   return (
     <div
       onClick={onClick}
-      className="bg-white rounded-2xl border border-gray-100 p-4 cursor-pointer hover:shadow-md transition-shadow active:scale-[0.99]"
+      className="gdr-card gdr-card-hover p-4 cursor-pointer active:scale-[0.99]"
     >
       <div className="flex items-start gap-3">
-        <div className="w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center" style={{ backgroundColor: '#EFF6FF' }}>
-          <Trophy size={22} color="#2563EB" />
+        <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center" style={{ backgroundColor: '#F0ECE3', border: '1px solid rgba(220,214,204,0.95)' }}>
+          <Trophy size={22} color="#A9824A" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <h3 className="font-black text-base leading-tight" style={{ color: '#0B1528' }}>{tournament.name}</h3>
-              <p className="text-sm font-semibold mt-0.5" style={{ color: '#2563EB' }}>{tournament.association}</p>
+              <p className="gdr-editorial-kicker mb-1">{tournament.association}</p>
+              <h3 className="text-[21px] leading-[1.04] truncate" style={{ color: '#151411', fontFamily: 'ui-serif, Georgia, Cambria, Times New Roman, Times, serif', fontWeight: 500 }}>{tournament.name}</h3>
             </div>
-            <span className="text-xs font-bold px-2 py-1 rounded-full flex-shrink-0" style={{ backgroundColor: status.bg, color: status.color }}>
+            <span className="text-[10px] font-black px-2.5 py-1 uppercase tracking-[0.16em] flex-shrink-0" style={{ backgroundColor: status.bg, color: status.color, border: '1px solid rgba(220,214,204,0.82)' }}>
               {status.label}
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 mt-3">
-            <Detail icon={Calendar} text={formatDateRange(tournament.start_date, tournament.end_date)} />
-            <Detail icon={MapPin} text={`${tournament.city}, ${tournament.state}`} />
-            <Detail icon={DollarSign} text={formatCost(tournament.cost)} />
-            <Detail icon={Users} text={`${tournament.teams_entered_count || tournament.teams_entered?.length || 0} teams entered`} />
+          <div className="mt-4 p-3" style={{ backgroundColor: '#F7F3EC', border: '1px solid rgba(220,214,204,0.78)' }}>
+            <div className="grid grid-cols-2 gap-2">
+              <Detail icon={Calendar} text={formatDateRange(tournament.start_date, tournament.end_date)} />
+              <Detail icon={MapPin} text={`${tournament.city}, ${tournament.state}`} />
+              <Detail icon={DollarSign} text={formatCost(tournament.cost)} />
+              <Detail icon={Users} text={`${tournament.teams_entered_count || tournament.teams_entered?.length || 0} teams entered`} />
+            </div>
           </div>
 
           <div className="flex flex-wrap gap-1.5 mt-3">
             {(tournament.age_divisions || []).slice(0, 4).map(age => (
-              <span key={age} className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: '#F1F5F9', color: '#0B1528' }}>{age}</span>
+              <span key={age} className="text-[10px] font-black px-2.5 py-1 uppercase tracking-[0.16em]" style={{ backgroundColor: '#151411', color: '#FBF8F1' }}>{age}</span>
             ))}
             {(tournament.classifications || []).slice(0, 3).map(cls => (
-              <span key={cls} className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: '#FEFCE8', color: '#D4A017' }}>{cls}</span>
+              <span key={cls} className="text-[10px] font-black px-2.5 py-1 uppercase tracking-[0.16em]" style={{ backgroundColor: '#EFE6D6', color: '#765B34' }}>{cls}</span>
             ))}
             {tournament.registration_url && (
-              <span className="inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: '#EFF6FF', color: '#2563EB' }}>
+              <span className="inline-flex items-center gap-1 text-[10px] font-black px-2.5 py-1 uppercase tracking-[0.16em]" style={{ backgroundColor: '#F0ECE3', color: '#151411' }}>
                 <ExternalLink size={11} /> Register
               </span>
             )}
@@ -67,8 +69,8 @@ export default function TournamentCard({ tournament, onClick }) {
 function Detail({ icon: Icon, text }) {
   return (
     <div className="flex items-center gap-1.5 min-w-0">
-      <Icon size={13} color="#94A3B8" className="flex-shrink-0" />
-      <span className="text-xs font-medium truncate" style={{ color: '#64748B' }}>{text}</span>
+      <Icon size={13} color="#A39A8E" className="flex-shrink-0" />
+      <span className="text-xs font-semibold truncate" style={{ color: '#6F685E' }}>{text}</span>
     </div>
   );
 }
