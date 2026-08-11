@@ -37,6 +37,7 @@ jobs:
 
       - name: Run USSSA Arkansas sync (dry run)
         if: ${{ inputs.target == 'usssa-ar-dry-run' }}
+        timeout-minutes: 3
         env:
           BASE44_APP_ID: ${{ secrets.BASE44_APP_ID }}
           BASE44_ACCESS_TOKEN: ${{ secrets.BASE44_ACCESS_TOKEN }}
@@ -46,6 +47,7 @@ jobs:
 
       - name: Run USSSA Arkansas sync (live)
         if: ${{ inputs.target == 'usssa-ar' }}
+        timeout-minutes: 3
         env:
           BASE44_APP_ID: ${{ secrets.BASE44_APP_ID }}
           BASE44_ACCESS_TOKEN: ${{ secrets.BASE44_ACCESS_TOKEN }}
@@ -54,6 +56,7 @@ jobs:
 
       - name: Run 2D Sports Arkansas sync (dry run)
         if: ${{ inputs.target == '2d-ar-dry-run' }}
+        timeout-minutes: 3
         env:
           BASE44_APP_ID: ${{ secrets.BASE44_APP_ID }}
           BASE44_ACCESS_TOKEN: ${{ secrets.BASE44_ACCESS_TOKEN }}
@@ -63,6 +66,7 @@ jobs:
 
       - name: Run 2D Sports Arkansas sync (live)
         if: ${{ inputs.target == '2d-ar' }}
+        timeout-minutes: 3
         env:
           BASE44_APP_ID: ${{ secrets.BASE44_APP_ID }}
           BASE44_ACCESS_TOKEN: ${{ secrets.BASE44_ACCESS_TOKEN }}
