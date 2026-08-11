@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+// Player profile view — publicView renders the read-only shareable version
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Edit, Share, MapPin, Trophy, MessageCircle, ExternalLink, Heart, ShieldCheck, Camera } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
