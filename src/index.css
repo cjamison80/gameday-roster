@@ -4,69 +4,72 @@
 
 @layer base {
   :root {
-    /* GameDay Roster — luxury editorial direction */
-    --midnight-navy: #1F252C;
-    --electric-blue: #4B5563;
-    --victory-red: #8A3324;
-    --field-green: #4A5A43;
-    --championship-gold: #A17C48;
-    --elite-purple: #6B6258;
+    /* GameDay Roster — Modern Editorial Luxury System */
+    --gdr-ink: #151411;
+    --gdr-charcoal: #22201B;
+    --gdr-graphite: #2E2B26;
+    --gdr-stone: #6F685E;
+    --gdr-taupe: #A39A8E;
+    --gdr-line: #DCD6CC;
+    --gdr-line-soft: #E9E4DB;
+    --gdr-ivory: #F7F3EC;
+    --gdr-cream: #FBF8F1;
+    --gdr-card: #FFFDF8;
+    --gdr-bronze: #A9824A;
+    --gdr-bronze-dark: #765B34;
+    --gdr-red: #B9232A;
+    --gdr-blue: #1E3A5F;
+    --gdr-green: #4F7A59;
 
-    --gdr-ink: #1C1B19;
-    --gdr-charcoal: #25231F;
-    --gdr-charcoal-2: #34312B;
-    --gdr-stone: #7C7368;
-    --gdr-muted: #9B9286;
-    --gdr-line: #D8D0C4;
-    --gdr-line-dark: rgba(255,255,255,0.16);
-    --gdr-ivory: #F5F1EA;
-    --gdr-parchment: #EBE4D8;
-    --gdr-surface: #FBF8F1;
-    --gdr-brass: #A17C48;
-    --gdr-brass-soft: #E5D6BF;
+    /* Legacy brand vars retained for compatibility */
+    --midnight-navy: #151411;
+    --electric-blue: #1E3A5F;
+    --victory-red: #B9232A;
+    --field-green: #4F7A59;
+    --championship-gold: #A9824A;
+    --elite-purple: #6B5B7A;
+    --ink: #151411;
+    --muted-ink: #6F685E;
+    --soft-line: #DCD6CC;
+    --surface: #FFFDF8;
+    --surface-soft: #F7F3EC;
+    --surface-tint: #F0ECE3;
 
-    --ink: var(--gdr-ink);
-    --muted-ink: var(--gdr-stone);
-    --soft-line: var(--gdr-line);
-    --surface: var(--gdr-surface);
-    --surface-soft: var(--gdr-ivory);
-    --surface-tint: var(--gdr-parchment);
+    /* shadcn tokens mapped to editorial palette */
+    --background: 38 35% 95%;
+    --foreground: 40 10% 8%;
+    --card: 42 100% 99%;
+    --card-foreground: 40 10% 8%;
+    --popover: 42 100% 99%;
+    --popover-foreground: 40 10% 8%;
+    --primary: 36 39% 48%;
+    --primary-foreground: 40 47% 97%;
+    --secondary: 38 24% 91%;
+    --secondary-foreground: 40 10% 8%;
+    --muted: 38 24% 91%;
+    --muted-foreground: 35 8% 42%;
+    --accent: 38 24% 90%;
+    --accent-foreground: 40 10% 8%;
+    --destructive: 357 68% 43%;
+    --destructive-foreground: 40 47% 97%;
+    --border: 38 22% 84%;
+    --input: 38 22% 84%;
+    --ring: 36 39% 48%;
+    --radius: 0.95rem;
 
-    /* shadcn tokens mapped to warm editorial palette */
-    --background: 38 32% 94%;
-    --foreground: 36 7% 10%;
-    --card: 40 42% 96%;
-    --card-foreground: 36 7% 10%;
-    --popover: 40 42% 96%;
-    --popover-foreground: 36 7% 10%;
-    --primary: 35 37% 46%;
-    --primary-foreground: 40 42% 96%;
-    --secondary: 36 24% 88%;
-    --secondary-foreground: 36 7% 10%;
-    --muted: 36 24% 88%;
-    --muted-foreground: 31 8% 47%;
-    --accent: 36 24% 88%;
-    --accent-foreground: 36 7% 10%;
-    --destructive: 9 58% 34%;
-    --destructive-foreground: 40 42% 96%;
-    --border: 34 23% 81%;
-    --input: 34 23% 81%;
-    --ring: 35 37% 46%;
-    --radius: 0.875rem;
-
-    --font-heading: Georgia, 'Times New Roman', serif;
-    --font-body: Inter, ui-sans-serif, system-ui, sans-serif;
-    --font-display: Georgia, 'Times New Roman', serif;
+    --font-heading: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    --font-body: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-display: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-    --sidebar-background: 38 32% 94%;
-    --sidebar-foreground: 36 7% 10%;
-    --sidebar-primary: 36 7% 10%;
-    --sidebar-primary-foreground: 40 42% 96%;
-    --sidebar-accent: 36 24% 88%;
-    --sidebar-accent-foreground: 36 7% 10%;
-    --sidebar-border: 34 23% 81%;
-    --sidebar-ring: 35 37% 46%;
+    --sidebar-background: 38 35% 95%;
+    --sidebar-foreground: 40 10% 8%;
+    --sidebar-primary: 40 10% 8%;
+    --sidebar-primary-foreground: 40 47% 97%;
+    --sidebar-accent: 38 24% 90%;
+    --sidebar-accent-foreground: 40 10% 8%;
+    --sidebar-border: 38 22% 84%;
+    --sidebar-ring: 36 39% 48%;
   }
 }
 
@@ -77,25 +80,23 @@
 
   html {
     scroll-behavior: smooth;
+    background: var(--gdr-ivory);
   }
 
   body {
     @apply bg-background text-foreground font-body antialiased;
     font-family: var(--font-body);
     background:
-      linear-gradient(90deg, rgba(28,27,25,0.018) 1px, transparent 1px),
-      linear-gradient(180deg, rgba(28,27,25,0.018) 1px, transparent 1px),
-      radial-gradient(circle at 12% -10%, rgba(161,124,72,0.16), transparent 32%),
-      radial-gradient(circle at 95% 8%, rgba(28,27,25,0.08), transparent 26%),
-      linear-gradient(180deg, #F5F1EA 0%, #EBE4D8 100%);
-    background-size: 44px 44px, 44px 44px, auto, auto, auto;
+      radial-gradient(circle at 8% -10%, rgba(169, 130, 74, 0.16), transparent 32%),
+      radial-gradient(circle at 96% 3%, rgba(21, 20, 17, 0.08), transparent 28%),
+      linear-gradient(180deg, #FBF8F1 0%, #F7F3EC 50%, #EFE8DC 100%);
     color: var(--gdr-ink);
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-display);
+    font-family: var(--font-heading);
     font-weight: 500;
-    letter-spacing: -0.035em;
+    letter-spacing: -0.045em;
     color: var(--gdr-ink);
   }
 }
@@ -104,11 +105,9 @@
   .gdr-app-background {
     min-height: 100vh;
     background:
-      linear-gradient(90deg, rgba(28,27,25,0.018) 1px, transparent 1px),
-      linear-gradient(180deg, rgba(28,27,25,0.018) 1px, transparent 1px),
-      radial-gradient(circle at 10% -8%, rgba(161,124,72,0.16), transparent 30%),
-      linear-gradient(180deg, #F5F1EA 0%, #EBE4D8 100%);
-    background-size: 44px 44px, 44px 44px, auto, auto;
+      radial-gradient(circle at 12% -8%, rgba(169, 130, 74, 0.14), transparent 30%),
+      radial-gradient(circle at 92% 0%, rgba(21, 20, 17, 0.08), transparent 24%),
+      linear-gradient(180deg, #FBF8F1 0%, #F7F3EC 54%, #EFE8DC 100%);
   }
 
   .gdr-page {
@@ -120,15 +119,24 @@
     position: relative;
     overflow: hidden;
     background:
-      linear-gradient(90deg, rgba(255,255,255,0.028) 1px, transparent 1px),
-      linear-gradient(180deg, rgba(255,255,255,0.028) 1px, transparent 1px),
-      radial-gradient(circle at 15% 4%, rgba(255,255,255,0.11), transparent 28%),
-      linear-gradient(135deg, #1C1B19 0%, #2D2A25 58%, #3A352E 100%);
-    background-size: 38px 38px, 38px 38px, auto, auto;
-    border-bottom: 1px solid rgba(255,255,255,0.12);
+      linear-gradient(rgba(21, 20, 17, 0.88), rgba(21, 20, 17, 0.94)),
+      radial-gradient(circle at 18% 10%, rgba(169, 130, 74, 0.28), transparent 32%),
+      linear-gradient(135deg, #151411 0%, #26231D 58%, #171613 100%);
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     box-shadow: none;
+  }
+
+  .gdr-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.22;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px);
+    background-size: 44px 44px;
   }
 
   .gdr-hero::after {
@@ -136,116 +144,103 @@
     position: absolute;
     inset: auto 24px 0 24px;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(229,214,191,0.56), transparent);
+    background: linear-gradient(90deg, transparent, rgba(169,130,74,0.72), transparent);
     pointer-events: none;
   }
 
-  .gdr-overline {
-    font-family: var(--font-body);
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-  }
-
-  .gdr-lux-heading {
-    font-family: var(--font-display);
-    font-weight: 500;
-    letter-spacing: -0.045em;
-  }
-
   .gdr-glass {
-    background: rgba(255, 255, 255, 0.075);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    box-shadow: none;
+    background: rgba(255, 253, 248, 0.08);
+    border: 1px solid rgba(255, 253, 248, 0.18);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
     backdrop-filter: blur(18px);
   }
 
   .gdr-card {
-    background: rgba(251, 248, 241, 0.94);
-    border: 1px solid rgba(216, 208, 196, 0.86);
-    border-radius: 18px;
-    box-shadow: 0 1px 0 rgba(255,255,255,0.72) inset, 0 18px 42px rgba(28,27,25,0.055);
+    background: rgba(255, 253, 248, 0.95);
+    border: 1px solid rgba(220, 214, 204, 0.92);
+    border-radius: 2px;
+    box-shadow: 0 18px 38px rgba(21, 20, 17, 0.06);
     backdrop-filter: blur(12px);
   }
 
   .gdr-card-hover {
-    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease;
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
   }
 
   .gdr-card-hover:hover {
-    transform: translateY(-1px);
-    border-color: rgba(161, 124, 72, 0.45);
-    background: rgba(255, 252, 244, 0.98);
-    box-shadow: 0 22px 50px rgba(28,27,25,0.085);
+    transform: translateY(-2px);
+    border-color: rgba(169, 130, 74, 0.44);
+    box-shadow: 0 24px 56px rgba(21, 20, 17, 0.10);
   }
 
   .gdr-soft-card {
-    background: rgba(251,248,241,0.82);
-    border: 1px solid rgba(216,208,196,0.82);
-    border-radius: 16px;
-    box-shadow: none;
+    background: rgba(255, 253, 248, 0.82);
+    border: 1px solid rgba(220, 214, 204, 0.78);
+    border-radius: 2px;
+    box-shadow: 0 12px 28px rgba(21, 20, 17, 0.04);
   }
 
   .gdr-chip {
-    border-radius: 999px;
-    border: 1px solid rgba(216,208,196,0.92);
-    background: rgba(251, 248, 241, 0.74);
+    border-radius: 0;
+    border: 1px solid rgba(220, 214, 204, 0.92);
+    background: rgba(255, 253, 248, 0.74);
     color: var(--gdr-stone);
     box-shadow: none;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
 
   .gdr-chip-active {
-    border-color: var(--gdr-charcoal);
-    background: var(--gdr-charcoal);
-    color: var(--gdr-ivory);
+    border-radius: 0;
+    border-color: var(--gdr-ink);
+    background: var(--gdr-ink);
+    color: #FBF8F1;
     box-shadow: none;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
 
   .gdr-bottom-nav {
     min-height: 72px;
-    border: 1px solid rgba(216,208,196,0.96);
-    background: rgba(245, 241, 234, 0.92);
-    box-shadow: 0 18px 46px rgba(28,27,25,0.14);
-    backdrop-filter: blur(22px);
+    border: 1px solid rgba(220, 214, 204, 0.88);
+    background: rgba(255, 253, 248, 0.94);
+    box-shadow: 0 20px 48px rgba(21, 20, 17, 0.16);
+    backdrop-filter: blur(24px);
   }
 
   .gdr-input-dark {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: #F5F1EA;
+    background: rgba(255, 253, 248, 0.08);
+    border: 1px solid rgba(255, 253, 248, 0.18);
+    color: #FBF8F1;
     backdrop-filter: blur(18px);
   }
 
   .gdr-select {
-    border-radius: 12px;
-    border: 1px solid rgba(216,208,196,0.94);
-    background: rgba(245, 241, 234, 0.92);
+    border-radius: 0;
+    border: 1px solid rgba(220, 214, 204, 0.95);
+    background: rgba(255, 253, 248, 0.84);
   }
 
-  .gdr-rule {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(161,124,72,0.42), transparent);
-  }
-
-  .gdr-editorial-panel {
-    background: rgba(251,248,241,0.72);
-    border-top: 1px solid rgba(216,208,196,0.74);
-    border-bottom: 1px solid rgba(216,208,196,0.74);
+  .gdr-editorial-kicker {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gdr-bronze);
   }
 }
 
 @layer utilities {
-  .nav-navy { background-color: var(--gdr-charcoal); }
-  .text-navy { color: var(--gdr-charcoal); }
-  .bg-navy { background-color: var(--gdr-charcoal); }
-  .border-navy { border-color: var(--gdr-charcoal); }
-  .text-electric { color: var(--gdr-stone); }
-  .bg-electric { background-color: var(--gdr-stone); }
-  .text-gold { color: var(--gdr-brass); }
-  .bg-gold { background-color: var(--gdr-brass); }
+  .nav-navy { background-color: var(--gdr-ink); }
+  .text-navy { color: var(--gdr-ink); }
+  .bg-navy { background-color: var(--gdr-ink); }
+  .border-navy { border-color: var(--gdr-ink); }
+  .text-electric { color: var(--gdr-blue); }
+  .bg-electric { background-color: var(--gdr-blue); }
+  .text-gold { color: var(--gdr-bronze); }
+  .bg-gold { background-color: var(--gdr-bronze); }
   .match-score-ring {
-    background: conic-gradient(var(--gdr-brass) var(--score), #D8D0C4 0);
+    background: conic-gradient(var(--gdr-bronze) var(--score), #DED7CB 0);
   }
   .bottom-nav-height { height: 72px; }
   .content-with-nav { padding-bottom: 96px; }
