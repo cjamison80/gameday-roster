@@ -15,17 +15,17 @@ export default function PlayerCard({ player, matchScore, availabilityStatus, onS
     >
       <div className="flex items-start gap-3">
         <div className="relative flex-shrink-0">
-          <div className="w-[68px] h-[68px] rounded-2xl overflow-hidden ring-1 ring-slate-200" style={{ background: 'linear-gradient(135deg, #EFF6FF 0%, #F8FAFC 100%)' }}>
+          <div className="w-[68px] h-[68px] overflow-hidden" style={{ background: '#F0ECE3', border: '1px solid rgba(220,214,204,0.96)' }}>
             {player.photo_url ? (
               <Image src={player.photo_url} alt={fullName} className="w-[68px] h-[68px]" fittingType="fill" />
             ) : (
               <div className="w-[68px] h-[68px] flex items-center justify-center">
-                <span className="text-2xl font-black" style={{ color: '#2563EB' }}>{getInitials(fullName)}</span>
+                <span className="text-2xl font-black" style={{ color: '#151411', letterSpacing: '-0.05em' }}>{getInitials(fullName)}</span>
               </div>
             )}
           </div>
           {player.is_verified && (
-            <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center ring-2 ring-white" style={{ backgroundColor: '#2563EB' }}>
+            <div className="absolute -bottom-1 -right-1 w-6 h-6 flex items-center justify-center ring-2 ring-[#FFFDF8]" style={{ backgroundColor: '#A9824A' }}>
               <span style={{ color: 'white', fontSize: 11, fontWeight: 900 }}>✓</span>
             </div>
           )}
@@ -34,8 +34,9 @@ export default function PlayerCard({ player, matchScore, availabilityStatus, onS
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <h3 className="font-black text-[17px] truncate tracking-[-0.03em]" style={{ color: '#0B1528' }}>{fullName}</h3>
-              <p className="text-xs font-semibold mt-1" style={{ color: '#64748B' }}>
+              <p className="gdr-editorial-kicker mb-1">Player Profile</p>
+              <h3 className="text-[20px] leading-[1.05] truncate" style={{ color: '#151411', fontFamily: 'ui-serif, Georgia, Cambria, Times New Roman, Times, serif', fontWeight: 500 }}>{fullName}</h3>
+              <p className="text-xs font-semibold mt-1.5" style={{ color: '#6F685E' }}>
                 {player.bats && player.throws ? `B/T: ${player.bats[0]}/${player.throws[0]}` : ''}
                 {player.age_division ? ` · ${player.age_division}` : ''}
                 {player.classification ? ` · ${player.classification}` : ''}
@@ -45,9 +46,9 @@ export default function PlayerCard({ player, matchScore, availabilityStatus, onS
               {matchScore !== undefined && <MatchScoreBadge score={matchScore} size="sm" />}
               {onSave && (
                 <button onClick={e => { e.stopPropagation(); onSave(); }}
-                  className="flex h-8 w-8 items-center justify-center rounded-full"
-                  style={{ backgroundColor: '#F8FAFC' }}>
-                  <Heart size={16} fill={isSaved ? '#DC2626' : 'none'} color={isSaved ? '#DC2626' : '#94A3B8'} />
+                  className="flex h-8 w-8 items-center justify-center"
+                  style={{ backgroundColor: '#F7F3EC', border: '1px solid rgba(220,214,204,0.9)' }}>
+                  <Heart size={16} fill={isSaved ? '#B9232A' : 'none'} color={isSaved ? '#B9232A' : '#A39A8E'} />
                 </button>
               )}
             </div>
@@ -56,8 +57,8 @@ export default function PlayerCard({ player, matchScore, availabilityStatus, onS
           {player.positions?.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mt-3">
               {player.positions.slice(0, 3).map(pos => (
-                <span key={pos} className="text-xs font-black px-2.5 py-1 rounded-full"
-                  style={{ backgroundColor: '#EFF6FF', color: '#2563EB' }}>
+                <span key={pos} className="text-[10px] font-black px-2.5 py-1 uppercase tracking-[0.16em]"
+                  style={{ backgroundColor: '#F7F3EC', color: '#151411', border: '1px solid rgba(220,214,204,0.88)' }}>
                   {pos}
                 </span>
               ))}
@@ -66,9 +67,9 @@ export default function PlayerCard({ player, matchScore, availabilityStatus, onS
 
           <div className="flex items-center gap-3 mt-3">
             {player.city && player.state && (
-              <div className="flex items-center gap-1 rounded-full px-2.5 py-1" style={{ backgroundColor: '#F8FAFC' }}>
-                <MapPin size={11} color="#94A3B8" />
-                <span className="text-xs font-semibold" style={{ color: '#64748B' }}>{player.city}, {player.state}</span>
+              <div className="flex items-center gap-1 px-2.5 py-1" style={{ backgroundColor: '#F7F3EC' }}>
+                <MapPin size={11} color="#A39A8E" />
+                <span className="text-xs font-semibold" style={{ color: '#6F685E' }}>{player.city}, {player.state}</span>
               </div>
             )}
             {availabilityStatus && <AvailabilityChip status={availabilityStatus} small />}
