@@ -158,16 +158,26 @@ export default function PlayerProfilePage({ publicView = false }) {
 
     setSaving(true);
     try {
-      const existing = await base44.entities.PlayerExternalProfile.filter({ player_id: id, provider: 'perfect_game' }, '-created_date', 1);
-      const savedLink = existing.length > 0
-        ? await base44.entities.PlayerExternalProfile.update(existing[0].id, externalPatch)
-        : await base44.entities.PlayerExternalProfile.create(externalPatch);
+      // Save directly to PlayerProfile first. This is the source used by the public profile.
+      await base44.entities.PlayerProfile.update(id, playerPatch);
 
-      // Mirror the link onto PlayerProfile too so public/profile reads are resilient.
-      await base44.entities.PlayerProfile.update(id, playerPatch).catch(() => null);
+      let savedLink = null;
+      try {
+        const existing = await base44.entities.PlayerExternalProfile.filter({ player_id: id, provider: 'perfect_game' }, '-created_date', 1);
+        savedLink = existing.length > 0
+          ? await base44.entities.PlayerExternalProfile.update(existing[0].id, externalPatch)
+          : await base44.entities.PlayerExternalProfile.create(externalPatch);
+      } catch (externalErr) {
+        // ExternalProfile is helpful for future integrations, but it should never block saving the visible PG link.
+        console.warn('Perfect Game external profile mirror failed. PlayerProfile link was still saved.', externalErr);
+      }
 
-      setPgProfile(savedLink);
-      setExternalProfiles(prev => [savedLink, ...prev.filter(link => link.id !== savedLink.id)]);
+      if (savedLink) {
+        setPgProfile(savedLink);
+        setExternalProfiles(prev => [savedLink, ...prev.filter(link => link.id !== savedLink.id)]);
+      } else {
+        setPgProfile({ ...externalPatch, id: pgProfile?.id || 'player-profile-mirror' });
+      }
       setEditData(d => ({ ...d, ...playerPatch }));
       setPlayer(p => ({ ...p, ...playerPatch }));
       toast({ title: 'Perfect Game profile connected', description: 'The link has been saved to this player profile.' });
