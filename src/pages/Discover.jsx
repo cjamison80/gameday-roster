@@ -162,7 +162,7 @@ export default function Discover() {
           <button
             onClick={() => setShowFilters(!showFilters)}
             className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all"
-            style={{ background: showFilters ? 'linear-gradient(135deg, #2563EB, #1D4ED8)' : 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.14)' }}
+            style={{ background: showFilters ? '#A9824A' : 'rgba(255,253,248,0.08)', border: '1px solid rgba(255,253,248,0.18)' }}
           >
             <SlidersHorizontal size={20} color={showFilters ? '#FFFFFF' : '#94A3B8'} />
           </button>
@@ -238,7 +238,7 @@ export default function Discover() {
           <button
             onClick={() => setFilters({ position: '', age_division: '', classification: '', sport: '', sanctioning: '' })}
             className="text-sm font-semibold"
-            style={{ color: '#2563EB' }}
+            style={{ color: '#A9824A' }}
           >
             Clear Filters
           </button>
@@ -251,7 +251,7 @@ export default function Discover() {
           <button
             key={chip.id}
             onClick={() => setActiveFilter(chip.id)}
-            className={`flex-shrink-0 px-4 py-2 rounded-full font-bold text-sm transition-all ${activeFilter === chip.id ? 'gdr-chip-active' : 'gdr-chip'}`}
+            className={`flex-shrink-0 px-4 py-2 font-black text-[11px] transition-all ${activeFilter === chip.id ? 'gdr-chip-active' : 'gdr-chip'}`}
           >
             {chip.label}
           </button>
@@ -278,7 +278,7 @@ export default function Discover() {
 
         {/* Section header */}
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold" style={{ color: '#0B1528' }}>
+          <h2 className="text-2xl" style={{ color: '#151411', fontFamily: 'ui-serif, Georgia, Cambria, Times New Roman, Times, serif', fontWeight: 500 }}>
             {activeFilter === 'all' ? 'Recommended for You' :
              activeFilter === 'this_weekend' ? 'This Weekend' :
              activeFilter === 'nearby' ? 'Near You' : 'Tryouts'}
