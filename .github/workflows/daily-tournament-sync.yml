@@ -1,9 +1,10 @@
 name: Daily Tournament Sync
 
+# Cron trigger paused — USSSA, 2D Sports, and Perfect Game TournamentSource
+# records all still have permission_status: "unknown". Re-enable the
+# `schedule:` trigger once that's resolved to "approved" for the sources
+# you actually want running unattended.
 on:
-  schedule:
-    # Runs daily at 5:15 AM Central Time during daylight saving offset approximation.
-    - cron: '15 10 * * *'
   workflow_dispatch:
 
 jobs:
@@ -26,7 +27,8 @@ jobs:
       - name: Run daily tournament sync
         env:
           BASE44_APP_ID: ${{ secrets.BASE44_APP_ID }}
-          BASE44_ACCESS_TOKEN: ${{ secrets.BASE44_ACCESS_TOKEN }}
+          BASE44_ADMIN_EMAIL: ${{ secrets.BASE44_ADMIN_EMAIL }}
+          BASE44_ADMIN_PASSWORD: ${{ secrets.BASE44_ADMIN_PASSWORD }}
           BASE44_APP_BASE_URL: ${{ secrets.BASE44_APP_BASE_URL }}
           MAX_EVENTS_PER_SOURCE: '75'
           REQUEST_DELAY_MS: '1500'
