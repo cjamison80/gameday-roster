@@ -181,6 +181,21 @@ export default function Tournaments() {
               <Select label="Association" value={filters.association} onChange={v => updateFilter('association', v)} options={ASSOCIATIONS} />
               <Select label="Age" value={filters.age} onChange={v => updateFilter('age', v)} options={AGE_DIVISIONS} />
               <Select label="Class" value={filters.classification} onChange={v => updateFilter('classification', v)} options={CLASSIFICATIONS} />
+              <div>
+                <label className="text-xs font-bold mb-1.5 block" style={{ color: '#5B6475' }}>ZIP Code</label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={5}
+                  value={filters.zip}
+                  onChange={e => updateFilter('zip', e.target.value.replace(/[^0-9]/g, ''))}
+                  placeholder="e.g. 72118"
+                  className="gdr-select w-full px-3 py-2.5 text-sm outline-none"
+                  style={{ color: '#0B1528' }}
+                />
+                {geocoding && <p className="text-xs mt-1" style={{ color: '#8B95A7' }}>Looking up ZIP...</p>}
+                {zipError && <p className="text-xs mt-1" style={{ color: '#C1121F' }}>{zipError}</p>}
+              </div>
               <Select label="Radius" value={filters.radius} onChange={v => updateFilter('radius', v)} options={RADIUS_OPTIONS.map(String)} suffix="miles" />
               <div>
                 <label className="text-xs font-bold mb-1.5 block" style={{ color: '#5B6475' }}>Max Cost</label>
@@ -211,7 +226,9 @@ export default function Tournaments() {
               </button>
             </div>
             <p className="text-xs leading-relaxed" style={{ color: '#8B95A7' }}>
-              Radius filtering is currently a state-level MVP proxy until latitude/longitude data is synced from approved tournament sources.
+              {filters.radius && !filters.zip
+                ? 'Enter a ZIP code above to search within that radius.'
+                : 'Radius search uses real distance from your ZIP code. Tournaments whose location hasn\u2019t been geocoded yet won\u2019t appear in radius results \u2014 that fills in gradually as new sources sync.'}
             </p>
           </div>
         )}
