@@ -177,6 +177,7 @@ export function normalizeTournamentRecord(raw = {}, source = {}) {
     teams_entered: raw.teams_entered || raw.teamsEntered || [],
     registration_url: raw.registration_url || raw.registrationUrl || raw.url || raw.source_url || '',
     source_url: raw.source_url || raw.sourceUrl || raw.url || source.events_url || '',
+    teams_url: raw.teams_url || raw.teamsUrl || '',
     source_system: source.name || raw.source_system || source.association || 'Manual',
     last_synced_at: new Date().toISOString(),
     status: raw.status || 'unknown',
@@ -191,6 +192,42 @@ export function buildTournamentKey(record = {}) {
   return [record.association, record.name, record.start_date, record.city, record.state]
     .map(v => String(v || '').trim().toLowerCase())
     .join('|');
+}
+
+// ---- Geocoding (city/state -> lat/long) ----
+// Nominatim (OpenStreetMap) is free and keyless but has a strict usage policy:
+// max ~1 request/second, and a descriptive User-Agent is required. Callers are
+// responsible for rate-limiting between calls and caching results — this
+// function only does a single lookup.
+const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/search';
+const GEOCODE_USER_AGENT = 'GameDayRosterBot/0.1 (+tournament-discovery; contact app admin)';
+
+export function geocodeKey(city = '', state = '') {
+  return `${String(city).trim().toLowerCase()}|${String(state).trim().toLowerCase()}`;
+}
+
+export async function geocodeCityState(city, state, { fetchTimeoutMs = 8000 } = {}) {
+  if (!city || !state) return null;
+  const query = `${city}, ${state}, USA`;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), fetchTimeoutMs);
+  try {
+    const res = await fetch(`${NOMINATIM_URL}?q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=us`, {
+      signal: controller.signal,
+      headers: { 'User-Agent': GEOCODE_USER_AGENT, 'Accept': 'application/json' }
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (!Array.isArray(data) || data.length === 0) return null;
+    const latitude = Number(data[0].lat);
+    const longitude = Number(data[0].lon);
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return null;
+    return { latitude, longitude };
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 // ---- 2D Sports (youth.2dsports.org) ----

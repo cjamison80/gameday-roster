@@ -1,0 +1,48 @@
+{
+  "name": "GeocodeCache",
+  "properties": {
+    "city": {
+      "type": "string"
+    },
+    "key": {
+      "description": "Normalized 'city|state' lookup key, e.g. 'cabot|ar'",
+      "type": "string"
+    },
+    "latitude": {
+      "type": "number"
+    },
+    "longitude": {
+      "type": "number"
+    },
+    "resolved": {
+      "default": false,
+      "description": "False if geocoding was attempted but failed \u2014 prevents endless retries of unresolvable locations",
+      "type": "boolean"
+    },
+    "state": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "key"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "type": "object"
+}
