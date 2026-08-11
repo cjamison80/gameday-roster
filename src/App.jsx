@@ -43,6 +43,19 @@ const AuthenticatedApp = () => {
   const isUnprotectedRoute = isPublicRoute || isAuthRoute;
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
+  if (isUnprotectedRoute) {
+    return (
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/public/player/:id" element={<PlayerProfilePage publicView />} />
+        <Route path="*" element={<PageNotFound />} />
+      </Routes>
+    );
+  }
+
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
       <div className="fixed inset-0 flex items-center justify-center" style={{ backgroundColor: '#0B1528' }}>
