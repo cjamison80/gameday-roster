@@ -108,7 +108,13 @@ export default function Tournaments() {
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm"
             style={{ backgroundColor: '#FFFFFF', color: '#0B1528', border: '1px solid #E2E8F0' }}
           >
-            <SlidersHorizontal size={16} /> Filters
+            <SlidersHorizontal size={16} />
+            Filters
+            {activeFilterCount > 0 && (
+              <span className="ml-1 px-2 py-0.5 rounded-full text-xs font-black text-white" style={{ backgroundColor: '#2563EB' }}>
+                {activeFilterCount}
+              </span>
+            )}
           </button>
           {userLocation.state && (
             <div className="flex items-center gap-1 text-xs font-semibold" style={{ color: '#64748B' }}>
