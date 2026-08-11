@@ -171,6 +171,15 @@ export default function PlayerProfilePage({ publicView = false }) {
   ];
   const visibleStats = [...battingStats, ...pitchingStats, ...metricStats];
   const hasStats = visibleStats.some(stat => stat.value !== '—');
+  const publicProfileUrl = `${window.location.origin}/public/player/${id}`;
+  const handleCopyPublicProfile = async () => {
+    try {
+      await navigator.clipboard.writeText(publicProfileUrl);
+      toast({ title: 'Public link copied', description: 'Share this link with coaches, parents or family.' });
+    } catch (e) {
+      toast({ title: 'Public profile link', description: publicProfileUrl });
+    }
+  };
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#F8FAFC' }}>
