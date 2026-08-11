@@ -6,6 +6,7 @@ import { SCRAPE_ADAPTERS, normalizeTournamentRecord, parseTournamentHtml, buildT
 const APP_ID = process.env.BASE44_APP_ID || process.env.VITE_BASE44_APP_ID;
 const ACCESS_TOKEN = process.env.BASE44_ACCESS_TOKEN || process.env.BASE44_TOKEN || process.env.VITE_BASE44_ACCESS_TOKEN;
 const APP_BASE_URL = process.env.BASE44_APP_BASE_URL || process.env.VITE_BASE44_APP_BASE_URL;
+const API_BASE_URL = process.env.BASE44_API_BASE_URL || APP_BASE_URL;
 const DRY_RUN = process.env.DRY_RUN === 'true';
 const MAX_EVENTS_PER_SOURCE = Number(process.env.MAX_EVENTS_PER_SOURCE || 75);
 const REQUEST_DELAY_MS = Number(process.env.REQUEST_DELAY_MS || 1500);
