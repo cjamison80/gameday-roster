@@ -28,6 +28,26 @@ function withTimeout(promise, ms, label) {
   return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
 }
 
+// Telltale markers of a bot-challenge/interstitial page (Cloudflare and similar
+// services). These often come back with a normal-looking 2xx/3xx status rather
+// than 401/403/429, so status-code checks alone miss them — we also inspect
+// the body itself. Kept short and small-body-gated so real pages that happen to
+// mention e.g. "Cloudflare" in a footer aren't misclassified.
+const CHALLENGE_MARKERS = [
+  'sgcaptcha',
+  'cdn-cgi/challenge-platform',
+  'Just a moment...',
+  'Attention Required! | Cloudflare',
+  'Checking if the site connection is secure',
+  '__CF$cv$params'
+];
+const CHALLENGE_BODY_MAX_BYTES = 8000;
+
+function isChallengePage(text = '') {
+  if (text.length > CHALLENGE_BODY_MAX_BYTES) return false;
+  return CHALLENGE_MARKERS.some(marker => text.includes(marker));
+}
+
 async function fetchText(url, sourceName) {
   console.log(`Fetching ${sourceName}: ${url}`);
   const controller = new AbortController();
@@ -43,7 +63,7 @@ async function fetchText(url, sourceName) {
       redirect: 'follow'
     });
 
-    if ([401, 403, 429].includes(res.status)) {
+    if ([401, 403, 429, 503].includes(res.status)) {
       const err = new Error(`${sourceName} returned ${res.status}. Stopping source sync.`);
       err.blocked = true;
       throw err;
@@ -54,6 +74,13 @@ async function fetchText(url, sourceName) {
     }
 
     const text = await res.text();
+
+    if (isChallengePage(text)) {
+      const err = new Error(`${sourceName} served a bot-challenge/CAPTCHA page instead of content (HTTP ${res.status}). Stopping source sync — this site is actively blocking automated requests.`);
+      err.blocked = true;
+      throw err;
+    }
+
     if (text.length > MAX_HTML_BYTES) {
       console.warn(`${sourceName} returned ${text.length} bytes. Trimming to ${MAX_HTML_BYTES} bytes.`);
       return text.slice(0, MAX_HTML_BYTES);
