@@ -26,12 +26,17 @@ if (!ACCESS_TOKEN) {
   process.exit(1);
 }
 
+if (!API_BASE_URL || !/^https?:\/\//i.test(API_BASE_URL)) {
+  console.error('Missing or invalid BASE44_APP_BASE_URL / BASE44_API_BASE_URL. For GitHub Actions, set BASE44_APP_BASE_URL to https://gameday-roster-hub.base44.app');
+  process.exit(1);
+}
+
 const base44 = createClient({
   appId: APP_ID,
   token: ACCESS_TOKEN,
   appBaseUrl: APP_BASE_URL,
   requiresAuth: false,
-  serverUrl: ''
+  serverUrl: API_BASE_URL
 });
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
