@@ -1,0 +1,39 @@
+name: USSSA Arkansas Tournament Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      max_events:
+        description: 'Maximum events to import from USSSA Arkansas baseball test run'
+        required: false
+        default: '50'
+      request_delay_ms:
+        description: 'Delay between record writes in milliseconds'
+        required: false
+        default: '1500'
+
+jobs:
+  sync-usssa-arkansas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run USSSA Arkansas baseball sync test
+        env:
+          BASE44_APP_ID: ${{ secrets.BASE44_APP_ID }}
+          BASE44_ACCESS_TOKEN: ${{ secrets.BASE44_ACCESS_TOKEN }}
+          BASE44_APP_BASE_URL: ${{ secrets.BASE44_APP_BASE_URL }}
+          MAX_EVENTS_PER_SOURCE: ${{ github.event.inputs.max_events }}
+          REQUEST_DELAY_MS: ${{ github.event.inputs.request_delay_ms }}
+        run: npm run sync:tournaments:usssa-ar
