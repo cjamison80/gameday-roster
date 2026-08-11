@@ -95,11 +95,20 @@ async function finishJob(job, source, patch) {
     return;
   }
 
-  await base44.entities.TournamentSyncJob.update(job.id, payload);
-  await base44.entities.TournamentSource.update(source.id, {
-    last_status: patch.status,
-    last_synced_at: new Date().toISOString()
-  });
+  try {
+    await base44.entities.TournamentSyncJob.update(job.id, payload);
+  } catch (err) {
+    console.warn(`Could not update TournamentSyncJob ${job.id}. Continuing.`, err.message);
+  }
+
+  try {
+    await base44.entities.TournamentSource.update(source.id, {
+      last_status: patch.status,
+      last_synced_at: new Date().toISOString()
+    });
+  } catch (err) {
+    console.warn(`Could not update TournamentSource ${source.id}. Continuing.`, err.message);
+  }
 }
 
 async function upsertTournament(source, record) {
