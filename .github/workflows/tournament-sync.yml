@@ -40,7 +40,8 @@ jobs:
         timeout-minutes: 3
         env:
           BASE44_APP_ID: ${{ secrets.BASE44_APP_ID }}
-          BASE44_ACCESS_TOKEN: ${{ secrets.BASE44_ACCESS_TOKEN }}
+          BASE44_ADMIN_EMAIL: ${{ secrets.BASE44_ADMIN_EMAIL }}
+          BASE44_ADMIN_PASSWORD: ${{ secrets.BASE44_ADMIN_PASSWORD }}
           BASE44_APP_BASE_URL: ${{ secrets.BASE44_APP_BASE_URL }}
           DRY_RUN: "true"
         run: npm run sync:tournaments:usssa-ar
@@ -50,7 +51,8 @@ jobs:
         timeout-minutes: 3
         env:
           BASE44_APP_ID: ${{ secrets.BASE44_APP_ID }}
-          BASE44_ACCESS_TOKEN: ${{ secrets.BASE44_ACCESS_TOKEN }}
+          BASE44_ADMIN_EMAIL: ${{ secrets.BASE44_ADMIN_EMAIL }}
+          BASE44_ADMIN_PASSWORD: ${{ secrets.BASE44_ADMIN_PASSWORD }}
           BASE44_APP_BASE_URL: ${{ secrets.BASE44_APP_BASE_URL }}
         run: npm run sync:tournaments:usssa-ar
 
@@ -59,7 +61,8 @@ jobs:
         timeout-minutes: 3
         env:
           BASE44_APP_ID: ${{ secrets.BASE44_APP_ID }}
-          BASE44_ACCESS_TOKEN: ${{ secrets.BASE44_ACCESS_TOKEN }}
+          BASE44_ADMIN_EMAIL: ${{ secrets.BASE44_ADMIN_EMAIL }}
+          BASE44_ADMIN_PASSWORD: ${{ secrets.BASE44_ADMIN_PASSWORD }}
           BASE44_APP_BASE_URL: ${{ secrets.BASE44_APP_BASE_URL }}
           DRY_RUN: "true"
         run: npm run sync:tournaments:2d-ar
@@ -69,6 +72,7 @@ jobs:
         timeout-minutes: 3
         env:
           BASE44_APP_ID: ${{ secrets.BASE44_APP_ID }}
-          BASE44_ACCESS_TOKEN: ${{ secrets.BASE44_ACCESS_TOKEN }}
+          BASE44_ADMIN_EMAIL: ${{ secrets.BASE44_ADMIN_EMAIL }}
+          BASE44_ADMIN_PASSWORD: ${{ secrets.BASE44_ADMIN_PASSWORD }}
           BASE44_APP_BASE_URL: ${{ secrets.BASE44_APP_BASE_URL }}
         run: npm run sync:tournaments:2d-ar
