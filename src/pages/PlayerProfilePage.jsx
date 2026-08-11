@@ -181,7 +181,7 @@ export default function PlayerProfilePage({ publicView = false }) {
             <ArrowLeft size={24} color="white" />
           </button>
           <div className="flex gap-2">
-            {!isOwner && (
+            {!isOwner && user && !publicView && (
               <button
                 onClick={toggleFav}
                 className="w-9 h-9 rounded-full flex items-center justify-center"
@@ -633,7 +633,7 @@ export default function PlayerProfilePage({ publicView = false }) {
         )}
 
         {/* Message button (non-owner) */}
-        {!isOwner && (
+        {!isOwner && user && !publicView && (
           <button
             onClick={() => navigate('/messages')}
             className="w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-2"
