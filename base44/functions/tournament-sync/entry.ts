@@ -7,6 +7,7 @@ import {
   buildTournamentKey,
   fetchUsssaNationwideRecords,
   fetchTwoDSportsRecords,
+  fetchPerfectGameRecords,
   geocodeCityState,
   geocodeKey
 } from '../../shared/scrape-core.js';
@@ -296,6 +297,20 @@ async function runSourceInner(base44, source, opts) {
       console.log(`Fetching ${source.name} via youth.2dsports.org session API...`);
       const records = await fetchTwoDSportsRecords({ fetchTimeoutMs: FETCH_TIMEOUT_MS, maxPages: 5 });
       console.log(`${source.name} returned ${records.length} real tournament records (season passes/memberships excluded).`);
+      parsed = records
+        .filter(record => {
+          if (sportFilter && String(record.sport || '').toLowerCase() !== sportFilter.toLowerCase()) return false;
+          if (stateFilter && String(record.state || '').toUpperCase() !== stateFilter.toUpperCase()) return false;
+          return true;
+        })
+        .slice(0, maxEvents);
+    } else if (source.parser_key === 'perfect_game') {
+      // Perfect Game: real national schedule page (RadGrid), not the marketing
+      // pages. See scrape-core.js for the group-header/sub-row correlation
+      // this needs and why (league groups vs single tournaments).
+      console.log(`Fetching ${source.name} via perfectgame.org national schedule...`);
+      const records = await fetchPerfectGameRecords({ fetchTimeoutMs: FETCH_TIMEOUT_MS });
+      console.log(`${source.name} returned ${records.length} real tournament records (season-long leagues excluded).`);
       parsed = records
         .filter(record => {
           if (sportFilter && String(record.sport || '').toLowerCase() !== sportFilter.toLowerCase()) return false;
