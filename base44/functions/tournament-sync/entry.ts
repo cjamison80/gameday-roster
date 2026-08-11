@@ -4,7 +4,8 @@ import {
   SCRAPE_ADAPTERS,
   parseTournamentHtml,
   normalizeTournamentRecord,
-  buildTournamentKey
+  buildTournamentKey,
+  fetchUsssaNationwideRecords
 } from '../../shared/scrape-core.js';
 
 const FETCH_TIMEOUT_MS = 15000;
@@ -169,7 +170,6 @@ async function upsertTournament(base44, source, record, dryRun) {
 
 async function runSourceInner(base44, source, opts) {
   const { stateFilter, sportFilter, maxEvents, dryRun } = opts;
-  const adapter = SCRAPE_ADAPTERS[source.parser_key];
   const job = await createJob(base44, source, 'running', `HTTP-triggered sync started for ${source.name}`);
 
   let recordsFound = 0;
@@ -187,24 +187,41 @@ async function runSourceInner(base44, source, opts) {
       return { source: source.name, status: 'blocked', records_found: 0, records_created: 0, records_updated: 0, records_skipped: 1, error: 'Source is not enabled for daily sync.' };
     }
 
-    if (!adapter) {
-      throw new Error(`No scrape adapter found for parser_key=${source.parser_key}`);
-    }
+    let parsed;
+    if (source.parser_key === 'usssa') {
+      // USSSA: real nationwide JSON API, not HTML scraping. See scrape-core.js
+      // for how this endpoint was recovered from USSSA's own frontend code.
+      console.log(`Fetching ${source.name} via USSSA nationwide API...`);
+      const records = await fetchUsssaNationwideRecords({ fetchTimeoutMs: FETCH_TIMEOUT_MS });
+      console.log(`${source.name} API returned ${records.length} records nationwide.`);
+      parsed = records
+        .filter(record => {
+          if (sportFilter && String(record.sport || '').toLowerCase() !== sportFilter.toLowerCase()) return false;
+          if (stateFilter && String(record.state || '').toUpperCase() !== stateFilter.toUpperCase()) return false;
+          return true;
+        })
+        .slice(0, maxEvents);
+    } else {
+      const adapter = SCRAPE_ADAPTERS[source.parser_key];
+      if (!adapter) {
+        throw new Error(`No scrape adapter found for parser_key=${source.parser_key}`);
+      }
 
-    const html = await fetchText(source.events_url, source.name);
-    console.log(`Parsing ${source.name} HTML...`);
-    const parsed = parseTournamentHtml(html, source, adapter)
-      .map(record => ({
-        ...record,
-        sport: record.sport || sportFilter || 'baseball',
-        state: record.state || ''
-      }))
-      .filter(record => {
-        if (sportFilter && String(record.sport || '').toLowerCase() !== sportFilter.toLowerCase()) return false;
-        if (stateFilter && String(record.state || '').toUpperCase() !== stateFilter.toUpperCase()) return false;
-        return true;
-      })
-      .slice(0, maxEvents);
+      const html = await fetchText(source.events_url, source.name);
+      console.log(`Parsing ${source.name} HTML...`);
+      parsed = parseTournamentHtml(html, source, adapter)
+        .map(record => ({
+          ...record,
+          sport: record.sport || sportFilter || 'baseball',
+          state: record.state || ''
+        }))
+        .filter(record => {
+          if (sportFilter && String(record.sport || '').toLowerCase() !== sportFilter.toLowerCase()) return false;
+          if (stateFilter && String(record.state || '').toUpperCase() !== stateFilter.toUpperCase()) return false;
+          return true;
+        })
+        .slice(0, maxEvents);
+    }
     recordsFound = parsed.length;
     console.log(`${source.name} parsed records after filters: ${recordsFound}`);
 
@@ -270,7 +287,7 @@ export default async function(req) {
     const sourceParam = url.searchParams.get('source') || '';
     const stateFilter = (url.searchParams.get('state') || '').trim();
     const sportFilter = (url.searchParams.get('sport') || '').trim();
-    const maxEvents = Math.max(1, Number(url.searchParams.get('max_events') || 5));
+    const maxEvents = Math.max(1, Number(url.searchParams.get('max_events') || 50));
     const dryRun = (url.searchParams.get('dry_run') || 'false').toLowerCase() === 'true';
 
     const parserKeys = sourceParam
