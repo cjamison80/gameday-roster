@@ -143,7 +143,22 @@ export default function Tournaments() {
                 />
               </div>
             </div>
-            <button onClick={clearFilters} className="text-sm font-bold" style={{ color: '#2563EB' }}>Clear all filters</button>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={clearFilters}
+                className="py-3 rounded-xl text-sm font-bold border-2"
+                style={{ color: '#64748B', borderColor: '#E2E8F0' }}
+              >
+                Clear Filters
+              </button>
+              <button
+                onClick={() => setShowFilters(false)}
+                className="py-3 rounded-xl text-sm font-bold text-white"
+                style={{ backgroundColor: '#2563EB' }}
+              >
+                Apply Filters · {filtered.length}
+              </button>
+            </div>
             <p className="text-xs leading-relaxed" style={{ color: '#94A3B8' }}>
               Radius filtering is currently a state-level MVP proxy until latitude/longitude data is synced from approved tournament sources.
             </p>
