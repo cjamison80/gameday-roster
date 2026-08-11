@@ -427,11 +427,11 @@ export default function PlayerProfilePage({ publicView = false }) {
               <div>
                 <h3 className="font-semibold" style={{ color: '#0B1528' }}>Player Stats</h3>
                 <p className="text-xs mt-1" style={{ color: '#5B6475' }}>
-                  {player.perfect_game_connection_status === 'connected' ? 'Connected to Perfect Game profile' : 'Manual stats now, Perfect Game sync-ready'}
+                  {pgConnectionStatus === 'connected' ? 'Connected to Perfect Game profile' : 'Manual stats now, Perfect Game sync-ready'}
                 </p>
               </div>
-              {player.perfect_game_url && !editing && (
-                <a href={player.perfect_game_url} target="_blank" rel="noopener noreferrer" className="text-xs font-bold px-3 py-1.5 rounded-full" style={{ backgroundColor: '#EFE6D6', color: '#8F0F1A' }}>
+              {pgProfileUrl && !editing && (
+                <a href={pgProfileUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-bold px-3 py-1.5 rounded-full" style={{ backgroundColor: '#EFE6D6', color: '#8F0F1A' }}>
                   PG
                 </a>
               )}
@@ -594,7 +594,7 @@ export default function PlayerProfilePage({ publicView = false }) {
         )}
 
         {/* Linked profiles: Perfect Game + GameChanger + Sideline HD */}
-        {(player.perfect_game_url || player.gamechanger_url || player.sidelinehd_url || (isOwner && editing)) && (
+        {(pgProfileUrl || player.gamechanger_url || player.sidelinehd_url || (isOwner && editing)) && (
           <div className="gdr-card p-5">
             <h3 className="font-semibold mb-3" style={{ color: '#0B1528' }}>Linked Profiles</h3>
             <div className="space-y-3">
@@ -631,9 +631,9 @@ export default function PlayerProfilePage({ publicView = false }) {
                       <p className="text-xs mt-2" style={{ color: '#8F0F1A' }}>Detected PG ID: {editData.perfect_game_player_id}</p>
                     )}
                   </div>
-                ) : player.perfect_game_url && (
+                ) : pgProfileUrl && (
                   <a
-                    href={player.perfect_game_url}
+                    href={pgProfileUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-2 w-full py-3  text-sm font-bold"
