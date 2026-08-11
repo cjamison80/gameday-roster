@@ -11,6 +11,7 @@
     "typecheck": "tsc -p ./jsconfig.json",
     "preview": "vite preview",
     "sync:tournaments": "node scripts/tournament-sync/daily-sync.mjs",
+    "sync:tournaments:usssa-ar": "node scripts/tournament-sync/usssa-arkansas-baseball.mjs",
     "sync:tournaments:dry-run": "DRY_RUN=true node scripts/tournament-sync/daily-sync.mjs"
   },
   "dependencies": {
