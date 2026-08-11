@@ -147,7 +147,7 @@ export default function PlayerProfilePage({ publicView = false }) {
     };
     const externalPatch = {
       player_id: id,
-      parent_id: player?.parent_id,
+      parent_id: user?.id,
       provider: 'perfect_game',
       provider_label: 'Perfect Game',
       url,
