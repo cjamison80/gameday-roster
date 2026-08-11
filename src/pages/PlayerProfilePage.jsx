@@ -163,6 +163,9 @@ export default function PlayerProfilePage({ publicView = false }) {
         ? await base44.entities.PlayerExternalProfile.update(existing[0].id, externalPatch)
         : await base44.entities.PlayerExternalProfile.create(externalPatch);
 
+      // Mirror the link onto PlayerProfile too so public/profile reads are resilient.
+      await base44.entities.PlayerProfile.update(id, playerPatch).catch(() => null);
+
       setPgProfile(savedLink);
       setExternalProfiles(prev => [savedLink, ...prev.filter(link => link.id !== savedLink.id)]);
       setEditData(d => ({ ...d, ...playerPatch }));
