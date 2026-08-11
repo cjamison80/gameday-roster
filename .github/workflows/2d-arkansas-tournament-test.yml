@@ -6,16 +6,16 @@ on:
       max_events:
         description: 'Maximum events to import from 2D Sports Arkansas baseball test run'
         required: false
-        default: '50'
+        default: '5'
       request_delay_ms:
         description: 'Delay between record writes in milliseconds'
         required: false
-        default: '1500'
+        default: '250'
 
 jobs:
   sync-2d-arkansas:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 8
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -37,4 +37,6 @@ jobs:
           BASE44_API_BASE_URL: https://gameday-roster-hub.base44.app
           MAX_EVENTS_PER_SOURCE: ${{ github.event.inputs.max_events }}
           REQUEST_DELAY_MS: ${{ github.event.inputs.request_delay_ms }}
+          FETCH_TIMEOUT_MS: 15000
+          SOURCE_TIMEOUT_MS: 120000
         run: npm run sync:tournaments:2d-ar
