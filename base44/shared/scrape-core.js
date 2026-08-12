@@ -594,38 +594,91 @@ function parsePerfectGameGroupHeaders(html) {
   return groups;
 }
 
-export async function fetchPerfectGameRecords({ fetchTimeoutMs = 15000 } = {}) {
+// Pagination: the classic ASP.NET RadGrid page uses a plain (non-AJAX)
+// __doPostBack for its numbered page links, which returns a full HTML page
+// (not a Telerik AJAX delta) — confirmed by testing directly. So each page is
+// just a normal POST carrying the PREVIOUS page's __VIEWSTATE/
+// __VIEWSTATEGENERATOR and an __EVENTTARGET naming that page's pager link
+// control. The pager's numbered-link control IDs are stable across pages
+// (page 2's own response still lists page 1 as ctl05, page 3 as ctl07, etc.),
+// confirmed directly rather than assumed, so this can target any page 1-10
+// without needing to simulate expanding the "next pages" (11+) group.
+function perfectGamePageTarget(pageNumber) {
+  const ctl = String(4 + pageNumber).padStart(2, '0');
+  return `ctl00$ctl00$ContentTopLevel$ContentPlaceHolder1$rgSchedule$ctl00$ctl03$ctl01$ctl${ctl}`;
+}
+
+function extractHiddenField(html, id) {
+  const m = html.match(new RegExp(`id="${id}"[^>]*value="([^"]*)"`));
+  return m ? m[1] : '';
+}
+
+async function fetchPerfectGameSchedulePage({ pageNumber, prevViewState, prevViewStateGenerator, fetchTimeoutMs }) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), fetchTimeoutMs);
-  let res;
   try {
-    res = await fetch(PERFECT_GAME_SCHEDULE_URL, {
+    const isFirstPage = pageNumber === 1;
+    const res = await fetch(PERFECT_GAME_SCHEDULE_URL, {
+      method: isFirstPage ? 'GET' : 'POST',
       signal: controller.signal,
-      headers: {
-        'User-Agent': PERFECT_GAME_USER_AGENT,
-        'Accept': 'text/html,application/xhtml+xml'
-      }
+      headers: isFirstPage
+        ? { 'User-Agent': PERFECT_GAME_USER_AGENT, 'Accept': 'text/html,application/xhtml+xml' }
+        : { 'User-Agent': PERFECT_GAME_USER_AGENT, 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: isFirstPage ? undefined : new URLSearchParams({
+        __EVENTTARGET: perfectGamePageTarget(pageNumber),
+        __EVENTARGUMENT: '',
+        __VIEWSTATE: prevViewState,
+        __VIEWSTATEGENERATOR: prevViewStateGenerator
+      }).toString()
     });
+
+    if ([401, 403, 429, 503].includes(res.status)) {
+      const err = new Error(`Perfect Game schedule page ${pageNumber} returned ${res.status}. Stopping source sync.`);
+      err.blocked = true;
+      throw err;
+    }
+    if (!res.ok) {
+      throw new Error(`Perfect Game schedule page ${pageNumber} fetch failed: ${res.status} ${res.statusText}`);
+    }
+    return await res.text();
   } finally {
     clearTimeout(timeout);
   }
+}
 
-  if ([401, 403, 429, 503].includes(res.status)) {
-    const err = new Error(`Perfect Game schedule page returned ${res.status}. Stopping source sync.`);
-    err.blocked = true;
-    throw err;
-  }
-  if (!res.ok) {
-    throw new Error(`Perfect Game schedule fetch failed: ${res.status} ${res.statusText}`);
-  }
+export async function fetchPerfectGameRecords({ fetchTimeoutMs = 15000, maxPages = 6 } = {}) {
+  const allSubRows = new Map();
+  const allGroups = [];
+  const seenGids = new Set();
+  let viewState = '';
+  let viewStateGenerator = '';
 
-  const html = await res.text();
-  const subRowsByGid = parsePerfectGameSubRows(html);
-  const groups = parsePerfectGameGroupHeaders(html);
+  for (let page = 1; page <= maxPages; page++) {
+    const html = await fetchPerfectGameSchedulePage({ pageNumber: page, prevViewState: viewState, prevViewStateGenerator: viewStateGenerator, fetchTimeoutMs });
+
+    const pageSubRows = parsePerfectGameSubRows(html);
+    for (const [gid, entry] of pageSubRows) {
+      allSubRows.set(gid, entry);
+    }
+    const pageGroups = parsePerfectGameGroupHeaders(html);
+    let newGroupCount = 0;
+    for (const g of pageGroups) {
+      if (seenGids.has(g.gid)) continue;
+      seenGids.add(g.gid);
+      allGroups.push(g);
+      newGroupCount++;
+    }
+
+    if (newGroupCount === 0 && page > 1) break; // no new groups — likely reached the end or pagination stopped advancing
+
+    viewState = extractHiddenField(html, '__VIEWSTATE');
+    viewStateGenerator = extractHiddenField(html, '__VIEWSTATEGENERATOR');
+    if (!viewState) break; // can't continue paginating without a viewstate to chain from
+  }
 
   const records = [];
-  for (const g of groups) {
-    const sub = subRowsByGid.get(g.gid);
+  for (const g of allGroups) {
+    const sub = allSubRows.get(g.gid);
     if (!sub || sub.starts.length === 0) continue;
 
     const minStart = new Date(Math.min(...sub.starts.map(d => d.getTime())));
@@ -660,4 +713,51 @@ export async function fetchPerfectGameRecords({ fetchTimeoutMs = 15000 } = {}) {
   }
 
   return records;
+}
+
+// ---- Perfect Game entered-teams import ----
+// TournamentTeamsGroup.aspx?gid=N is a real, unprotected page listing each
+// team registered for a tournament, grouped by age division. It's a
+// different page structure from the schedule (no RadGrid), so it gets its
+// own lightweight parser rather than reusing the sub-row/group-header logic.
+function parsePerfectGameTeamsPage(html) {
+  const teams = [];
+  // Each age-division block: an event link with the division name as its text,
+  // followed by a "Participating Teams" list of team links + city/state spans.
+  const blockRe = /<a[^>]*id="[^"]*hlEvent_\d+"[^>]*>([^<]+)<\/a>[\s\S]*?(?=<a[^>]*id="[^"]*hlEvent_\d+"|$)/g;
+  let m;
+  while ((m = blockRe.exec(html))) {
+    const ageDivision = m[1].trim();
+    const block = m[0];
+    const teamRe = /id="[^"]*hlTeams_\d+"[^>]*>([^<]+)<\/a>[\s\S]*?<span[^>]*id="[^"]*lblCity_\d+"[^>]*><font[^>]*>([^<]*)<\/font><\/span>/g;
+    let tm;
+    while ((tm = teamRe.exec(block))) {
+      const teamName = tm[1].trim();
+      const cityState = tm[2].trim();
+      const [city, state] = cityState.split(',').map(s => s.trim());
+      if (teamName) {
+        teams.push({ team_name: teamName, age_division: ageDivision, classification: '', city: city || '', state: state || '' });
+      }
+    }
+  }
+  return teams;
+}
+
+export async function fetchPerfectGameTeams(teamsUrl, { fetchTimeoutMs = 12000 } = {}) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), fetchTimeoutMs);
+  try {
+    const res = await fetch(teamsUrl, {
+      signal: controller.signal,
+      headers: { 'User-Agent': PERFECT_GAME_USER_AGENT, 'Accept': 'text/html,application/xhtml+xml' }
+    });
+    if ([401, 403, 429, 503].includes(res.status)) return []; // don't block the whole sync over one tournament's team page
+    if (!res.ok) return [];
+    const html = await res.text();
+    return parsePerfectGameTeamsPage(html);
+  } catch {
+    return [];
+  } finally {
+    clearTimeout(timeout);
+  }
 }
