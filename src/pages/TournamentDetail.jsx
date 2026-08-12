@@ -85,19 +85,6 @@ export default function TournamentDetail() {
   }
 
   const statusLabel = (tournament.status || 'unknown').replace('_', ' ');
-      const [aAge, aClass] = divisionRank(a);
-      const [bAge, bClass] = divisionRank(b);
-      if (aAge !== bAge) return aAge - bAge;
-      if (aClass !== bClass) return aClass - bClass;
-      return (a.team_name || '').localeCompare(b.team_name || '');
-    });
-  }, [teams]);
-
-  const divisionOptions = useMemo(() => [...new Set(sortedTeams.map(divisionLabel))], [sortedTeams]);
-
-  const displayedTeams = selectedDivision
-    ? sortedTeams.filter(t => divisionLabel(t) === selectedDivision)
-    : sortedTeams;
 
   return (
     <div className="gdr-page" >
