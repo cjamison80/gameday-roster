@@ -32,6 +32,7 @@ import CoachProfilePage from '@/pages/CoachProfilePage';
 import OrganizationProfilePage from '@/pages/OrganizationProfilePage';
 import AdminDashboard from '@/pages/AdminDashboard';
 import Settings from '@/pages/Settings';
+import Billing from '@/pages/Billing';
 import Tournaments from '@/pages/Tournaments';
 import TournamentDetail from '@/pages/TournamentDetail';
 import TournamentSourcesAdmin from '@/pages/TournamentSourcesAdmin';
@@ -97,6 +98,7 @@ const AuthenticatedApp = () => {
           <Route path="/messages" element={<Messages />} />
           <Route path="/activity" element={<Activity />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/tournaments" element={<Tournaments />} />
           <Route path="/coach-dashboard" element={<CoachDashboard />} />
         </Route>
 
@@ -107,7 +109,7 @@ const AuthenticatedApp = () => {
         <Route path="/coach/:id" element={<CoachProfilePage />} />
         <Route path="/organization/:id" element={<OrganizationProfilePage />} />
         <Route path="/create-opportunity" element={<CreateOpportunity />} />
-        <Route path="/tournaments" element={<Tournaments />} />
+        <Route path="/billing" element={<Billing />} />
         <Route path="/tournament/:id" element={<TournamentDetail />} />
         <Route path="/admin/tournament-sources" element={<TournamentSourcesAdmin />} />
         <Route path="/admin" element={<AdminDashboard />} />
