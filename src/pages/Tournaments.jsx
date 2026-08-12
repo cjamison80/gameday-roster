@@ -17,6 +17,28 @@ const AGE_DIVISIONS = ['8U','9U','10U','11U','12U','13U','14U','15U','16U','17U'
 const CLASSIFICATIONS = ['Major','AAA','AA','A','Open'];
 const RADIUS_OPTIONS = [25, 50, 100, 150, 250, 500];
 
+// Rolling list of the next 12 months (value: "YYYY-MM", label: "August 2026").
+function buildMonthOptions() {
+  const options = [];
+  const now = new Date();
+  for (let i = 0; i < 12; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+    const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    const label = d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    options.push({ value, label });
+  }
+  return options;
+}
+const MONTH_OPTIONS = buildMonthOptions();
+
+function monthRange(value) {
+  const [year, month] = value.split('-').map(Number);
+  const start = `${value}-01`;
+  const lastDay = new Date(year, month, 0).getDate();
+  const end = `${value}-${String(lastDay).padStart(2, '0')}`;
+  return { start, end };
+}
+
 async function geocodeZip(zip) {
   const res = await fetch(`https://api.zippopotam.us/us/${encodeURIComponent(zip)}`);
   if (!res.ok) throw new Error('ZIP code not found');
@@ -39,6 +61,7 @@ export default function Tournaments() {
     association: '',
     age: searchParams.get('age') || '',
     classification: searchParams.get('classification') || '',
+    month: '',
     zip: '',
     radius: '',
     maxCost: ''
@@ -106,6 +129,12 @@ export default function Tournaments() {
       if (filters.age && !(t.age_divisions || []).includes(filters.age)) return false;
       if (filters.classification && !(t.classifications || []).includes(filters.classification)) return false;
       if (filters.maxCost && Number(t.cost || 0) > Number(filters.maxCost)) return false;
+      if (filters.month) {
+        const { start, end } = monthRange(filters.month);
+        const tStart = t.start_date || '';
+        const tEnd = t.end_date || t.start_date || '';
+        if (!tStart || tEnd < start || tStart > end) return false; // no overlap with the selected month
+      }
 
       if (radiusActive) {
         if (t.latitude == null || t.longitude == null) return false; // no location data yet — can't confirm it's in range
@@ -118,7 +147,7 @@ export default function Tournaments() {
 
   const updateFilter = (key, value) => setFilters(f => ({ ...f, [key]: value }));
   const clearFilters = () => {
-    setFilters({ state: '', association: '', age: '', classification: '', zip: '', radius: '', maxCost: '' });
+    setFilters({ state: '', association: '', age: '', classification: '', month: '', zip: '', radius: '', maxCost: '' });
     setZipCoords(null);
     setZipError('');
   };
