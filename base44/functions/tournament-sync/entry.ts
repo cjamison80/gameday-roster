@@ -342,7 +342,7 @@ async function runSourceInner(base44, source, opts) {
       // pages. See scrape-core.js for the group-header/sub-row correlation
       // this needs and why (league groups vs single tournaments).
       console.log(`Fetching ${source.name} via perfectgame.org national schedule...`);
-      const records = await fetchPerfectGameRecords({ fetchTimeoutMs: FETCH_TIMEOUT_MS });
+      const records = await fetchPerfectGameRecords({ fetchTimeoutMs: FETCH_TIMEOUT_MS, maxPages: 6 });
       console.log(`${source.name} returned ${records.length} real tournament records (season-long leagues excluded).`);
       parsed = records
         .filter(record => {
@@ -378,7 +378,7 @@ async function runSourceInner(base44, source, opts) {
     for (const [index, record] of parsed.entries()) {
       try {
         console.log(`Upserting ${index + 1}/${parsed.length}: ${record.name || 'Unnamed tournament'}`);
-        const result = await upsertTournament(base44, source, record, dryRun, geoState);
+        const result = await upsertTournament(base44, source, record, dryRun, geoState, teamsState);
         if (result === 'created') recordsCreated += 1;
         else if (result === 'updated') recordsUpdated += 1;
         else recordsSkipped += 1;
