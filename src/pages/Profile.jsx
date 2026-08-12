@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, ChevronRight, Edit, Settings, Bell, HelpCircle, LogOut, Shield, Camera, ClipboardList, Heart, Trophy } from 'lucide-react';
+import { Plus, ChevronRight, Edit, Settings, Bell, HelpCircle, LogOut, Shield, Camera, ClipboardList, Heart, Trophy, CreditCard } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { getInitials } from '@/lib/utils';
 import VerifiedBadge from '@/components/VerifiedBadge';
 import AvailabilityChip from '@/components/AvailabilityChip';
 import { Image } from '@/components/ui/image';
 import PlayerCreateForm from '@/components/player/PlayerCreateForm';
+import { getPlanFromList, isLimitReached, loadPublicPlans, loadUserSubscription } from '@/lib/subscription';
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -16,6 +17,8 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [showCreatePlayer, setShowCreatePlayer] = useState(false);
   const [favorites, setFavorites] = useState({ teams: [], players: [] });
+  const [plans, setPlans] = useState([]);
+  const [subscription, setSubscription] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -28,13 +31,18 @@ export default function Profile() {
     try {
       const u = await base44.auth.me();
       setUser(u);
-      const [profiles, myPlayers, favs] = await Promise.all([
+      const [profiles, myPlayers, favs, planRows] = await Promise.all([
         base44.entities.UserProfile.filter({ user_id: u.id }),
         base44.entities.PlayerProfile.filter({ parent_id: u.id }),
-        base44.entities.Favorite.filter({ user_id: u.id })
+        base44.entities.Favorite.filter({ user_id: u.id }),
+        loadPublicPlans()
       ]);
-      if (profiles.length > 0) setUserProfile(profiles[0]);
+      const profile = profiles[0] || null;
+      if (profile) setUserProfile(profile);
       setPlayers(myPlayers);
+      setPlans(planRows);
+      const sub = await loadUserSubscription(u, profile?.role || 'parent', planRows);
+      setSubscription(sub);
       const teamIds = favs.filter(f => f.target_type === 'team').map(f => f.target_id);
       const playerIds = favs.filter(f => f.target_type === 'player').map(f => f.target_id);
       const [favTeams, favPlayers] = await Promise.all([
@@ -62,6 +70,16 @@ export default function Profile() {
     player: 'Player Account',
     organization: 'Organization Account',
     admin: 'Administrator'
+  };
+
+  const currentPlan = getPlanFromList(plans, subscription?.plan_code || (userProfile?.role === 'coach' ? 'coach_free' : userProfile?.role === 'organization' ? 'org_starter' : 'parent_free'));
+  const playerLimitReached = isLimitReached(currentPlan, 'player_profiles', players.length);
+  const handleAddPlayer = () => {
+    if (playerLimitReached) {
+      navigate('/billing?reason=player_profiles');
+      return;
+    }
+    setShowCreatePlayer(true);
   };
 
   if (loading) {
@@ -118,6 +136,22 @@ export default function Profile() {
       </div>
 
       <div className="px-5 py-5 space-y-5 pb-24">
+        {/* Subscription status */}
+        <button
+          onClick={() => navigate('/billing')}
+          className="gdr-card w-full p-4 flex items-center gap-3 text-left"
+        >
+          <div className="w-11 h-11 rounded-2xl flex items-center justify-center" style={{ backgroundColor: '#FEE2E2' }}>
+            <CreditCard size={20} color="#C1121F" />
+          </div>
+          <div className="flex-1">
+            <p className="text-xs font-black uppercase tracking-[0.16em]" style={{ color: '#94A3B8' }}>Current Plan</p>
+            <h3 className="font-black" style={{ color: '#0B1528' }}>{currentPlan?.name || 'Free Plan'}</h3>
+            <p className="text-xs mt-0.5" style={{ color: '#5B6475' }}>View limits, upgrades and billing</p>
+          </div>
+          <ChevronRight size={18} color="#8B95A7" />
+        </button>
+
         {/* Coach tools entry points (for coaches) */}
         {userProfile?.role === 'coach' && (
           <div className="space-y-3">
@@ -159,7 +193,7 @@ export default function Profile() {
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-2xl" style={{ color: '#0B1528' }}>My Players</h2>
               <button
-                onClick={() => setShowCreatePlayer(true)}
+                onClick={handleAddPlayer}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold text-white"
                 style={{ backgroundColor: '#C1121F' }}
               >
@@ -170,7 +204,7 @@ export default function Profile() {
 
             {players.length === 0 ? (
               <div
-                onClick={() => setShowCreatePlayer(true)}
+                onClick={handleAddPlayer}
                 className="gdr-card border-2 border-dashed p-8 flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 transition-colors"
                 style={{ borderColor: '#CBD5E1' }}
               >
