@@ -38,7 +38,6 @@ const TEAMS_BUDGET_PER_RUN = 30;
 const TEAMS_FETCH_DELAY_MS = 150;
 
 async function loadGeoCache(base44) {
-const TEAMS_FETCH_DELAY_MS = 150;
   const cache = new Map();
   try {
     const rows = await withTimeout(base44.asServiceRole.entities.GeocodeCache.list('-created_date', 500), 15000, 'List GeocodeCache');
