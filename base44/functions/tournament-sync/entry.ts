@@ -414,7 +414,7 @@ export default async function(req) {
     const sourceParam = url.searchParams.get('source') || '';
     const stateFilter = (url.searchParams.get('state') || '').trim();
     const sportFilter = (url.searchParams.get('sport') || '').trim();
-    const maxEvents = Math.max(1, Number(url.searchParams.get('max_events') || 50));
+    const maxEvents = Math.max(1, Number(url.searchParams.get('max_events') || 150));
     const dryRun = (url.searchParams.get('dry_run') || 'false').toLowerCase() === 'true';
 
     const parserKeys = sourceParam
