@@ -218,7 +218,7 @@ async function finishJob(base44, job, source, patch) {
   }
 }
 
-async function upsertTournament(base44, source, record, dryRun, geoState) {
+async function upsertTournament(base44, source, record, dryRun, geoState, teamsState) {
   const tournament = normalizeTournamentRecord(record, source);
 
   if (geoState && tournament.city && tournament.state && tournament.latitude == null) {
@@ -227,6 +227,20 @@ async function upsertTournament(base44, source, record, dryRun, geoState) {
       tournament.latitude = coords.latitude;
       tournament.longitude = coords.longitude;
     }
+  }
+
+  if (teamsState && source.parser_key === 'perfect_game' && tournament.teams_url && teamsState.budgetUsed < TEAMS_BUDGET_PER_RUN) {
+    teamsState.budgetUsed += 1;
+    try {
+      const teams = await fetchPerfectGameTeams(tournament.teams_url, { fetchTimeoutMs: FETCH_TIMEOUT_MS });
+      if (teams.length) {
+        tournament.teams_entered = teams;
+        tournament.teams_entered_count = teams.length;
+      }
+    } catch (err) {
+      console.warn(`Could not fetch teams for ${tournament.name}.`, err.message);
+    }
+    await sleep(TEAMS_FETCH_DELAY_MS);
   }
 
   const sourceKey = buildTournamentKey(tournament);
