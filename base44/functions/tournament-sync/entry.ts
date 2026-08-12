@@ -28,10 +28,13 @@ const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Nominatim's usage policy caps requests at ~1/sec. We only geocode NEW
 // city/state combos (existing ones are cached in the GeocodeCache entity).
-// 80 covers a full one-run backfill of the current ~65 unique tournament
-// cities with headroom for growth, while 80 * 1.1s ≈ 88s still comfortably
-// fits within SOURCE_TIMEOUT_MS alongside normal per-record upsert work.
-const GEOCODE_BUDGET_PER_RUN = 80;
+// Kept intentionally small relative to SOURCE_TIMEOUT_MS (90s) — this budget
+// is SHARED across every source in one run, so whichever source runs after
+// others have already used part of it still needs most of its own 90s window
+// left for actual fetching/upserting. Backfill just takes more runs instead
+// of fewer, which is fine — a reliably-finishing run beats a faster one that
+// risks getting killed with no recorded status.
+const GEOCODE_BUDGET_PER_RUN = 20;
 const GEOCODE_RATE_LIMIT_MS = 1100;
 
 // Perfect Game team pages are unprotected and cheap, but we still cap fetches
@@ -333,7 +336,7 @@ async function runSourceInner(base44, source, opts) {
       // based platform from the main site. See scrape-core.js for the session/
       // pagination details recovered from its own frontend JS.
       console.log(`Fetching ${source.name} via youth.2dsports.org session API...`);
-      const records = await fetchTwoDSportsRecords({ fetchTimeoutMs: FETCH_TIMEOUT_MS, maxPages: 8 });
+      const records = await fetchTwoDSportsRecords({ fetchTimeoutMs: FETCH_TIMEOUT_MS, maxPages: 5 });
       console.log(`${source.name} returned ${records.length} real tournament records (season passes/memberships excluded).`);
       parsed = records
         .filter(record => {
