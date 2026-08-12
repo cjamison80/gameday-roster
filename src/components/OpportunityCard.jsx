@@ -14,7 +14,7 @@ export default function OpportunityCard({ opportunity, matchScore, onSave, isSav
       className="gdr-card gdr-card-hover overflow-hidden cursor-pointer active:scale-[0.99]"
       onClick={onClick}
     >
-      <div className="px-4 py-3 border-b" style={{ borderColor: 'rgba(220,214,204,0.82)' }}>
+      <div className="px-4 py-3 border-b" style={{ borderColor: 'rgba(203,213,225,0.88)' }}>
         <div className="flex items-center justify-between gap-3">
           <span className="gdr-editorial-kicker">
             {typeLabel}
@@ -25,7 +25,7 @@ export default function OpportunityCard({ opportunity, matchScore, onSave, isSav
               <button
                 onClick={e => { e.stopPropagation(); onSave?.(); }}
                 className="flex h-8 w-8 items-center justify-center transition-colors"
-                style={{ backgroundColor: '#F5F7FB', border: '1px solid rgba(220,214,204,0.9)' }}
+                style={{ backgroundColor: '#F5F7FB', border: '1px solid rgba(203,213,225,0.9)' }}
               >
                 <Heart size={16} fill={isSaved ? '#B9232A' : 'none'} color={isSaved ? '#B9232A' : '#8B95A7'} />
               </button>
@@ -38,7 +38,7 @@ export default function OpportunityCard({ opportunity, matchScore, onSave, isSav
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-3 flex-1 min-w-0">
             <div className="w-14 h-14 flex-shrink-0 flex items-center justify-center overflow-hidden"
-              style={{ background: '#EEF2F7', border: '1px solid rgba(220,214,204,0.96)' }}>
+              style={{ background: '#EEF2F7', border: '1px solid rgba(203,213,225,0.96)' }}>
               {teamLogo ? (
                 <Image src={teamLogo} alt={teamName} className="w-14 h-14" fittingType="fill" />
               ) : (
@@ -48,7 +48,7 @@ export default function OpportunityCard({ opportunity, matchScore, onSave, isSav
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-[20px] leading-[1.05] truncate" style={{ color: '#0B1528', fontFamily: 'ui-serif, Georgia, Cambria, Times New Roman, Times, serif', fontWeight: 500 }}>
+              <h3 className="text-[20px] leading-[1.05] truncate" style={{ color: '#0B1528', fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif', fontWeight: 850 }}>
                 {opportunity.title}
               </h3>
               <p className="text-sm font-semibold mt-1.5 truncate" style={{ color: '#5B6475' }}>{teamName}</p>
@@ -57,7 +57,7 @@ export default function OpportunityCard({ opportunity, matchScore, onSave, isSav
                 <div className="flex flex-wrap gap-1.5 mt-3">
                   {opportunity.positions_needed.slice(0, 3).map(pos => (
                     <span key={pos} className="text-[10px] font-black px-2.5 py-1 uppercase tracking-[0.16em]"
-                      style={{ backgroundColor: '#F5F7FB', color: '#0B1528', border: '1px solid rgba(220,214,204,0.88)' }}>
+                      style={{ backgroundColor: '#F5F7FB', color: '#0B1528', border: '1px solid rgba(203,213,225,0.88)' }}>
                       {pos}
                     </span>
                   ))}
@@ -74,7 +74,7 @@ export default function OpportunityCard({ opportunity, matchScore, onSave, isSav
           {matchScore !== undefined && <MatchScoreBadge score={matchScore} size="md" />}
         </div>
 
-        <div className="mt-4 p-3" style={{ backgroundColor: '#F5F7FB', border: '1px solid rgba(220,214,204,0.78)' }}>
+        <div className="mt-4 p-3" style={{ backgroundColor: '#F5F7FB', border: '1px solid rgba(203,213,225,0.78)' }}>
           <div className="grid grid-cols-2 gap-2">
             <Detail icon={Calendar} label={formatDateRange(opportunity.event_date_start, opportunity.event_date_end)} />
             <Detail icon={MapPin} label={`${opportunity.city}, ${opportunity.state}`} />
@@ -91,7 +91,7 @@ export default function OpportunityCard({ opportunity, matchScore, onSave, isSav
               </span>
             )}
             {opportunity.classification && (
-              <span className="text-[10px] font-black px-2.5 py-1 uppercase tracking-[0.16em]" style={{ backgroundColor: '#EFE6D6', color: '#8F0F1A' }}>
+              <span className="text-[10px] font-black px-2.5 py-1 uppercase tracking-[0.16em]" style={{ backgroundColor: '#FEE2E2', color: '#991B1B' }}>
                 {opportunity.classification}
               </span>
             )}

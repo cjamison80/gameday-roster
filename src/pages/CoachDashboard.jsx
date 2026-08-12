@@ -142,7 +142,7 @@ export default function CoachDashboard() {
         <button
           onClick={() => navigate(`/tournaments?state=${userProfile?.state || ''}${teams[0]?.age_division ? `&age=${teams[0].age_division}` : ''}${teams[0]?.classification ? `&classification=${teams[0].classification}` : ''}`)}
           className="w-full flex items-center justify-center gap-2 mt-5 py-3.5 font-black uppercase tracking-[0.16em] text-xs"
-          style={{ backgroundColor: '#EFE6D6', color: '#0B1528' }}
+          style={{ backgroundColor: '#FEE2E2', color: '#0B1528' }}
         >
           <Trophy size={18} color="#C1121F" />
           Find Tournaments
@@ -192,7 +192,7 @@ export default function CoachDashboard() {
                         {team.age_division || '—'}{team.classification ? ` · ${team.classification}` : ''}
                       </span>
                       {team.sanctioning_body && (
-                        <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: '#EFE6D6', color: '#C1121F' }}>
+                        <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: '#FEE2E2', color: '#C1121F' }}>
                           {team.sanctioning_body}
                         </span>
                       )}
@@ -321,7 +321,7 @@ function HeaderStat({ icon: Icon, value, label }) {
 
 function StatusPill({ status }) {
   const map = {
-    pending: { bg: '#EFE6D6', color: '#8F0F1A', label: 'Pending' },
+    pending: { bg: '#FEE2E2', color: '#991B1B', label: 'Pending' },
     accepted: { bg: '#E7EDE2', color: '#4F7A59', label: 'Accepted' },
     declined: { bg: '#F1DADA', color: '#B9232A', label: 'Declined' },
     withdrawn: { bg: '#EEF2F7', color: '#5B6475', label: 'Withdrawn' }

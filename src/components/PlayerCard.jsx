@@ -15,7 +15,7 @@ export default function PlayerCard({ player, matchScore, availabilityStatus, onS
     >
       <div className="flex items-start gap-3">
         <div className="relative flex-shrink-0">
-          <div className="w-[68px] h-[68px] overflow-hidden" style={{ background: '#EEF2F7', border: '1px solid rgba(220,214,204,0.96)' }}>
+          <div className="w-[68px] h-[68px] overflow-hidden" style={{ background: '#EEF2F7', border: '1px solid rgba(203,213,225,0.96)' }}>
             {player.photo_url ? (
               <Image src={player.photo_url} alt={fullName} className="w-[68px] h-[68px]" fittingType="fill" />
             ) : (
@@ -35,7 +35,7 @@ export default function PlayerCard({ player, matchScore, availabilityStatus, onS
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
               <p className="gdr-editorial-kicker mb-1">Player Profile</p>
-              <h3 className="text-[20px] leading-[1.05] truncate" style={{ color: '#0B1528', fontFamily: 'ui-serif, Georgia, Cambria, Times New Roman, Times, serif', fontWeight: 500 }}>{fullName}</h3>
+              <h3 className="text-[20px] leading-[1.05] truncate" style={{ color: '#0B1528', fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif', fontWeight: 850 }}>{fullName}</h3>
               <p className="text-xs font-semibold mt-1.5" style={{ color: '#5B6475' }}>
                 {player.bats && player.throws ? `B/T: ${player.bats[0]}/${player.throws[0]}` : ''}
                 {player.age_division ? ` · ${player.age_division}` : ''}
@@ -47,7 +47,7 @@ export default function PlayerCard({ player, matchScore, availabilityStatus, onS
               {onSave && (
                 <button onClick={e => { e.stopPropagation(); onSave(); }}
                   className="flex h-8 w-8 items-center justify-center"
-                  style={{ backgroundColor: '#F5F7FB', border: '1px solid rgba(220,214,204,0.9)' }}>
+                  style={{ backgroundColor: '#F5F7FB', border: '1px solid rgba(203,213,225,0.9)' }}>
                   <Heart size={16} fill={isSaved ? '#B9232A' : 'none'} color={isSaved ? '#B9232A' : '#8B95A7'} />
                 </button>
               )}
@@ -58,7 +58,7 @@ export default function PlayerCard({ player, matchScore, availabilityStatus, onS
             <div className="flex flex-wrap gap-1.5 mt-3">
               {player.positions.slice(0, 3).map(pos => (
                 <span key={pos} className="text-[10px] font-black px-2.5 py-1 uppercase tracking-[0.16em]"
-                  style={{ backgroundColor: '#F5F7FB', color: '#0B1528', border: '1px solid rgba(220,214,204,0.88)' }}>
+                  style={{ backgroundColor: '#F5F7FB', color: '#0B1528', border: '1px solid rgba(203,213,225,0.88)' }}>
                   {pos}
                 </span>
               ))}

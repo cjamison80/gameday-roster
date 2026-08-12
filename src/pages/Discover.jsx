@@ -278,7 +278,7 @@ export default function Discover() {
 
         {/* Section header */}
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl" style={{ color: '#0B1528', fontFamily: 'ui-serif, Georgia, Cambria, Times New Roman, Times, serif', fontWeight: 500 }}>
+          <h2 className="text-2xl" style={{ color: '#0B1528', fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif', fontWeight: 850 }}>
             {activeFilter === 'all' ? 'Recommended for You' :
              activeFilter === 'this_weekend' ? 'This Weekend' :
              activeFilter === 'nearby' ? 'Near You' : 'Tryouts'}

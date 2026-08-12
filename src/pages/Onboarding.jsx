@@ -11,7 +11,7 @@ import PlayerOnboardingForm from '@/components/onboarding/PlayerOnboardingForm';
 const roles = [
   { id: 'parent', icon: Users, title: 'Parent', description: 'Manage player profiles for your athletes', color: '#16A34A', bg: '#DCFCE7' },
   { id: 'coach', icon: Briefcase, title: 'Coach', description: 'Find players and manage your team roster', color: '#2563EB', bg: '#EFF6FF' },
-  { id: 'player', icon: User, title: 'Player', description: 'Create your own player profile (must be 18+)', color: '#A4A017', bg: '#FEFCE8' },
+  { id: 'player', icon: User, title: 'Player', description: 'Create your own player profile (must be 18+)', color: '#C1121F', bg: '#FEFCE8' },
   { id: 'organization', icon: Building2, title: 'Organization', description: 'Manage teams, coaches and run recruiting', color: '#8B5CF6', bg: '#F5F3FF' }
 ];
 
@@ -93,7 +93,7 @@ export default function Onboarding() {
           <div className="px-6 pb-12 space-y-3">
             <button onClick={() => setStep('role')}
               className="w-full py-4 rounded-2xl font-bold text-white text-lg flex items-center justify-center gap-2 transition-transform active:scale-95"
-              style={{ background: 'linear-gradient(135deg, #C1121F, #8F0F1A)' }}>
+              style={{ background: 'linear-gradient(135deg, #C1121F, #991B1B)' }}>
               Get Started
               <ChevronRight size={20} />
             </button>

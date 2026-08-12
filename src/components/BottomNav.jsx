@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Globe, MessageCircle, Bell, User } from 'lucide-react';
+import { Home, Trophy, Globe, MessageCircle, User } from 'lucide-react';
 
 const navItems = [
   { path: '/discover', icon: Home, label: 'Discover' },
+  { path: '/tournaments', icon: Trophy, label: 'Tourneys' },
   { path: '/network', icon: Globe, label: 'Network' },
   { path: '/messages', icon: MessageCircle, label: 'Messages' },
-  { path: '/activity', icon: Bell, label: 'Activity' },
   { path: '/profile', icon: User, label: 'Profile' },
 ];
 
@@ -22,7 +22,7 @@ export default function BottomNav({ unreadMessages = 0, unreadNotifications = 0 
         <div className="flex items-center justify-around gap-1 h-full">
           {navItems.map(({ path, icon: Icon, label }) => {
             const isActive = location.pathname === path || (path === '/discover' && location.pathname === '/');
-            const badge = label === 'Messages' ? unreadMessages : label === 'Activity' ? unreadNotifications : 0;
+            const badge = label === 'Messages' ? unreadMessages : 0;
 
             return (
               <Link
@@ -31,7 +31,8 @@ export default function BottomNav({ unreadMessages = 0, unreadNotifications = 0 
                 className="relative flex flex-1 flex-col items-center justify-center gap-1 px-1 py-2 transition-all duration-200"
                 style={{
                   minHeight: 54,
-                  background: isActive ? '#0B1528' : 'transparent'
+                  background: isActive ? 'linear-gradient(135deg, #0B1528, #17233A)' : 'transparent',
+                  borderRadius: 16
                 }}
               >
                 <div className="relative flex items-center justify-center">
@@ -51,7 +52,7 @@ export default function BottomNav({ unreadMessages = 0, unreadNotifications = 0 
                 </div>
                 <span
                   className="text-center font-black leading-none uppercase"
-                  style={{ fontSize: 9, color: isActive ? '#F8FAFC' : '#8B95A7', letterSpacing: '0.12em' }}
+                  style={{ fontSize: 8.5, color: isActive ? '#F8FAFC' : '#8B95A7', letterSpacing: '0.08em' }}
                 >
                   {label}
                 </span>

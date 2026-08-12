@@ -141,7 +141,7 @@ export default function Profile() {
               className="w-full flex items-center gap-3 p-4  text-left border border-gray-100"
               style={{ backgroundColor: '#FFFFFF' }}
             >
-              <div className="w-11 h-11  flex items-center justify-center" style={{ backgroundColor: '#EFE6D6' }}>
+              <div className="w-11 h-11  flex items-center justify-center" style={{ backgroundColor: '#FEE2E2' }}>
                 <Trophy size={20} color="#C1121F" />
               </div>
               <div className="flex-1">

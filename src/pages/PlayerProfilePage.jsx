@@ -273,7 +273,7 @@ export default function PlayerProfilePage({ publicView = false }) {
                 <button
                   onClick={handleCopyPublicProfile}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold"
-                  style={{ backgroundColor: '#EFE6D6', color: '#8F0F1A' }}
+                  style={{ backgroundColor: '#FEE2E2', color: '#991B1B' }}
                 >
                   <Share size={14} />
                   Public Link
@@ -383,7 +383,7 @@ export default function PlayerProfilePage({ publicView = false }) {
             </span>
           )}
           {player.classification && (
-            <span className="px-3 py-1 rounded-full text-sm font-bold" style={{ backgroundColor: '#EFE6D6', color: '#C1121F' }}>
+            <span className="px-3 py-1 rounded-full text-sm font-bold" style={{ backgroundColor: '#FEE2E2', color: '#C1121F' }}>
               {player.classification}
             </span>
           )}
@@ -432,7 +432,7 @@ export default function PlayerProfilePage({ publicView = false }) {
                   {saving ? 'Saving Perfect Game Link...' : 'Connect & Save Perfect Game Profile'}
                 </button>
                 {editData.perfect_game_player_id && (
-                  <p className="text-xs mt-2" style={{ color: '#8F0F1A' }}>Detected PG ID: {editData.perfect_game_player_id}</p>
+                  <p className="text-xs mt-2" style={{ color: '#991B1B' }}>Detected PG ID: {editData.perfect_game_player_id}</p>
                 )}
               </div>
             ) : pgProfileUrl ? (
@@ -441,7 +441,7 @@ export default function PlayerProfilePage({ publicView = false }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 w-full py-3 text-sm font-bold"
-                style={{ backgroundColor: '#EFE6D6', color: '#8F0F1A' }}
+                style={{ backgroundColor: '#FEE2E2', color: '#991B1B' }}
               >
                 <ExternalLink size={16} />
                 View {player.first_name} on Perfect Game
@@ -502,7 +502,7 @@ export default function PlayerProfilePage({ publicView = false }) {
                 </p>
               </div>
               {pgProfileUrl && !editing && (
-                <a href={pgProfileUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-bold px-3 py-1.5 rounded-full" style={{ backgroundColor: '#EFE6D6', color: '#8F0F1A' }}>
+                <a href={pgProfileUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-bold px-3 py-1.5 rounded-full" style={{ backgroundColor: '#FEE2E2', color: '#991B1B' }}>
                   PG
                 </a>
               )}

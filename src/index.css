@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    /* GameDay Roster — Modern Editorial Luxury System */
+    /* GameDay Roster — Premium Sports Marketplace System */
     --gdr-ink: #0B1528;
     --gdr-charcoal: #111C34;
     --gdr-graphite: #17233A;
@@ -15,6 +15,7 @@
     --gdr-ivory: #F5F7FB;
     --gdr-cream: #F8FAFC;
     --gdr-card: #FFFFFF;
+    --gdr-accent: #C1121F;
     --gdr-bronze: #C1121F;
     --gdr-bronze-dark: #8F0F1A;
     --gdr-red: #B9232A;
@@ -36,30 +37,30 @@
     --surface-tint: #EEF2F7;
 
     /* shadcn tokens mapped to editorial palette */
-    --background: 38 35% 95%;
-    --foreground: 40 10% 8%;
-    --card: 42 100% 99%;
-    --card-foreground: 40 10% 8%;
-    --popover: 42 100% 99%;
-    --popover-foreground: 40 10% 8%;
+    --background: 215 35% 97%;
+    --foreground: 220 55% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 55% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 55% 10%;
     --primary: 355 83% 41%;
     --primary-foreground: 210 40% 98%;
-    --secondary: 38 24% 91%;
-    --secondary-foreground: 40 10% 8%;
-    --muted: 38 24% 91%;
-    --muted-foreground: 35 8% 42%;
-    --accent: 38 24% 90%;
-    --accent-foreground: 40 10% 8%;
+    --secondary: 214 32% 91%;
+    --secondary-foreground: 220 55% 10%;
+    --muted: 214 32% 91%;
+    --muted-foreground: 217 16% 40%;
+    --accent: 214 32% 91%;
+    --accent-foreground: 220 55% 10%;
     --destructive: 357 68% 43%;
     --destructive-foreground: 40 47% 97%;
-    --border: 38 22% 84%;
-    --input: 38 22% 84%;
+    --border: 214 28% 84%;
+    --input: 214 28% 84%;
     --ring: 355 83% 41%;
     --radius: 0.95rem;
 
-    --font-heading: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    --font-heading: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     --font-body: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    --font-display: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    --font-display: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
     --sidebar-background: 38 35% 95%;
@@ -95,8 +96,8 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
-    font-weight: 500;
-    letter-spacing: -0.045em;
+    font-weight: 850;
+    letter-spacing: -0.035em;
     color: var(--gdr-ink);
   }
 }
@@ -149,17 +150,17 @@
   }
 
   .gdr-glass {
-    background: rgba(255, 253, 248, 0.08);
-    border: 1px solid rgba(255, 253, 248, 0.18);
+    background: rgba(248, 250, 252, 0.08);
+    border: 1px solid rgba(248, 250, 252, 0.18);
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
     backdrop-filter: blur(18px);
   }
 
   .gdr-card {
-    background: rgba(255, 253, 248, 0.95);
-    border: 1px solid rgba(220, 214, 204, 0.92);
-    border-radius: 2px;
-    box-shadow: 0 18px 38px rgba(21, 20, 17, 0.06);
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(203, 213, 225, 0.92);
+    border-radius: 18px;
+    box-shadow: 0 16px 36px rgba(11, 21, 40, 0.08);
     backdrop-filter: blur(12px);
   }
 
@@ -170,19 +171,19 @@
   .gdr-card-hover:hover {
     transform: translateY(-2px);
     border-color: rgba(193, 18, 31, 0.35);
-    box-shadow: 0 24px 56px rgba(21, 20, 17, 0.10);
+    box-shadow: 0 24px 56px rgba(11, 21, 40, 0.14);
   }
 
   .gdr-soft-card {
     background: rgba(255, 253, 248, 0.82);
-    border: 1px solid rgba(220, 214, 204, 0.78);
-    border-radius: 2px;
-    box-shadow: 0 12px 28px rgba(21, 20, 17, 0.04);
+    border: 1px solid rgba(203, 213, 225, 0.78);
+    border-radius: 18px;
+    box-shadow: 0 12px 28px rgba(11, 21, 40, 0.06);
   }
 
   .gdr-chip {
-    border-radius: 0;
-    border: 1px solid rgba(220, 214, 204, 0.92);
+    border-radius: 999px;
+    border: 1px solid rgba(203, 213, 225, 0.92);
     background: rgba(255, 253, 248, 0.74);
     color: var(--gdr-stone);
     box-shadow: none;
@@ -191,7 +192,7 @@
   }
 
   .gdr-chip-active {
-    border-radius: 0;
+    border-radius: 999px;
     border-color: var(--gdr-ink);
     background: var(--gdr-ink);
     color: #F8FAFC;
@@ -202,31 +203,31 @@
 
   .gdr-bottom-nav {
     min-height: 72px;
-    border: 1px solid rgba(220, 214, 204, 0.88);
-    background: rgba(255, 253, 248, 0.94);
-    box-shadow: 0 20px 48px rgba(21, 20, 17, 0.16);
+    border: 1px solid rgba(203, 213, 225, 0.88);
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 20px 48px rgba(11, 21, 40, 0.16);
     backdrop-filter: blur(24px);
   }
 
   .gdr-input-dark {
-    background: rgba(255, 253, 248, 0.08);
-    border: 1px solid rgba(255, 253, 248, 0.18);
+    background: rgba(248, 250, 252, 0.08);
+    border: 1px solid rgba(248, 250, 252, 0.18);
     color: #F8FAFC;
     backdrop-filter: blur(18px);
   }
 
   .gdr-select {
-    border-radius: 0;
-    border: 1px solid rgba(220, 214, 204, 0.95);
+    border-radius: 999px;
+    border: 1px solid rgba(203, 213, 225, 0.95);
     background: rgba(255, 253, 248, 0.84);
   }
 
   .gdr-editorial-kicker {
     font-size: 10px;
     font-weight: 800;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--gdr-bronze);
+    color: var(--gdr-accent);
   }
 
   .gdr-auth-screen {
@@ -360,6 +361,27 @@
     letter-spacing: 0.18em;
     padding: 8px 10px;
   }
+
+
+  .gdr-marketplace-card {
+    background: #FFFFFF;
+    border: 1px solid rgba(203, 213, 225, 0.92);
+    border-radius: 20px;
+    box-shadow: 0 16px 36px rgba(11, 21, 40, 0.08);
+  }
+
+  .gdr-scoreboard {
+    background: linear-gradient(135deg, #0B1528, #17233A);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 18px;
+    color: #F8FAFC;
+  }
+
+  .gdr-red-cta {
+    background: linear-gradient(135deg, #C1121F, #8F0F1A);
+    color: #FFFFFF;
+    box-shadow: 0 14px 28px rgba(193, 18, 31, 0.22);
+  }
 }
 
 @layer utilities {
@@ -369,10 +391,10 @@
   .border-navy { border-color: var(--gdr-ink); }
   .text-electric { color: var(--gdr-blue); }
   .bg-electric { background-color: var(--gdr-blue); }
-  .text-gold { color: var(--gdr-bronze); }
-  .bg-gold { background-color: var(--gdr-bronze); }
+  .text-gold { color: var(--gdr-accent); }
+  .bg-gold { background-color: var(--gdr-accent); }
   .match-score-ring {
-    background: conic-gradient(var(--gdr-bronze) var(--score), #DED7CB 0);
+    background: conic-gradient(var(--gdr-accent) var(--score), #DED7CB 0);
   }
   .bottom-nav-height { height: 72px; }
   .content-with-nav { padding-bottom: 96px; }
