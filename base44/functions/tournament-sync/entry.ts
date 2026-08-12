@@ -14,13 +14,17 @@ import {
   geocodeKey
 } from '../../shared/scrape-core.js';
 
-const FETCH_TIMEOUT_MS = 15000;
-// A job stuck at status "running" with no finished_at (seen after raising this
-// to 240s) means the underlying platform killed the function before our own
-// try/catch got to record anything — i.e. our timeout was set HIGHER than the
-// platform's real hard limit, which defeats the purpose of having one. Keeping
-// this comfortably low means WE always get to write a clean status.
-const SOURCE_TIMEOUT_MS = 90000;
+// USSSA's server response time varies — confirmed via a direct live test that
+// it can legitimately take up to ~29s to answer the nationwide search query
+// (not an error, just slow under current load). 35s gives real headroom above
+// that without being reckless.
+const FETCH_TIMEOUT_MS = 35000;
+// 90s previously looked too tight once USSSA's fetch alone can now take up to
+// 35s, leaving too little room for the rest of a source's upsert/geocode work.
+// 120s was the original value this whole project ran on successfully for a
+// long stretch before later experiments pushed it around — going back to that
+// known-good number rather than guessing again.
+const SOURCE_TIMEOUT_MS = 120000;
 const REQUEST_DELAY_MS = 250;
 const MAX_HTML_BYTES = 3000000;
 const USER_AGENT = 'GameDayRosterBot/0.1 (+tournament-discovery; contact app admin)';
