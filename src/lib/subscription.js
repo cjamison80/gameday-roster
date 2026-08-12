@@ -128,6 +128,19 @@ export function getPlanFromList(plans, code) {
   return (plans || []).find(p => p.code === code) || FALLBACK_PLANS.find(p => p.code === code) || FALLBACK_PLANS[0];
 }
 
+export function getEntitledPlan(plans, subscription, role = 'parent') {
+  const status = subscription?.status || 'free';
+  const requestedPlan = getPlanFromList(plans, subscription?.plan_code || getDefaultPlanCode(role));
+  const isRequestedPaid = Number(requestedPlan?.monthly_price_cents || 0) > 0;
+
+  // Paid plans should only unlock limits after a real payment/trial status.
+  if (isRequestedPaid && !['active', 'trialing'].includes(status)) {
+    return getPlanFromList(plans, getDefaultPlanCode(role));
+  }
+
+  return requestedPlan;
+}
+
 export function getPlansForRole(plans, role = 'parent') {
   const normalizedRole = role === 'player' ? 'parent' : role;
   const source = plans?.length ? plans : FALLBACK_PLANS;
