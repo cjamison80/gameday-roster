@@ -1,0 +1,71 @@
+{
+  "name": "UsageCounter",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "counter_key": {
+      "type": "string",
+      "description": "applications, roster_posts, player_profiles, teams, coaches, videos"
+    },
+    "period_key": {
+      "type": "string",
+      "description": "YYYY-MM for monthly counters or all_time"
+    },
+    "value": {
+      "type": "integer",
+      "default": 0
+    },
+    "limit_value": {
+      "type": "integer"
+    },
+    "plan_code": {
+      "type": "string"
+    },
+    "last_incremented_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "metadata": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "user_id",
+    "counter_key",
+    "period_key"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {},
+    "update": {
+      "$or": [
+        {
+          "user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

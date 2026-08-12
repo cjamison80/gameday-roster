@@ -1,0 +1,110 @@
+{
+  "name": "SubscriptionPlan",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "Stable plan code used by the app, e.g. parent_free, coach_pro"
+    },
+    "name": {
+      "type": "string"
+    },
+    "account_type": {
+      "type": "string",
+      "enum": [
+        "parent",
+        "player",
+        "coach",
+        "organization",
+        "admin",
+        "all"
+      ]
+    },
+    "tier": {
+      "type": "string",
+      "enum": [
+        "free",
+        "plus",
+        "family",
+        "pro",
+        "starter",
+        "elite",
+        "enterprise"
+      ]
+    },
+    "description": {
+      "type": "string"
+    },
+    "monthly_price_cents": {
+      "type": "integer",
+      "default": 0
+    },
+    "annual_price_cents": {
+      "type": "integer",
+      "default": 0
+    },
+    "currency": {
+      "type": "string",
+      "default": "USD"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "is_public": {
+      "type": "boolean",
+      "default": true
+    },
+    "recommended": {
+      "type": "boolean",
+      "default": false
+    },
+    "display_order": {
+      "type": "integer",
+      "default": 100
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "limits": {
+      "type": "object",
+      "description": "Plan limits such as player_profiles, applications_per_month, roster_posts_per_month, teams, coaches, videos_per_player"
+    },
+    "stripe_monthly_price_id": {
+      "type": "string"
+    },
+    "stripe_annual_price_id": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "code",
+    "name",
+    "account_type",
+    "tier"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

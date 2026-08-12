@@ -1,0 +1,84 @@
+{
+  "name": "BillingEvent",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "subscription_id": {
+      "type": "string"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "checkout_started",
+        "checkout_completed",
+        "subscription_created",
+        "subscription_updated",
+        "subscription_canceled",
+        "payment_succeeded",
+        "payment_failed",
+        "plan_changed",
+        "limit_reached",
+        "manual_note"
+      ]
+    },
+    "plan_code": {
+      "type": "string"
+    },
+    "amount_cents": {
+      "type": "integer"
+    },
+    "currency": {
+      "type": "string",
+      "default": "USD"
+    },
+    "provider": {
+      "type": "string",
+      "enum": [
+        "stripe",
+        "manual",
+        "system"
+      ],
+      "default": "system"
+    },
+    "provider_event_id": {
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "user_id",
+    "event_type"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
