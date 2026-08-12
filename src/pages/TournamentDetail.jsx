@@ -140,20 +140,48 @@ export default function TournamentDetail() {
             </span>
           </div>
           {teams.length > 0 ? (
-            <div className="space-y-2">
-              {teams.map((team, idx) => (
-                <div key={`${team.team_name}-${idx}`} className=" p-3 flex items-center gap-3" >
-                  <div className="w-10 h-10  flex items-center justify-center" style={{ backgroundColor: '#F5F7FB' }}>
-                    <span className="font-semibold text-sm" style={{ color: '#C1121F' }}>{team.team_name?.split(' ').map(w => w[0]).join('').slice(0, 3) || 'T'}</span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold truncate" style={{ color: '#0B1528' }}>{team.team_name}</p>
-                    <p className="text-xs" style={{ color: '#5B6475' }}>
-                      {[team.age_division, team.classification, team.city && team.state ? `${team.city}, ${team.state}` : null].filter(Boolean).join(' · ')}
-                    </p>
-                  </div>
-                </div>
-              ))}
+            <div className="space-y-3">
+              {divisionOptions.length > 1 && (
+                <select
+                  value={selectedDivision}
+                  onChange={e => setSelectedDivision(e.target.value)}
+                  className="gdr-select w-full px-3 py-2.5 text-sm outline-none"
+                  style={{ color: '#0B1528' }}
+                >
+                  <option value="">All Divisions ({teams.length})</option>
+                  {divisionOptions.map(label => (
+                    <option key={label} value={label}>
+                      {label} ({sortedTeams.filter(t => divisionLabel(t) === label).length})
+                    </option>
+                  ))}
+                </select>
+              )}
+              <div className="space-y-2">
+                {displayedTeams.map((team, idx) => {
+                  const label = divisionLabel(team);
+                  const showHeader = !selectedDivision && (idx === 0 || divisionLabel(displayedTeams[idx - 1]) !== label);
+                  return (
+                    <React.Fragment key={`${team.team_name}-${idx}`}>
+                      {showHeader && (
+                        <p className="text-xs font-bold uppercase tracking-wide pt-2 first:pt-0" style={{ color: '#8B95A7' }}>
+                          {label} · {sortedTeams.filter(t => divisionLabel(t) === label).length} teams
+                        </p>
+                      )}
+                      <div className=" p-3 flex items-center gap-3" >
+                        <div className="w-10 h-10  flex items-center justify-center" style={{ backgroundColor: '#F5F7FB' }}>
+                          <span className="font-semibold text-sm" style={{ color: '#C1121F' }}>{team.team_name?.split(' ').map(w => w[0]).join('').slice(0, 3) || 'T'}</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold truncate" style={{ color: '#0B1528' }}>{team.team_name}</p>
+                          <p className="text-xs" style={{ color: '#5B6475' }}>
+                            {[team.age_division, team.classification, team.city && team.state ? `${team.city}, ${team.state}` : null].filter(Boolean).join(' · ')}
+                          </p>
+                        </div>
+                      </div>
+                    </React.Fragment>
+                  );
+                })}
+              </div>
             </div>
           ) : tournament.teams_url ? (
             <a
