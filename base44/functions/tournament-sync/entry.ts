@@ -281,7 +281,7 @@ async function upsertTournament(base44, source, record, dryRun, geoState, teamsS
 }
 
 async function runSourceInner(base44, source, opts) {
-  const { stateFilter, sportFilter, maxEvents, dryRun, geoState } = opts;
+  const { stateFilter, sportFilter, maxEvents, dryRun, geoState, teamsState } = opts;
   const job = await createJob(base44, source, 'running', `HTTP-triggered sync started for ${source.name}`);
 
   let recordsFound = 0;
