@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Bell, Shield, LogOut, RefreshCw, Settings as SettingsIcon } from 'lucide-react';
+import { ArrowLeft, Bell, Shield, LogOut, RefreshCw, Settings as SettingsIcon, CreditCard } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { getInitials } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
@@ -85,6 +85,30 @@ export default function Settings() {
       </div>
 
       <div className="px-5 py-5 space-y-5">
+        {/* Subscription & Billing */}
+        <div className="bg-white rounded-2xl border border-gray-100 p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <CreditCard size={18} color="#C1121F" />
+            <h3 className="font-bold" style={{ color: '#0B1528' }}>Subscription & Billing</h3>
+          </div>
+          <p className="text-sm mb-3" style={{ color: '#64748B' }}>
+            View plan options, upgrade limits, and future payment settings for your account.
+          </p>
+          <button
+            onClick={() => navigate('/billing')}
+            className="w-full flex items-center gap-3 p-4 rounded-2xl text-left"
+            style={{ backgroundColor: '#FEE2E2' }}
+          >
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#C1121F' }}>
+              <CreditCard size={18} color="white" />
+            </div>
+            <div className="flex-1">
+              <h4 className="font-bold text-sm" style={{ color: '#0B1528' }}>Manage Subscription</h4>
+              <p className="text-xs mt-0.5" style={{ color: '#C1121F' }}>Plans, billing and limits</p>
+            </div>
+          </button>
+        </div>
+
         {/* Notifications */}
         <div className="bg-white rounded-2xl border border-gray-100 p-5">
           <div className="flex items-center gap-2 mb-4">
