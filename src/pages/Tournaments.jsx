@@ -103,7 +103,7 @@ export default function Tournaments() {
       const user = await base44.auth.me();
       const [profileResults, tournamentResults] = await Promise.all([
         base44.entities.UserProfile.filter({ user_id: user.id }),
-        base44.entities.Tournament.list('start_date', 200)
+        base44.entities.Tournament.list('start_date', 1000)
       ]);
       const profile = profileResults[0];
       setUserLocation({ city: profile?.city || '', state: profile?.state || '' });
