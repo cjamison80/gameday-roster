@@ -14,7 +14,7 @@ import {
 } from '../../shared/scrape-core.js';
 
 const FETCH_TIMEOUT_MS = 15000;
-const SOURCE_TIMEOUT_MS = 180000;
+const SOURCE_TIMEOUT_MS = 240000;
 const REQUEST_DELAY_MS = 250;
 const MAX_HTML_BYTES = 3000000;
 const USER_AGENT = 'GameDayRosterBot/0.1 (+tournament-discovery; contact app admin)';
