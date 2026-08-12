@@ -328,7 +328,7 @@ async function runSourceInner(base44, source, opts) {
       // based platform from the main site. See scrape-core.js for the session/
       // pagination details recovered from its own frontend JS.
       console.log(`Fetching ${source.name} via youth.2dsports.org session API...`);
-      const records = await fetchTwoDSportsRecords({ fetchTimeoutMs: FETCH_TIMEOUT_MS, maxPages: 5 });
+      const records = await fetchTwoDSportsRecords({ fetchTimeoutMs: FETCH_TIMEOUT_MS, maxPages: 8 });
       console.log(`${source.name} returned ${records.length} real tournament records (season passes/memberships excluded).`);
       parsed = records
         .filter(record => {
@@ -464,6 +464,7 @@ export default async function(req) {
     console.log(`Candidate sources: ${candidateSources.map(s => `${s.name}(${s.parser_key})`).join(', ') || 'none'}`);
 
     const geoState = { cache: await loadGeoCache(base44), budgetUsed: 0 };
+    const teamsState = { budgetUsed: 0 };
 
     const results = [];
     for (const source of candidateSources) {
