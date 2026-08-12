@@ -280,14 +280,24 @@ async function runSourceInner(base44, source, opts) {
     if (source.parser_key === 'usssa') {
       // USSSA: real nationwide JSON API, not HTML scraping. See scrape-core.js
       // for how this endpoint was recovered from USSSA's own frontend code.
+      // The API's own ordering isn't proximity- or state-based (confirmed: AR
+      // events exist in the full dataset but weren't showing up in an
+      // unprioritized slice), so once filtered we explicitly sort Arkansas and
+      // its neighboring states first before slicing to maxEvents — otherwise
+      // this app's core audience can get starved out by nationwide noise.
       console.log(`Fetching ${source.name} via USSSA nationwide API...`);
       const records = await fetchUsssaNationwideRecords({ fetchTimeoutMs: FETCH_TIMEOUT_MS });
       console.log(`${source.name} API returned ${records.length} records nationwide.`);
+      const priorityStates = ['AR', 'TX', 'TN', 'MS', 'LA', 'MO', 'OK'];
       parsed = records
         .filter(record => {
           if (sportFilter && String(record.sport || '').toLowerCase() !== sportFilter.toLowerCase()) return false;
           if (stateFilter && String(record.state || '').toUpperCase() !== stateFilter.toUpperCase()) return false;
           return true;
+        })
+        .sort((a, b) => {
+          const rank = s => { const i = priorityStates.indexOf(String(s || '').toUpperCase()); return i === -1 ? priorityStates.length : i; };
+          return rank(a.state) - rank(b.state);
         })
         .slice(0, maxEvents);
     } else if (source.parser_key === '2d_sports') {
