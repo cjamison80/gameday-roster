@@ -1,8 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, Calendar, DollarSign, ExternalLink, MapPin, Trophy, Users } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { formatDateRange } from '@/lib/utils';
+
+const AGE_ORDER = ['8U','9U','10U','11U','12U','13U','14U','15U','16U','17U','18U'];
+const CLASS_ORDER = ['Major','AAA','AA','A','Open'];
+
+function divisionRank(team) {
+  const ageIdx = AGE_ORDER.indexOf(team.age_division);
+  const classIdx = CLASS_ORDER.indexOf(team.classification);
+  return [ageIdx === -1 ? AGE_ORDER.length : ageIdx, classIdx === -1 ? CLASS_ORDER.length : classIdx];
+}
+
+function divisionLabel(team) {
+  return [team.age_division, team.classification].filter(Boolean).join(' ') || 'Unspecified Division';
+}
 
 function formatCost(cost) {
   if (cost === undefined || cost === null || cost === '') return 'Cost TBD';
@@ -15,6 +28,7 @@ export default function TournamentDetail() {
   const navigate = useNavigate();
   const [tournament, setTournament] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedDivision, setSelectedDivision] = useState('');
 
   useEffect(() => {
     loadData();
@@ -51,6 +65,22 @@ export default function TournamentDetail() {
 
   const teams = tournament.teams_entered || [];
   const statusLabel = (tournament.status || 'unknown').replace('_', ' ');
+
+  const sortedTeams = useMemo(() => {
+    return [...teams].sort((a, b) => {
+      const [aAge, aClass] = divisionRank(a);
+      const [bAge, bClass] = divisionRank(b);
+      if (aAge !== bAge) return aAge - bAge;
+      if (aClass !== bClass) return aClass - bClass;
+      return (a.team_name || '').localeCompare(b.team_name || '');
+    });
+  }, [teams]);
+
+  const divisionOptions = useMemo(() => [...new Set(sortedTeams.map(divisionLabel))], [sortedTeams]);
+
+  const displayedTeams = selectedDivision
+    ? sortedTeams.filter(t => divisionLabel(t) === selectedDivision)
+    : sortedTeams;
 
   return (
     <div className="gdr-page" >
