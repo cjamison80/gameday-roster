@@ -238,18 +238,35 @@ async function upsertTournament(base44, source, record, dryRun, geoState, teamsS
     }
   }
 
-  if (teamsState && source.parser_key === 'perfect_game' && tournament.teams_url && teamsState.budgetUsed < TEAMS_BUDGET_PER_RUN) {
-    teamsState.budgetUsed += 1;
-    try {
-      const teams = await fetchPerfectGameTeams(tournament.teams_url, { fetchTimeoutMs: FETCH_TIMEOUT_MS });
-      if (teams.length) {
-        tournament.teams_entered = teams;
-        tournament.teams_entered_count = teams.length;
+  if (teamsState && teamsState.budgetUsed < TEAMS_BUDGET_PER_RUN) {
+    if (source.parser_key === 'perfect_game' && tournament.teams_url) {
+      teamsState.budgetUsed += 1;
+      try {
+        const teams = await fetchPerfectGameTeams(tournament.teams_url, { fetchTimeoutMs: FETCH_TIMEOUT_MS });
+        if (teams.length) {
+          tournament.teams_entered = teams;
+          tournament.teams_entered_count = teams.length;
+        }
+      } catch (err) {
+        console.warn(`Could not fetch teams for ${tournament.name}.`, err.message);
       }
-    } catch (err) {
-      console.warn(`Could not fetch teams for ${tournament.name}.`, err.message);
+      await sleep(TEAMS_FETCH_DELAY_MS);
+    } else if (source.parser_key === 'usssa' && tournament.source_url) {
+      const eventIdMatch = tournament.source_url.match(/eventID=(\d+)/);
+      if (eventIdMatch) {
+        teamsState.budgetUsed += 1;
+        try {
+          const teams = await fetchUsssaTeams(eventIdMatch[1], { fetchTimeoutMs: FETCH_TIMEOUT_MS });
+          if (teams.length) {
+            tournament.teams_entered = teams;
+            tournament.teams_entered_count = teams.length;
+          }
+        } catch (err) {
+          console.warn(`Could not fetch USSSA teams for ${tournament.name}.`, err.message);
+        }
+        await sleep(TEAMS_FETCH_DELAY_MS);
+      }
     }
-    await sleep(TEAMS_FETCH_DELAY_MS);
   }
 
   const sourceKey = buildTournamentKey(tournament);
