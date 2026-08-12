@@ -8,6 +8,7 @@ import {
   fetchUsssaNationwideRecords,
   fetchTwoDSportsRecords,
   fetchPerfectGameRecords,
+  fetchPerfectGameTeams,
   geocodeCityState,
   geocodeKey
 } from '../../shared/scrape-core.js';
@@ -28,7 +29,13 @@ const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const GEOCODE_BUDGET_PER_RUN = 80;
 const GEOCODE_RATE_LIMIT_MS = 1100;
 
-async function loadGeoCache(base44) {
+// Perfect Game team pages are unprotected and cheap, but we still cap fetches
+// per run to bound execution time — whatever's left over just gets picked up
+// on a later run. Unlike geocoding, team rosters genuinely change over time as
+// more teams register, so (unlike the geocode cache) this intentionally has no
+// "already done, skip forever" cache — it re-fetches periodically.
+const TEAMS_BUDGET_PER_RUN = 30;
+const TEAMS_FETCH_DELAY_MS = 150;
   const cache = new Map();
   try {
     const rows = await withTimeout(base44.asServiceRole.entities.GeocodeCache.list('-created_date', 500), 15000, 'List GeocodeCache');
