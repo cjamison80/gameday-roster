@@ -512,10 +512,62 @@ export async function fetchUsssaNationwideRecords({ fetchTimeoutMs = 15000, zip 
       teams_entered: [],
       registration_url: r.ID ? `https://www.usssa.com/baseball/event_home/?eventID=${r.ID}` : '',
       source_url: r.ID ? `https://www.usssa.com/baseball/event_home/?eventID=${r.ID}` : '',
+      teams_url: r.ID ? `https://www.usssa.com/baseball/event_home/?eventID=${r.ID}` : '',
       status: 'open',
       description: [r.stature, r.eventType].filter(Boolean).join(' · ')
     };
   }).filter(r => r.name && r.source_url);
+}
+
+// ---- USSSA entered-teams import ("Who's Coming") ----
+// Same selpV2 API as the nationwide search, just a different tabName. Found
+// by inspecting the event_home page's own controller (selpV2Ctrl.js), which
+// showed the action/params, then calling it with each menu tab name returned
+// by the API itself until "lookWhoIsComing" (labeled "Who's Coming" in the
+// menu) turned out to hold the real team roster, grouped by division.
+function parseUsssaClassName(className = '') {
+  const m = className.match(/(\d+)\s*&\s*Under\s+([A-Za-z]+)/);
+  return { age_division: m ? `${m[1]}U` : '', classification: m ? m[2] : '' };
+}
+
+export async function fetchUsssaTeams(eventId, { fetchTimeoutMs = 12000 } = {}) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), fetchTimeoutMs);
+  try {
+    const res = await fetch(USSSA_API_URL.replace('eventSearchSimpleV11', 'selpV2'), {
+      method: 'POST',
+      signal: controller.signal,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'User-Agent': 'GameDayRosterBot/0.1 (+tournament-discovery; contact app admin)',
+        'Accept': 'application/json'
+      },
+      body: new URLSearchParams({ eventID: String(eventId), divisionID: '', tabName: 'lookWhoIsComing' }).toString()
+    });
+    if ([401, 403, 429].includes(res.status)) return [];
+    if (!res.ok) return [];
+    const data = await res.json();
+    const divisions = Array.isArray(data.lwcDivisions) ? data.lwcDivisions : [];
+    const teams = [];
+    for (const div of divisions) {
+      const { age_division, classification } = parseUsssaClassName(div.className);
+      for (const t of div.teams || []) {
+        const [state, city] = String(t.city || '').split(' - ').map(s => s.trim());
+        teams.push({
+          team_name: t.teamName || '',
+          age_division,
+          classification,
+          city: city || '',
+          state: state || ''
+        });
+      }
+    }
+    return teams.filter(t => t.team_name);
+  } catch {
+    return [];
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 // ---- Perfect Game (perfectgame.org national schedule) ----
