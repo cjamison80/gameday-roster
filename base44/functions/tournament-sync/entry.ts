@@ -9,6 +9,7 @@ import {
   fetchTwoDSportsRecords,
   fetchPerfectGameRecords,
   fetchPerfectGameTeams,
+  fetchUsssaTeams,
   geocodeCityState,
   geocodeKey
 } from '../../shared/scrape-core.js';
