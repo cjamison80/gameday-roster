@@ -13,7 +13,7 @@ import {
 } from '../../shared/scrape-core.js';
 
 const FETCH_TIMEOUT_MS = 15000;
-const SOURCE_TIMEOUT_MS = 120000;
+const SOURCE_TIMEOUT_MS = 180000;
 const REQUEST_DELAY_MS = 250;
 const MAX_HTML_BYTES = 3000000;
 const USER_AGENT = 'GameDayRosterBot/0.1 (+tournament-discovery; contact app admin)';
@@ -21,11 +21,11 @@ const USER_AGENT = 'GameDayRosterBot/0.1 (+tournament-discovery; contact app adm
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Nominatim's usage policy caps requests at ~1/sec. We only geocode NEW
-// city/state combos (existing ones are cached in the GeocodeCache entity), and
-// cap how many new lookups happen per run so a run with lots of unfamiliar
-// cities can't blow past the function's own time budget — leftover cities just
-// get geocoded on a subsequent run once the cache has room.
-const GEOCODE_BUDGET_PER_RUN = 20;
+// city/state combos (existing ones are cached in the GeocodeCache entity).
+// 80 covers a full one-run backfill of the current ~65 unique tournament
+// cities with headroom for growth, while 80 * 1.1s ≈ 88s still comfortably
+// fits within SOURCE_TIMEOUT_MS alongside normal per-record upsert work.
+const GEOCODE_BUDGET_PER_RUN = 80;
 const GEOCODE_RATE_LIMIT_MS = 1100;
 
 async function loadGeoCache(base44) {
