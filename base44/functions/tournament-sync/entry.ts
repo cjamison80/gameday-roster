@@ -468,7 +468,7 @@ export default async function(req) {
 
     const results = [];
     for (const source of candidateSources) {
-      const result = await runSource(base44, source, { stateFilter, sportFilter, maxEvents, dryRun, geoState });
+      const result = await runSource(base44, source, { stateFilter, sportFilter, maxEvents, dryRun, geoState, teamsState });
       results.push(result);
       await sleep(REQUEST_DELAY_MS * 2);
     }
