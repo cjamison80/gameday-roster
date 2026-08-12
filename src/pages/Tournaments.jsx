@@ -298,7 +298,10 @@ function Select({ label, value, onChange, options, suffix }) {
         style={{ color: '#0B1528' }}
       >
         <option value="">All</option>
-        {options.map(o => <option key={o} value={o}>{o}{suffix ? ` ${suffix}` : ''}</option>)}
+        {options.map(o => {
+          const opt = typeof o === 'object' ? o : { value: o, label: `${o}${suffix ? ` ${suffix}` : ''}` };
+          return <option key={opt.value} value={opt.value}>{opt.label}</option>;
+        })}
       </select>
     </div>
   );
