@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Share, Heart, MapPin, Calendar, DollarSign, Users, Clock, CheckCircle, ChevronRight } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { formatDateRange, formatDate, calculateMatchScore } from '@/lib/utils';
+import { currentMonthKey, getPlanFromList, isLimitReached, loadPublicPlans, loadUserSubscription } from '@/lib/subscription';
 import MatchScoreBadge from '@/components/MatchScoreBadge';
 import { Image } from '@/components/ui/image';
 import PlayerCreateForm from '@/components/player/PlayerCreateForm';
@@ -107,6 +108,25 @@ export default function OpportunityDetail() {
     if (!selectedPlayer || !user || applying) return;
     setApplying(true);
     try {
+      const planRows = await loadPublicPlans();
+      const profileRows = await base44.entities.UserProfile.filter({ user_id: user.id }).catch(() => []);
+      const subscription = await loadUserSubscription(user, profileRows[0]?.role || 'parent', planRows);
+      const plan = getPlanFromList(planRows, subscription?.plan_code || 'parent_free');
+      const allApps = await base44.entities.Application.filter({ parent_id: user.id }, '-created_date', 100).catch(() => []);
+      const monthKey = currentMonthKey();
+      const appsThisMonth = allApps.filter(app => String(app.created_date || '').slice(0, 7) === monthKey).length;
+      if (isLimitReached(plan, 'applications_per_month', appsThisMonth)) {
+        await base44.entities.BillingEvent.create({
+          user_id: user.id,
+          event_type: 'limit_reached',
+          plan_code: plan.code,
+          provider: 'system',
+          metadata: { limit: 'applications_per_month', used: appsThisMonth }
+        }).catch(() => null);
+        navigate('/billing?reason=applications');
+        return;
+      }
+
       await base44.entities.Application.create({
         opportunity_id: id,
         parent_id: user.id,

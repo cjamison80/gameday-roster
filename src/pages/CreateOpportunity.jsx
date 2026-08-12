@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, X, Check } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { currentMonthKey, getPlanFromList, isLimitReached, loadPublicPlans, loadUserSubscription } from '@/lib/subscription';
 
 const positionOptions = ['Pitcher', 'Catcher', 'Shortstop', 'Second Base', 'Third Base', 'First Base', 'Left Field', 'Center Field', 'Right Field', 'Outfield', 'Utility'];
 const ageDivisions = ['8U', '9U', '10U', '11U', '12U', '13U', '14U', '15U', '16U', '17U', '18U'];
@@ -84,6 +85,25 @@ export default function CreateOpportunity() {
         setAccessError('Only coach, organization, or admin accounts can create opportunities.');
         return;
       }
+
+      const planRows = await loadPublicPlans();
+      const subscription = await loadUserSubscription(user, profile?.role || 'coach', planRows);
+      const plan = getPlanFromList(planRows, subscription?.plan_code || 'coach_free');
+      const existingPosts = await base44.entities.Opportunity.filter({ coach_id: user.id }, '-created_date', 100).catch(() => []);
+      const monthKey = currentMonthKey();
+      const postsThisMonth = existingPosts.filter(post => String(post.created_date || '').slice(0, 7) === monthKey).length;
+      if (isLimitReached(plan, 'roster_posts_per_month', postsThisMonth)) {
+        await base44.entities.BillingEvent.create({
+          user_id: user.id,
+          event_type: 'limit_reached',
+          plan_code: plan.code,
+          provider: 'system',
+          metadata: { limit: 'roster_posts_per_month', used: postsThisMonth }
+        }).catch(() => null);
+        navigate('/billing?reason=roster_posts');
+        return;
+      }
+
       const payload = {
         ...form,
         player_cost: form.player_cost ? parseFloat(form.player_cost) : 0,
