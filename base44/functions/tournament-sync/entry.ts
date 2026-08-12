@@ -39,7 +39,7 @@ const GEOCODE_RATE_LIMIT_MS = 1100;
 // on a later run. Unlike geocoding, team rosters genuinely change over time as
 // more teams register, so (unlike the geocode cache) this intentionally has no
 // "already done, skip forever" cache — it re-fetches periodically.
-const TEAMS_BUDGET_PER_RUN = 30;
+const TEAMS_BUDGET_PER_RUN = 10;
 const TEAMS_FETCH_DELAY_MS = 150;
 
 async function loadGeoCache(base44) {
@@ -347,7 +347,7 @@ async function runSourceInner(base44, source, opts) {
       // pages. See scrape-core.js for the group-header/sub-row correlation
       // this needs and why (league groups vs single tournaments).
       console.log(`Fetching ${source.name} via perfectgame.org national schedule...`);
-      const records = await fetchPerfectGameRecords({ fetchTimeoutMs: FETCH_TIMEOUT_MS, maxPages: 6 });
+      const records = await fetchPerfectGameRecords({ fetchTimeoutMs: FETCH_TIMEOUT_MS, maxPages: 3 });
       console.log(`${source.name} returned ${records.length} real tournament records (season-long leagues excluded).`);
       parsed = records
         .filter(record => {
