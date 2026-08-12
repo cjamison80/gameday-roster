@@ -45,6 +45,27 @@ export default function TournamentDetail() {
     }
   };
 
+  // These must run before any early return below — hooks can't be called
+  // conditionally, so they use null-safe fallbacks instead of relying on
+  // `tournament` already being loaded.
+  const teams = tournament?.teams_entered || [];
+
+  const sortedTeams = useMemo(() => {
+    return [...teams].sort((a, b) => {
+      const [aAge, aClass] = divisionRank(a);
+      const [bAge, bClass] = divisionRank(b);
+      if (aAge !== bAge) return aAge - bAge;
+      if (aClass !== bClass) return aClass - bClass;
+      return (a.team_name || '').localeCompare(b.team_name || '');
+    });
+  }, [teams]);
+
+  const divisionOptions = useMemo(() => [...new Set(sortedTeams.map(divisionLabel))], [sortedTeams]);
+
+  const displayedTeams = selectedDivision
+    ? sortedTeams.filter(t => divisionLabel(t) === selectedDivision)
+    : sortedTeams;
+
   if (loading) {
     return (
       <div className="gdr-page flex items-center justify-center" >
@@ -63,11 +84,7 @@ export default function TournamentDetail() {
     );
   }
 
-  const teams = tournament.teams_entered || [];
   const statusLabel = (tournament.status || 'unknown').replace('_', ' ');
-
-  const sortedTeams = useMemo(() => {
-    return [...teams].sort((a, b) => {
       const [aAge, aClass] = divisionRank(a);
       const [bAge, bClass] = divisionRank(b);
       if (aAge !== bAge) return aAge - bAge;
