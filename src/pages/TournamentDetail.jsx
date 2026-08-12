@@ -256,7 +256,7 @@ function ChipGroup({ label, values, gold }) {
       {values.length > 0 ? (
         <div className="flex flex-wrap gap-2">
           {values.map(v => (
-            <span key={v} className="text-xs font-bold px-2 py-1 rounded-full" style={{ backgroundColor: gold ? '#EFE6D6' : '#EEF2F7', color: gold ? '#C1121F' : '#0B1528' }}>{v}</span>
+            <span key={v} className="text-xs font-bold px-2 py-1 rounded-full" style={{ backgroundColor: gold ? '#FEE2E2' : '#EEF2F7', color: gold ? '#C1121F' : '#0B1528' }}>{v}</span>
           ))}
         </div>
       ) : <p className="text-sm" style={{ color: '#8B95A7' }}>All / not specified</p>}

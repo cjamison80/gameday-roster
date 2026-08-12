@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Search, SlidersHorizontal, Bell, MapPin, X, ChevronRight } from 'lucide-react';
+import { Search, SlidersHorizontal, Bell, MapPin, X, ChevronRight, Trophy, UserCheck, CalendarCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import OpportunityCard from '@/components/OpportunityCard';
@@ -245,6 +245,42 @@ export default function Discover() {
         </div>
       )}
 
+      {/* Marketplace command center */}
+      <div className="px-5 pt-5">
+        <div className="grid grid-cols-3 gap-3">
+          <button
+            onClick={() => navigate('/tournaments')}
+            className="gdr-marketplace-card p-3 text-left active:scale-[0.98] transition-transform"
+          >
+            <div className="w-9 h-9 flex items-center justify-center mb-3" style={{ backgroundColor: '#FEE2E2', borderRadius: 12 }}>
+              <Trophy size={18} color="#C1121F" />
+            </div>
+            <p className="text-xs font-black uppercase tracking-[0.12em]" style={{ color: '#0B1528' }}>Find</p>
+            <p className="text-[11px] font-semibold mt-0.5" style={{ color: '#5B6475' }}>Tournaments</p>
+          </button>
+          <button
+            onClick={() => navigate('/network')}
+            className="gdr-marketplace-card p-3 text-left active:scale-[0.98] transition-transform"
+          >
+            <div className="w-9 h-9 flex items-center justify-center mb-3" style={{ backgroundColor: '#EEF2F7', borderRadius: 12 }}>
+              <UserCheck size={18} color="#0B1528" />
+            </div>
+            <p className="text-xs font-black uppercase tracking-[0.12em]" style={{ color: '#0B1528' }}>Build</p>
+            <p className="text-[11px] font-semibold mt-0.5" style={{ color: '#5B6475' }}>Network</p>
+          </button>
+          <button
+            onClick={() => navigate('/profile')}
+            className="gdr-marketplace-card p-3 text-left active:scale-[0.98] transition-transform"
+          >
+            <div className="w-9 h-9 flex items-center justify-center mb-3" style={{ backgroundColor: '#E7EDE2', borderRadius: 12 }}>
+              <CalendarCheck size={18} color="#4F7A59" />
+            </div>
+            <p className="text-xs font-black uppercase tracking-[0.12em]" style={{ color: '#0B1528' }}>Update</p>
+            <p className="text-[11px] font-semibold mt-0.5" style={{ color: '#5B6475' }}>Availability</p>
+          </button>
+        </div>
+      </div>
+
       {/* Filter chips */}
       <div className="flex gap-2 px-5 py-5 overflow-x-auto no-scrollbar">
         {filterChips.map(chip => (
@@ -279,7 +315,7 @@ export default function Discover() {
         {/* Section header */}
         <div className="flex items-center justify-between">
           <h2 className="text-2xl" style={{ color: '#0B1528', fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif', fontWeight: 850 }}>
-            {activeFilter === 'all' ? 'Recommended for You' :
+            {activeFilter === 'all' ? 'Opportunity Marketplace' :
              activeFilter === 'this_weekend' ? 'This Weekend' :
              activeFilter === 'nearby' ? 'Near You' : 'Tryouts'}
           </h2>

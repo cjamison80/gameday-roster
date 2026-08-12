@@ -142,7 +142,7 @@ export default function CoachDashboard() {
         <button
           onClick={() => navigate(`/tournaments?state=${userProfile?.state || ''}${teams[0]?.age_division ? `&age=${teams[0].age_division}` : ''}${teams[0]?.classification ? `&classification=${teams[0].classification}` : ''}`)}
           className="w-full flex items-center justify-center gap-2 mt-5 py-3.5 font-black uppercase tracking-[0.16em] text-xs"
-          style={{ backgroundColor: '#FEE2E2', color: '#0B1528' }}
+          style={{ background: 'linear-gradient(135deg, #FFFFFF, #EEF2F7)', color: '#0B1528', border: '1px solid rgba(203,213,225,0.95)' }}
         >
           <Trophy size={18} color="#C1121F" />
           Find Tournaments

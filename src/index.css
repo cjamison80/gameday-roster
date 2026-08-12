@@ -17,7 +17,7 @@
     --gdr-card: #FFFFFF;
     --gdr-accent: #C1121F;
     --gdr-bronze: #C1121F;
-    --gdr-bronze-dark: #8F0F1A;
+    --gdr-bronze-dark: #991B1B;
     --gdr-red: #B9232A;
     --gdr-blue: #1E3A5F;
     --gdr-green: #4F7A59;
@@ -175,7 +175,7 @@
   }
 
   .gdr-soft-card {
-    background: rgba(255, 253, 248, 0.82);
+    background: rgba(255, 255, 255, 0.88);
     border: 1px solid rgba(203, 213, 225, 0.78);
     border-radius: 18px;
     box-shadow: 0 12px 28px rgba(11, 21, 40, 0.06);
@@ -184,7 +184,7 @@
   .gdr-chip {
     border-radius: 999px;
     border: 1px solid rgba(203, 213, 225, 0.92);
-    background: rgba(255, 253, 248, 0.74);
+    background: rgba(255, 255, 255, 0.86);
     color: var(--gdr-stone);
     box-shadow: none;
     letter-spacing: 0.08em;
@@ -219,7 +219,7 @@
   .gdr-select {
     border-radius: 999px;
     border: 1px solid rgba(203, 213, 225, 0.95);
-    background: rgba(255, 253, 248, 0.84);
+    background: rgba(255, 255, 255, 0.92);
   }
 
   .gdr-editorial-kicker {
@@ -378,7 +378,7 @@
   }
 
   .gdr-red-cta {
-    background: linear-gradient(135deg, #C1121F, #8F0F1A);
+    background: linear-gradient(135deg, #C1121F, #991B1B);
     color: #FFFFFF;
     box-shadow: 0 14px 28px rgba(193, 18, 31, 0.22);
   }

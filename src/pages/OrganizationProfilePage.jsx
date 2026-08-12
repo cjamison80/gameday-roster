@@ -103,7 +103,7 @@ export default function OrganizationProfilePage() {
           className="w-full flex items-center justify-between gap-3 gdr-card p-4 text-left hover:shadow-md transition-shadow"
         >
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12  flex items-center justify-center" style={{ backgroundColor: '#EFE6D6' }}>
+            <div className="w-12 h-12  flex items-center justify-center" style={{ backgroundColor: '#FEE2E2' }}>
               <Trophy size={22} color="#C1121F" />
             </div>
             <div>

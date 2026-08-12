@@ -41,8 +41,8 @@ export default function GameDayLogo({ size = 32, showText = true, light = false 
           textAnchor="middle"
           fill={primary}
           fontSize="19"
-          fontWeight="700"
-          fontFamily="Georgia, Times New Roman, serif"
+          fontWeight="900"
+          fontFamily="Inter, Arial, sans-serif"
         >
           G
         </text>
@@ -54,10 +54,10 @@ export default function GameDayLogo({ size = 32, showText = true, light = false 
           <span
             style={{
               color: primary,
-              fontFamily: 'Georgia, Times New Roman, serif',
-              fontWeight: 500,
+              fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif',
+              fontWeight: 900,
               fontSize: size * 0.48,
-              letterSpacing: '-0.04em',
+              letterSpacing: '-0.06em',
               lineHeight: 0.95,
               whiteSpace: 'nowrap',
             }}
