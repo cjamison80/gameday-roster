@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, X, Check } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { currentMonthKey, getPlanFromList, isLimitReached, loadPublicPlans, loadUserSubscription } from '@/lib/subscription';
+import { currentMonthKey, getEntitledPlan, isLimitReached, loadPublicPlans, loadUserSubscription } from '@/lib/subscription';
 
 const positionOptions = ['Pitcher', 'Catcher', 'Shortstop', 'Second Base', 'Third Base', 'First Base', 'Left Field', 'Center Field', 'Right Field', 'Outfield', 'Utility'];
 const ageDivisions = ['8U', '9U', '10U', '11U', '12U', '13U', '14U', '15U', '16U', '17U', '18U'];
@@ -88,7 +88,7 @@ export default function CreateOpportunity() {
 
       const planRows = await loadPublicPlans();
       const subscription = await loadUserSubscription(user, profile?.role || 'coach', planRows);
-      const plan = getPlanFromList(planRows, subscription?.plan_code || 'coach_free');
+      const plan = getEntitledPlan(planRows, subscription, profile?.role || 'coach');
       const existingPosts = await base44.entities.Opportunity.filter({ coach_id: user.id }, '-created_date', 100).catch(() => []);
       const monthKey = currentMonthKey();
       const postsThisMonth = existingPosts.filter(post => String(post.created_date || '').slice(0, 7) === monthKey).length;

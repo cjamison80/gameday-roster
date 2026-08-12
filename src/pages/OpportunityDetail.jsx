@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Share, Heart, MapPin, Calendar, DollarSign, Users, Clock, CheckCircle, ChevronRight } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { formatDateRange, formatDate, calculateMatchScore } from '@/lib/utils';
-import { currentMonthKey, getPlanFromList, isLimitReached, loadPublicPlans, loadUserSubscription } from '@/lib/subscription';
+import { currentMonthKey, getEntitledPlan, isLimitReached, loadPublicPlans, loadUserSubscription } from '@/lib/subscription';
 import MatchScoreBadge from '@/components/MatchScoreBadge';
 import { Image } from '@/components/ui/image';
 import PlayerCreateForm from '@/components/player/PlayerCreateForm';
@@ -111,7 +111,7 @@ export default function OpportunityDetail() {
       const planRows = await loadPublicPlans();
       const profileRows = await base44.entities.UserProfile.filter({ user_id: user.id }).catch(() => []);
       const subscription = await loadUserSubscription(user, profileRows[0]?.role || 'parent', planRows);
-      const plan = getPlanFromList(planRows, subscription?.plan_code || 'parent_free');
+      const plan = getEntitledPlan(planRows, subscription, profileRows[0]?.role || 'parent');
       const allApps = await base44.entities.Application.filter({ parent_id: user.id }, '-created_date', 100).catch(() => []);
       const monthKey = currentMonthKey();
       const appsThisMonth = allApps.filter(app => String(app.created_date || '').slice(0, 7) === monthKey).length;

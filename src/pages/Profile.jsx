@@ -7,7 +7,7 @@ import VerifiedBadge from '@/components/VerifiedBadge';
 import AvailabilityChip from '@/components/AvailabilityChip';
 import { Image } from '@/components/ui/image';
 import PlayerCreateForm from '@/components/player/PlayerCreateForm';
-import { getPlanFromList, isLimitReached, loadPublicPlans, loadUserSubscription } from '@/lib/subscription';
+import { getEntitledPlan, getPlanFromList, isLimitReached, loadPublicPlans, loadUserSubscription } from '@/lib/subscription';
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -72,7 +72,7 @@ export default function Profile() {
     admin: 'Administrator'
   };
 
-  const currentPlan = getPlanFromList(plans, subscription?.plan_code || (userProfile?.role === 'coach' ? 'coach_free' : userProfile?.role === 'organization' ? 'org_starter' : 'parent_free'));
+  const currentPlan = getEntitledPlan(plans, subscription, userProfile?.role || 'parent');
   const playerLimitReached = isLimitReached(currentPlan, 'player_profiles', players.length);
   const handleAddPlayer = () => {
     if (playerLimitReached) {
