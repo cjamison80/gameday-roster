@@ -237,6 +237,12 @@ async function finishJob(base44, job, source, patch) {
 async function upsertTournament(base44, source, record, dryRun, geoState, teamsState) {
   const tournament = normalizeTournamentRecord(record, source);
 
+  const existing = await withTimeout(
+    base44.asServiceRole.entities.Tournament.filter({ source_url: tournament.source_url }, '-created_date', 1),
+    10000,
+    `Find existing tournament ${tournament.source_url}`
+  );
+
   if (geoState && tournament.city && tournament.state && tournament.latitude == null) {
     const coords = await resolveGeo(base44, geoState, tournament.city, tournament.state);
     if (coords) {
@@ -245,7 +251,14 @@ async function upsertTournament(base44, source, record, dryRun, geoState, teamsS
     }
   }
 
-  if (teamsState && teamsState.budgetUsed < TEAMS_BUDGET_PER_RUN) {
+  // Only spend team-fetch budget on records that don't already have a real
+  // roster imported — otherwise, with a fixed processing order and no "already
+  // done" check, the same first ~20 records would get fetched every single
+  // run while the rest never advance. Skipping already-covered ones lets
+  // budget naturally flow to new records each run, same as the geocode cache.
+  const alreadyHasTeams = (existing[0]?.teams_entered?.length || 0) > 0;
+
+  if (teamsState && !alreadyHasTeams && teamsState.budgetUsed < TEAMS_BUDGET_PER_RUN) {
     if (source.parser_key === 'perfect_game' && tournament.teams_url) {
       teamsState.budgetUsed += 1;
       try {
@@ -274,14 +287,14 @@ async function upsertTournament(base44, source, record, dryRun, geoState, teamsS
         await sleep(TEAMS_FETCH_DELAY_MS);
       }
     }
+  } else if (alreadyHasTeams) {
+    // Preserve the previously-imported roster instead of overwriting it with
+    // the source's fresh-but-empty default.
+    tournament.teams_entered = existing[0].teams_entered;
+    tournament.teams_entered_count = existing[0].teams_entered.length;
   }
 
   const sourceKey = buildTournamentKey(tournament);
-  const existing = await withTimeout(
-    base44.asServiceRole.entities.Tournament.filter({ source_url: tournament.source_url }, '-created_date', 1),
-    10000,
-    `Find existing tournament ${tournament.source_url}`
-  );
 
   if (dryRun) {
     console.log(`[dry-run] upsert ${source.association}: ${tournament.name} (${tournament.start_date})`);
