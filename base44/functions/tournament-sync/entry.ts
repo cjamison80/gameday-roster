@@ -43,7 +43,10 @@ const GEOCODE_RATE_LIMIT_MS = 1100;
 // on a later run. Unlike geocoding, team rosters genuinely change over time as
 // more teams register, so (unlike the geocode cache) this intentionally has no
 // "already done, skip forever" cache — it re-fetches periodically.
-const TEAMS_BUDGET_PER_RUN = 10;
+// Shared across BOTH Perfect Game and USSSA team fetches now (each is a
+// single fast request, ~1s including the delay) — 20 comfortably fits within
+// SOURCE_TIMEOUT_MS (90s) alongside each source's normal fetch/upsert work.
+const TEAMS_BUDGET_PER_RUN = 20;
 const TEAMS_FETCH_DELAY_MS = 150;
 
 async function loadGeoCache(base44) {
