@@ -70,7 +70,7 @@ export default function PlayerProfilePage({ publicView = false }) {
       }
 
       try {
-        const avail = await base44.entities.Availability.filter({ player_id: id }, '-week_start', 1);
+        const avail = await base44.entities.Availability.filter({ player_id: playerId }, '-week_start', 1);
         if (avail.length > 0) setAvailability(avail[0]);
       } catch (availabilityErr) {
         setAvailability(null);
