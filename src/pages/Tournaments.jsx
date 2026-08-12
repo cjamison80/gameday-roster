@@ -210,6 +210,7 @@ export default function Tournaments() {
               <Select label="Association" value={filters.association} onChange={v => updateFilter('association', v)} options={ASSOCIATIONS} />
               <Select label="Age" value={filters.age} onChange={v => updateFilter('age', v)} options={AGE_DIVISIONS} />
               <Select label="Class" value={filters.classification} onChange={v => updateFilter('classification', v)} options={CLASSIFICATIONS} />
+              <Select label="Month" value={filters.month} onChange={v => updateFilter('month', v)} options={MONTH_OPTIONS} />
               <div>
                 <label className="text-xs font-bold mb-1.5 block" style={{ color: '#5B6475' }}>ZIP Code</label>
                 <input
