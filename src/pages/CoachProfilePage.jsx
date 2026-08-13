@@ -171,6 +171,61 @@ export default function CoachProfilePage() {
           </div>
         )}
 
+        {/* Reviews */}
+        <div className="bg-white rounded-2xl border border-gray-100 p-5">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-bold" style={{ color: '#0B1528' }}>Reviews</h3>
+            {!isOwnProfile && (
+              <button
+                onClick={() => setShowReviewForm(v => !v)}
+                className="text-sm font-semibold"
+                style={{ color: '#2563EB' }}
+              >
+                {myReview ? 'Edit your review' : 'Write a review'}
+              </button>
+            )}
+          </div>
+
+          {showReviewForm && (
+            <div className="rounded-xl p-4 mb-4" style={{ backgroundColor: '#F8FAFC' }}>
+              <p className="text-sm font-semibold mb-2" style={{ color: '#0B1528' }}>Your rating</p>
+              <StarRating value={draftRating} onChange={setDraftRating} size={26} interactive />
+              <textarea
+                value={draftComment}
+                onChange={e => setDraftComment(e.target.value)}
+                placeholder="Share your experience with this coach (optional)"
+                rows={3}
+                className="w-full mt-3 rounded-xl px-3 py-2.5 text-sm border border-gray-200 outline-none resize-none"
+                style={{ color: '#0B1528' }}
+              />
+              <button
+                onClick={submitReview}
+                disabled={!draftRating || submittingReview}
+                className="w-full mt-3 py-2.5 rounded-xl font-bold text-sm text-white transition-opacity"
+                style={{ backgroundColor: '#2563EB', opacity: draftRating ? 1 : 0.5 }}
+              >
+                {submittingReview ? 'Submitting...' : myReview ? 'Update Review' : 'Submit Review'}
+              </button>
+            </div>
+          )}
+
+          {reviews.length > 0 ? (
+            <div className="space-y-3">
+              {reviews.map(r => (
+                <div key={r.id} className="pb-3 border-b border-gray-50 last:border-0 last:pb-0">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold" style={{ color: '#0B1528' }}>{r.reviewer_name || 'A parent'}</p>
+                    <StarRating value={r.rating} size={13} />
+                  </div>
+                  {r.comment && <p className="text-sm mt-1" style={{ color: '#64748B' }}>{r.comment}</p>}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm" style={{ color: '#94A3B8' }}>No reviews yet.</p>
+          )}
+        </div>
+
         {/* Tournament Finder */}
         <button
           onClick={() => navigate(`/tournaments?state=${coach.state || ''}${teams[0]?.age_division ? `&age=${teams[0].age_division}` : ''}${teams[0]?.classification ? `&classification=${teams[0].classification}` : ''}`)}
