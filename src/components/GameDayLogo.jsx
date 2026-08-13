@@ -1,13 +1,12 @@
 import React from 'react';
 
-const INK = '#1C1B19';
+const INK = '#0B1528';
 const IVORY = '#F8FAFC';
 const BRASS = '#C1121F';
-const REDWOOD = '#C1121F';
 
 export default function GameDayLogo({ size = 32, showText = true, light = false }) {
   const primary = light ? IVORY : INK;
-  const muted = light ? 'rgba(245,241,234,0.78)' : '#7C7368';
+  const muted = light ? 'rgba(248,250,252,0.78)' : '#64748B';
   const accent = light ? '#FCA5A5' : BRASS;
 
   return (
@@ -65,7 +64,7 @@ export default function GameDayLogo({ size = 32, showText = true, light = false 
             GameDay
           </span>
           <div className="flex items-center gap-2 mt-1" style={{ width: '100%' }}>
-            <span style={{ height: 1, flex: 1, backgroundColor: light ? 'rgba(216,192,154,0.72)' : '#D5DCE8' }} />
+            <span style={{ height: 1, flex: 1, backgroundColor: light ? 'rgba(248,250,252,0.34)' : '#D5DCE8' }} />
             <span
               style={{
                 color: muted,
@@ -80,7 +79,7 @@ export default function GameDayLogo({ size = 32, showText = true, light = false 
             >
               Roster
             </span>
-            <span style={{ height: 1, flex: 1, backgroundColor: light ? 'rgba(216,192,154,0.72)' : '#D5DCE8' }} />
+            <span style={{ height: 1, flex: 1, backgroundColor: light ? 'rgba(248,250,252,0.34)' : '#D5DCE8' }} />
           </div>
         </div>
       )}
