@@ -61,21 +61,17 @@ const AuthenticatedApp = () => {
 
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
-      <div className="fixed inset-0 gdr-auth-ballpark gdr-premium-auth-panel flex items-center justify-center overflow-hidden" style={{ backgroundColor: '#0B1528' }}>
-        <div className="gdr-diamond-scene gdr-splash-diamond" aria-hidden="true">
-          <div className="gdr-outfield-arc" />
-          <div className="gdr-foul-line gdr-left-line" />
-          <div className="gdr-foul-line gdr-right-line" />
-          <div className="gdr-baseball-diamond">
-            <span className="gdr-base gdr-home" />
-            <span className="gdr-base gdr-first" />
-            <span className="gdr-base gdr-second" />
-            <span className="gdr-base gdr-third" />
-            <span className="gdr-mound" />
-          </div>
+      <div className="fixed inset-0 gdr-clean-splash flex items-center justify-center overflow-hidden" style={{ backgroundColor: '#0B1528' }}>
+        <div className="gdr-splash-glow gdr-splash-glow-red" aria-hidden="true" />
+        <div className="gdr-splash-glow gdr-splash-glow-blue" aria-hidden="true" />
+        <div className="gdr-splash-linework" aria-hidden="true">
+          <span className="gdr-splash-plate" />
+          <span className="gdr-splash-diagonal gdr-splash-diagonal-left" />
+          <span className="gdr-splash-diagonal gdr-splash-diagonal-right" />
+          <span className="gdr-splash-arc" />
         </div>
         <div className="relative z-10 flex flex-col items-center gap-5 px-8 text-center">
-          <GameDayLogo size={62} showText={true} light={true} />
+          <GameDayLogo size={64} showText={true} light={true} />
           <p className="text-sm font-semibold max-w-xs" style={{ color: '#CBD5E1' }}>
             The marketplace for travel baseball opportunities.
           </p>
