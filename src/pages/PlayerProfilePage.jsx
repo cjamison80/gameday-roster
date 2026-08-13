@@ -847,6 +847,58 @@ export default function PlayerProfilePage({ publicView = false }) {
           </button>
         )}
 
+        {/* Recommend as guest player (coach viewers only) */}
+        {!isOwner && user && !publicView && viewerIsCoach && (
+          <div className=" p-4" style={{ backgroundColor: '#F5F7FB', border: '1px solid rgba(203,213,225,0.9)' }}>
+            {recSubmitted ? (
+              <p className="text-sm font-semibold text-center" style={{ color: '#4F7A59' }}>
+                Thanks — {player.first_name} has been listed as an available guest player.
+              </p>
+            ) : !showRecommendForm ? (
+              <button
+                onClick={() => setShowRecommendForm(true)}
+                className="w-full flex items-center justify-center gap-2 py-2 font-bold text-sm"
+                style={{ color: '#C1121F' }}
+              >
+                <UserPlus size={16} />
+                Recommend {player.first_name} as a Guest Player
+              </button>
+            ) : (
+              <div className="space-y-3">
+                <p className="text-sm font-semibold" style={{ color: '#0B1528' }}>When is {player.first_name} available?</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-bold mb-1 block" style={{ color: '#5B6475' }}>Start</label>
+                    <input type="date" value={recStart} onChange={e => setRecStart(e.target.value)}
+                      className="w-full px-3 py-2 text-sm border border-gray-200 outline-none bg-white" style={{ color: '#0B1528' }} />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold mb-1 block" style={{ color: '#5B6475' }}>End</label>
+                    <input type="date" value={recEnd} onChange={e => setRecEnd(e.target.value)}
+                      className="w-full px-3 py-2 text-sm border border-gray-200 outline-none bg-white" style={{ color: '#0B1528' }} />
+                  </div>
+                </div>
+                <textarea
+                  value={recNote}
+                  onChange={e => setRecNote(e.target.value)}
+                  placeholder="Why are you recommending them? (e.g. his team isn't playing this weekend, great bat)"
+                  rows={2}
+                  className="w-full px-3 py-2 text-sm border border-gray-200 outline-none resize-none bg-white"
+                  style={{ color: '#0B1528' }}
+                />
+                <button
+                  onClick={submitRecommendation}
+                  disabled={!recStart || !recEnd || submittingRec}
+                  className="w-full py-2.5 font-bold text-sm text-white transition-opacity"
+                  style={{ backgroundColor: '#C1121F', opacity: (recStart && recEnd) ? 1 : 0.5 }}
+                >
+                  {submittingRec ? 'Submitting...' : 'Submit Recommendation'}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Message button (non-owner) */}
         {!isOwner && user && !publicView && (
           <button
