@@ -29,7 +29,9 @@ import PlayerProfilePage from '@/pages/PlayerProfilePage';
 import CreateOpportunity from '@/pages/CreateOpportunity';
 import CoachDashboard from '@/pages/CoachDashboard';
 import TeamProfilePage from '@/pages/TeamProfilePage';
+import TeamEditPage from '@/pages/TeamEditPage';
 import CoachProfilePage from '@/pages/CoachProfilePage';
+import CoachEditPage from '@/pages/CoachEditPage';
 import OrganizationProfilePage from '@/pages/OrganizationProfilePage';
 import AdminDashboard from '@/pages/AdminDashboard';
 import Settings from '@/pages/Settings';
@@ -124,7 +126,9 @@ const AuthenticatedApp = () => {
         <Route path="/opportunity/:id" element={<OpportunityDetail />} />
         <Route path="/player/:id" element={<PlayerProfilePage />} />
         <Route path="/team/:id" element={<TeamProfilePage />} />
+        <Route path="/team/:id/edit" element={<TeamEditPage />} />
         <Route path="/coach/:id" element={<CoachProfilePage />} />
+        <Route path="/coach/:id/edit" element={<CoachEditPage />} />
         <Route path="/organization/:id" element={<OrganizationProfilePage />} />
         <Route path="/create-opportunity" element={<CreateOpportunity />} />
         <Route path="/billing" element={<Billing />} />
