@@ -26,6 +26,13 @@ export default function PlayerProfilePage({ publicView = false }) {
   const [pgProfile, setPgProfile] = useState(null);
   const [saving, setSaving] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [viewerIsCoach, setViewerIsCoach] = useState(false);
+  const [showRecommendForm, setShowRecommendForm] = useState(false);
+  const [recStart, setRecStart] = useState('');
+  const [recEnd, setRecEnd] = useState('');
+  const [recNote, setRecNote] = useState('');
+  const [submittingRec, setSubmittingRec] = useState(false);
+  const [recSubmitted, setRecSubmitted] = useState(false);
   const fileInputRef = useRef(null);
   const { isFav, toggle: toggleFav } = useFavorite(playerId, 'player');
   const { toast } = useToast();
@@ -64,6 +71,8 @@ export default function PlayerProfilePage({ publicView = false }) {
         const u = await base44.auth.me();
         setUser(u);
         setIsOwner(!publicView && p.parent_id === u.id);
+        const profiles = await base44.entities.UserProfile.filter({ user_id: u.id });
+        setViewerIsCoach(profiles[0]?.role === 'coach');
       } catch (authErr) {
         setUser(null);
         setIsOwner(false);
