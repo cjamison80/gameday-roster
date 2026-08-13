@@ -1,0 +1,77 @@
+{
+  "name": "PlayerRecommendation",
+  "properties": {
+    "available_end": {
+      "format": "date",
+      "type": "string"
+    },
+    "available_start": {
+      "format": "date",
+      "type": "string"
+    },
+    "note": {
+      "description": "Why the recommending coach is vouching for this player / context on availability",
+      "type": "string"
+    },
+    "player_id": {
+      "description": "PlayerProfile.id being recommended",
+      "type": "string"
+    },
+    "recommended_by_name": {
+      "description": "Denormalized display name of the recommending coach",
+      "type": "string"
+    },
+    "recommended_by_user_id": {
+      "description": "User.id of the coach making the recommendation",
+      "type": "string"
+    },
+    "sport": {
+      "default": "baseball",
+      "type": "string"
+    },
+    "status": {
+      "default": "open",
+      "enum": [
+        "open",
+        "filled",
+        "expired"
+      ],
+      "type": "string"
+    }
+  },
+  "required": [
+    "player_id",
+    "recommended_by_user_id",
+    "available_start",
+    "available_end"
+  ],
+  "rls": {
+    "create": {},
+    "delete": {
+      "$or": [
+        {
+          "data.recommended_by_user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {},
+    "update": {
+      "$or": [
+        {
+          "data.recommended_by_user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  },
+  "type": "object"
+}
