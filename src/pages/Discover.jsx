@@ -336,60 +336,101 @@ export default function Discover() {
 
       {/* Content */}
       <div className="px-5 pb-6 space-y-4">
-        {/* Stats banner */}
-        {!loading && opportunities.length > 0 && (
-          <div className="grid grid-cols-3 gap-3">
-            {[
-              { value: opportunities.filter(o => o.type === 'pickup').length, label: 'Opportunities' },
-              { value: opportunities.filter(o => o.type === 'tryout').length, label: 'Tryouts' },
-              { value: new Set(opportunities.map(o => o.city + o.state)).size, label: 'Locations' }
-            ].map(stat => (
-              <div key={stat.label} className="gdr-soft-card p-3 text-center">
-                <div className="text-2xl font-black tracking-[-0.04em]" style={{ color: '#0B1528' }}>{stat.value}</div>
-                <div className="text-xs font-bold mt-0.5" style={{ color: '#94A3B8' }}>{stat.label}</div>
+        {contentType === 'opportunities' ? (
+          <>
+            {/* Stats banner */}
+            {!loading && opportunities.length > 0 && (
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { value: opportunities.filter(o => o.type === 'pickup').length, label: 'Opportunities' },
+                  { value: opportunities.filter(o => o.type === 'tryout').length, label: 'Tryouts' },
+                  { value: new Set(opportunities.map(o => o.city + o.state)).size, label: 'Locations' }
+                ].map(stat => (
+                  <div key={stat.label} className="gdr-soft-card p-3 text-center">
+                    <div className="text-2xl font-black tracking-[-0.04em]" style={{ color: '#0B1528' }}>{stat.value}</div>
+                    <div className="text-xs font-bold mt-0.5" style={{ color: '#94A3B8' }}>{stat.label}</div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        )}
+            )}
 
-        {/* Section header */}
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl" style={{ color: '#0B1528', fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif', fontWeight: 850 }}>
-            {activeFilter === 'all' ? 'Opportunity Marketplace' :
-             activeFilter === 'this_weekend' ? 'This Weekend' :
-             activeFilter === 'nearby' ? 'Near You' : 'Tryouts'}
-          </h2>
-          <span className="text-sm font-medium" style={{ color: '#94A3B8' }}>
-            {filteredOpps.length} results
-          </span>
-        </div>
+            {/* Section header */}
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl" style={{ color: '#0B1528', fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif', fontWeight: 850 }}>
+                {activeFilter === 'all' ? 'Opportunity Marketplace' :
+                 activeFilter === 'this_weekend' ? 'This Weekend' :
+                 activeFilter === 'nearby' ? 'Near You' : 'Tryouts'}
+              </h2>
+              <span className="text-sm font-medium" style={{ color: '#94A3B8' }}>
+                {filteredOpps.length} results
+              </span>
+            </div>
 
-        {/* Cards */}
-        {loading ? (
-          <div className="space-y-4">
-            {[1,2,3].map(i => <SkeletonCard key={i} />)}
-          </div>
-        ) : filteredOpps.length > 0 ? (
-          <div className="space-y-4">
-            {filteredOpps.map(opp => (
-              <OpportunityCard
-                key={opp.id}
-                opportunity={opp}
-                matchScore={getMatchScore(opp)}
-                isSaved={savedIds.has(opp.id)}
-                onSave={() => toggleSave(opp.id)}
-                onClick={() => navigate(`/opportunity/${opp.id}`)}
-              />
-            ))}
-          </div>
+            {/* Cards */}
+            {loading ? (
+              <div className="space-y-4">
+                {[1,2,3].map(i => <SkeletonCard key={i} />)}
+              </div>
+            ) : filteredOpps.length > 0 ? (
+              <div className="space-y-4">
+                {filteredOpps.map(opp => (
+                  <OpportunityCard
+                    key={opp.id}
+                    opportunity={opp}
+                    matchScore={getMatchScore(opp)}
+                    isSaved={savedIds.has(opp.id)}
+                    onSave={() => toggleSave(opp.id)}
+                    onClick={() => navigate(`/opportunity/${opp.id}`)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-16">
+                <div className="text-5xl mb-4">⚾</div>
+                <h3 className="text-lg font-bold mb-2" style={{ color: '#0B1528' }}>No opportunities found</h3>
+                <p className="text-sm" style={{ color: '#94A3B8' }}>
+                  Try adjusting your filters or check back soon.
+                </p>
+              </div>
+            )}
+          </>
         ) : (
-          <div className="text-center py-16">
-            <div className="text-5xl mb-4">⚾</div>
-            <h3 className="text-lg font-bold mb-2" style={{ color: '#0B1528' }}>No opportunities found</h3>
-            <p className="text-sm" style={{ color: '#94A3B8' }}>
-              Try adjusting your filters or check back soon.
-            </p>
-          </div>
+          <>
+            {/* Section header */}
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl" style={{ color: '#0B1528', fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif', fontWeight: 850 }}>
+                Guest Players Available
+              </h2>
+              <span className="text-sm font-medium" style={{ color: '#94A3B8' }}>
+                {filteredRecs.length} results
+              </span>
+            </div>
+
+            {loading ? (
+              <div className="space-y-4">
+                {[1,2,3].map(i => <SkeletonCard key={i} />)}
+              </div>
+            ) : filteredRecs.length > 0 ? (
+              <div className="space-y-4">
+                {filteredRecs.map(rec => (
+                  <RecommendationCard
+                    key={rec.id}
+                    recommendation={rec}
+                    player={recPlayers[rec.player_id]}
+                    onClick={() => navigate(`/player/${rec.player_id}`)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-16">
+                <div className="text-5xl mb-4">🙋</div>
+                <h3 className="text-lg font-bold mb-2" style={{ color: '#0B1528' }}>No guest players right now</h3>
+                <p className="text-sm" style={{ color: '#94A3B8' }}>
+                  When a coach recommends an available player, they'll show up here.
+                </p>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
