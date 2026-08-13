@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, Briefcase, Building2, Trophy, AlertCircle, CheckCircle, Clock, Database } from 'lucide-react';
+import { ArrowLeft, Users, Briefcase, Building2, Trophy, AlertCircle, CheckCircle, Clock, Database, Copy } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { teamIdentityKey } from '@/lib/teamIdentity';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -12,6 +13,8 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
   const [authorized, setAuthorized] = useState(null);
   const [teams, setTeams] = useState([]);
+  const [allTeams, setAllTeams] = useState([]);
+  const [mergingKey, setMergingKey] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -45,6 +48,7 @@ export default function AdminDashboard() {
       setCoaches(coachs.filter(c => c.verification_status === 'pending'));
       setOrgs(organizations.filter(o => o.verification_status === 'pending'));
       setTeams(allTeams.filter(t => t.verification_status === 'pending'));
+      setAllTeams(allTeams);
     } catch (e) {
       console.error(e);
     } finally {
@@ -70,6 +74,38 @@ export default function AdminDashboard() {
   const rejectTeam = async (teamId) => {
     await base44.entities.Team.update(teamId, { verification_status: 'rejected' });
     setTeams(prev => prev.filter(t => t.id !== teamId));
+  };
+
+  // Retroactive scan: same identity rule as the onboarding-time check
+  // (name + age division + state), clustering the FULL existing team list
+  // rather than just newly-created ones.
+  const duplicateClusters = useMemo(() => {
+    const groups = new Map();
+    for (const t of allTeams) {
+      const key = teamIdentityKey(t);
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(t);
+    }
+    return [...groups.entries()].filter(([, group]) => group.length > 1);
+  }, [allTeams]);
+
+  const keepTeam = async (clusterKey, keeperId, allIdsInCluster) => {
+    const others = allIdsInCluster.filter(id => id !== keeperId);
+    if (!window.confirm(`Keep this team and permanently delete the other ${others.length}? This can't be undone.`)) return;
+    setMergingKey(clusterKey);
+    try {
+      await base44.entities.Team.update(keeperId, { verification_status: 'verified', is_verified: true });
+      for (const id of others) {
+        await base44.entities.Team.delete(id);
+      }
+      setAllTeams(prev => prev.filter(t => !others.includes(t.id)).map(t => t.id === keeperId ? { ...t, verification_status: 'verified', is_verified: true } : t));
+      setTeams(prev => prev.filter(t => !others.includes(t.id)));
+    } catch (e) {
+      console.error(e);
+      alert('Something went wrong merging this cluster — check the console.');
+    } finally {
+      setMergingKey(null);
+    }
   };
 
   const statCards = [
@@ -114,7 +150,7 @@ export default function AdminDashboard() {
       {/* Tabs */}
       <div className="bg-white border-b border-gray-100">
         <div className="flex px-5">
-          {['overview', 'verifications'].map(tab => (
+          {['overview', 'verifications', 'duplicates'].map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -129,6 +165,12 @@ export default function AdminDashboard() {
                 <span className="ml-1.5 px-1.5 py-0.5 rounded-full text-xs font-bold text-white"
                   style={{ backgroundColor: '#DC2626' }}>
                   {coaches.length + orgs.length + teams.length}
+                </span>
+              )}
+              {tab === 'duplicates' && duplicateClusters.length > 0 && (
+                <span className="ml-1.5 px-1.5 py-0.5 rounded-full text-xs font-bold text-white"
+                  style={{ backgroundColor: '#D97706' }}>
+                  {duplicateClusters.length}
                 </span>
               )}
             </button>
