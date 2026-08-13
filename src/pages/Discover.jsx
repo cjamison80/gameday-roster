@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Search, SlidersHorizontal, Bell, MapPin, X, ChevronRight, Trophy, UserCheck, CalendarCheck } from 'lucide-react';
+import { Search, SlidersHorizontal, Bell, MapPin, X, ChevronRight, Trophy, UserCheck, CalendarCheck, UserPlus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import OpportunityCard from '@/components/OpportunityCard';
+import RecommendationCard from '@/components/RecommendationCard';
 import { SkeletonCard } from '@/components/SkeletonCard';
 import GameDayLogo from '@/components/GameDayLogo';
 import { calculateMatchScore } from '@/lib/utils';
