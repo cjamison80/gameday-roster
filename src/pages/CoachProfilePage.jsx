@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, ExternalLink, MapPin, MessageCircle, Trophy } from 'lucide-react';
+import { ArrowLeft, ExternalLink, MapPin, MessageCircle, Trophy, Pencil } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import VerifiedBadge from '@/components/VerifiedBadge';
+import StarRating from '@/components/StarRating';
 import { Image } from '@/components/ui/image';
 import { SkeletonCard } from '@/components/SkeletonCard';
 
@@ -11,6 +12,13 @@ export default function CoachProfilePage() {
   const navigate = useNavigate();
   const [coach, setCoach] = useState(null);
   const [teams, setTeams] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [currentUserId, setCurrentUserId] = useState(null);
+  const [myReview, setMyReview] = useState(null);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [draftRating, setDraftRating] = useState(0);
+  const [draftComment, setDraftComment] = useState('');
+  const [submittingReview, setSubmittingReview] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,14 +29,59 @@ export default function CoachProfilePage() {
     try {
       const c = await base44.entities.CoachProfile.get(id);
       setCoach(c);
-      const teamList = await base44.entities.Team.filter({ head_coach_id: c.user_id }, '-created_date', 30);
+      const user = await base44.auth.me().catch(() => null);
+      setCurrentUserId(user?.id || null);
+      const [teamList, reviewList] = await Promise.all([
+        base44.entities.Team.filter({ head_coach_id: c.user_id }, '-created_date', 30),
+        base44.entities.CoachReview.filter({ coach_id: c.id }, '-created_date', 100)
+      ]);
       setTeams(teamList);
+      setReviews(reviewList);
+      if (user) {
+        const existing = reviewList.find(r => r.reviewer_user_id === user.id);
+        if (existing) {
+          setMyReview(existing);
+          setDraftRating(existing.rating);
+          setDraftComment(existing.comment || '');
+        }
+      }
     } catch (e) {
       console.error(e);
     } finally {
       setLoading(false);
     }
   };
+
+  const submitReview = async () => {
+    if (!draftRating || submittingReview) return;
+    setSubmittingReview(true);
+    try {
+      const user = await base44.auth.me();
+      if (myReview) {
+        const updated = await base44.entities.CoachReview.update(myReview.id, { rating: draftRating, comment: draftComment });
+        setReviews(prev => prev.map(r => r.id === myReview.id ? updated : r));
+        setMyReview(updated);
+      } else {
+        const created = await base44.entities.CoachReview.create({
+          coach_id: coach.id,
+          reviewer_user_id: user.id,
+          reviewer_name: user.full_name || 'A parent',
+          rating: draftRating,
+          comment: draftComment
+        });
+        setReviews(prev => [created, ...prev]);
+        setMyReview(created);
+      }
+      setShowReviewForm(false);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
+
+  const avgRating = reviews.length ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length : 0;
+  const isOwnProfile = currentUserId && coach?.user_id === currentUserId;
 
   if (loading) {
     return (
