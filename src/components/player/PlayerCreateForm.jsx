@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
+import ParentalConsentForm from '@/components/onboarding/ParentalConsentForm';
 
 /**
  * Reusable player-profile creation form.
  * Pre-fills the parent/guardian name + email from the logged-in user,
  * uses tappable chips for age / positions / relationship for reliable
- * state persistence, and enforces the mandatory parent/guardian terms.
+ * state persistence, and always ends with a real e-signed parental
+ * consent step (ParentalConsentForm) before the profile is created —
+ * no bypass, including in "quick" mode (which only trims which optional
+ * fields are shown, not the consent requirement itself).
  */
 export default function PlayerCreateForm({ user, defaultAge = '', defaultPositions = [], onCreated, onCancel, submitLabel = 'Create Player', quick = false }) {
+  const [step, setStep] = useState('details');
   const [first, setFirst] = useState('');
   const [last, setLast] = useState('');
   const [age, setAge] = useState(defaultAge);
@@ -16,18 +21,22 @@ export default function PlayerCreateForm({ user, defaultAge = '', defaultPositio
   const [guardianRelationship, setGuardianRelationship] = useState(quick ? 'Legal Guardian' : '');
   const [guardianEmail, setGuardianEmail] = useState(user?.email || '');
   const [guardianPhone, setGuardianPhone] = useState('');
-  const [terms, setTerms] = useState(quick);
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState('');
 
-  const handleCreate = async (e) => {
+  const detailsValid = first && last && guardianName && guardianRelationship;
+
+  const goToConsent = (e) => {
     e?.preventDefault?.();
     setError('');
     if (!user) { setError('Please wait for your account to load.'); return; }
-    if (!first || !last) { setError('First and last name are required.'); return; }
-    if (!guardianName || !guardianRelationship) { setError('Parent / guardian name and relationship are required.'); return; }
-    if (!quick && !terms) { setError('Please accept the parent / guardian terms to continue.'); return; }
+    if (!detailsValid) { setError('First/last name and parent/guardian name and relationship are required.'); return; }
+    setStep('consent');
+  };
+
+  const handleSigned = async (consent) => {
     setCreating(true);
+    setError('');
     try {
       const p = await base44.entities.PlayerProfile.create({
         first_name: first,
@@ -40,19 +49,40 @@ export default function PlayerCreateForm({ user, defaultAge = '', defaultPositio
         guardian_phone: guardianPhone,
         guardian_relationship: guardianRelationship,
         has_accepted_parental_terms: true,
-        parental_terms_accepted_at: new Date().toISOString()
+        parental_terms_accepted_at: consent.signed_at
+      });
+      await base44.entities.ParentalConsent.create({
+        player_id: p.id,
+        ...consent
       });
       onCreated?.(p);
     } catch (err) {
       console.error(err);
       setError(err?.message || 'Could not create player. Please try again.');
+      setStep('details');
     } finally {
       setCreating(false);
     }
   };
 
+  if (step === 'consent') {
+    return (
+      <div className="space-y-4">
+        <p className="text-sm font-semibold" style={{ color: '#0B1528' }}>One more step — parent/guardian consent</p>
+        <ParentalConsentForm
+          playerFirstName={first}
+          defaultName={guardianName}
+          defaultRelationship={guardianRelationship}
+          onSigned={handleSigned}
+          onCancel={() => setStep('details')}
+        />
+        {creating && <p className="text-xs text-center" style={{ color: '#94A3B8' }}>Creating player profile...</p>}
+      </div>
+    );
+  }
+
   return (
-    <form onSubmit={handleCreate} className="space-y-5">
+    <form onSubmit={goToConsent} className="space-y-5">
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label htmlFor="np-first-name" className="text-sm font-semibold mb-1.5 block" style={{ color: '#64748B' }}>First Name *</label>
@@ -193,24 +223,9 @@ export default function PlayerCreateForm({ user, defaultAge = '', defaultPositio
         </div>
       </div>
 
-      {quick ? (
-        <p className="text-xs leading-relaxed px-1" style={{ color: '#94A3B8' }}>
-          By adding this player, you confirm you are their parent or legal guardian and that this page is parent/guardian-run.
-        </p>
-      ) : (
-        <label className="flex items-start gap-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={terms}
-            onChange={e => setTerms(e.target.checked)}
-            className="mt-0.5 w-5 h-5 flex-shrink-0"
-            style={{ accentColor: '#2563EB' }}
-          />
-          <span className="text-xs leading-relaxed" style={{ color: '#475569' }}>
-            I am this player's parent or legal guardian and acknowledge that player pages on GameDay Roster are created and managed by a parent or legal guardian.
-          </span>
-        </label>
-      )}
+      <p className="text-xs leading-relaxed px-1" style={{ color: '#94A3B8' }}>
+        Next, you'll review and electronically sign a parent/guardian consent statement.
+      </p>
 
       {error && (
         <div className="rounded-xl px-4 py-3 text-sm font-medium" style={{ backgroundColor: '#FEE2E2', color: '#DC2626' }}>
@@ -224,8 +239,8 @@ export default function PlayerCreateForm({ user, defaultAge = '', defaultPositio
             Cancel
           </button>
         )}
-        <button type="submit" disabled={creating} className="flex-1 py-4 rounded-2xl font-bold text-white transition-opacity" style={{ backgroundColor: '#2563EB', opacity: creating ? 0.6 : 1 }}>
-          {creating ? 'Creating...' : submitLabel}
+        <button type="submit" className="flex-1 py-4 rounded-2xl font-bold text-white transition-opacity" style={{ backgroundColor: '#2563EB' }}>
+          Continue to Consent
         </button>
       </div>
     </form>
