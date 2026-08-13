@@ -11,6 +11,7 @@ export default function AdminDashboard() {
   const [orgs, setOrgs] = useState([]);
   const [activeTab, setActiveTab] = useState('overview');
   const [authorized, setAuthorized] = useState(null);
+  const [teams, setTeams] = useState([]);
 
   useEffect(() => {
     loadData();
@@ -26,12 +27,13 @@ export default function AdminDashboard() {
         return;
       }
       setAuthorized(true);
-      const [players, coachs, organizations, opps, apps] = await Promise.all([
+      const [players, coachs, organizations, opps, apps, allTeams] = await Promise.all([
         base44.entities.PlayerProfile.list(),
         base44.entities.CoachProfile.list(),
         base44.entities.Organization.list(),
         base44.entities.Opportunity.list(),
-        base44.entities.Application.list()
+        base44.entities.Application.list(),
+        base44.entities.Team.list()
       ]);
       setStats({
         players: players.length,
@@ -42,6 +44,7 @@ export default function AdminDashboard() {
       });
       setCoaches(coachs.filter(c => c.verification_status === 'pending'));
       setOrgs(organizations.filter(o => o.verification_status === 'pending'));
+      setTeams(allTeams.filter(t => t.verification_status === 'pending'));
     } catch (e) {
       console.error(e);
     } finally {
@@ -57,6 +60,16 @@ export default function AdminDashboard() {
   const rejectCoach = async (coachId) => {
     await base44.entities.CoachProfile.update(coachId, { verification_status: 'rejected' });
     setCoaches(prev => prev.filter(c => c.id !== coachId));
+  };
+
+  const verifyTeam = async (teamId) => {
+    await base44.entities.Team.update(teamId, { verification_status: 'verified', is_verified: true });
+    setTeams(prev => prev.filter(t => t.id !== teamId));
+  };
+
+  const rejectTeam = async (teamId) => {
+    await base44.entities.Team.update(teamId, { verification_status: 'rejected' });
+    setTeams(prev => prev.filter(t => t.id !== teamId));
   };
 
   const statCards = [
@@ -88,11 +101,11 @@ export default function AdminDashboard() {
           </button>
           <h1 className="text-2xl font-black text-white">Admin Dashboard</h1>
         </div>
-        {coaches.length > 0 || orgs.length > 0 ? (
+        {coaches.length > 0 || orgs.length > 0 || teams.length > 0 ? (
           <div className="flex items-center gap-2 mt-2 px-3 py-2 rounded-xl" style={{ backgroundColor: '#1E293B' }}>
             <AlertCircle size={16} color="#F59E0B" />
             <span className="text-sm font-semibold" style={{ color: '#F59E0B' }}>
-              {coaches.length + orgs.length} pending verifications
+              {coaches.length + orgs.length + teams.length} pending verifications
             </span>
           </div>
         ) : null}
@@ -112,10 +125,10 @@ export default function AdminDashboard() {
               }}
             >
               {tab}
-              {tab === 'verifications' && (coaches.length + orgs.length) > 0 && (
+              {tab === 'verifications' && (coaches.length + orgs.length + teams.length) > 0 && (
                 <span className="ml-1.5 px-1.5 py-0.5 rounded-full text-xs font-bold text-white"
                   style={{ backgroundColor: '#DC2626' }}>
-                  {coaches.length + orgs.length}
+                  {coaches.length + orgs.length + teams.length}
                 </span>
               )}
             </button>
@@ -162,7 +175,7 @@ export default function AdminDashboard() {
         {activeTab === 'verifications' && (
           <div className="space-y-4">
             <h2 className="text-lg font-black" style={{ color: '#0B1528' }}>Pending Verifications</h2>
-            {coaches.length === 0 && orgs.length === 0 ? (
+            {coaches.length === 0 && orgs.length === 0 && teams.length === 0 ? (
               <div className="text-center py-12">
                 <CheckCircle size={40} color="#16A34A" className="mx-auto mb-3" />
                 <p className="font-bold" style={{ color: '#0B1528' }}>All caught up!</p>
@@ -170,6 +183,39 @@ export default function AdminDashboard() {
               </div>
             ) : (
               <>
+                {teams.map(team => (
+                  <div key={team.id} className="bg-white rounded-2xl border border-gray-100 p-4">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#DCFCE7' }}>
+                        <span className="font-black" style={{ color: '#16A34A' }}>
+                          {team.name?.split(' ').map(w => w[0]).join('').slice(0, 3)}
+                        </span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold truncate" style={{ color: '#0B1528' }}>{team.name}</p>
+                        <div className="flex items-center gap-1">
+                          <Clock size={12} color="#F59E0B" />
+                          <span className="text-xs font-semibold" style={{ color: '#F59E0B' }}>Possible Duplicate — Review Needed</span>
+                        </div>
+                      </div>
+                    </div>
+                    {team.duplicate_flag_note && (
+                      <p className="text-xs mb-3 p-2 rounded-lg" style={{ backgroundColor: '#F8FAFC', color: '#64748B' }}>{team.duplicate_flag_note}</p>
+                    )}
+                    <div className="flex gap-2">
+                      <button onClick={() => rejectTeam(team.id)}
+                        className="flex-1 py-2.5 rounded-xl font-bold text-sm border-2 border-gray-200"
+                        style={{ color: '#DC2626' }}>
+                        Reject
+                      </button>
+                      <button onClick={() => verifyTeam(team.id)}
+                        className="flex-1 py-2.5 rounded-xl font-bold text-sm text-white"
+                        style={{ backgroundColor: '#16A34A' }}>
+                        Verify
+                      </button>
+                    </div>
+                  </div>
+                ))}
                 {coaches.map(coach => (
                   <div key={coach.id} className="bg-white rounded-2xl border border-gray-100 p-4">
                     <div className="flex items-center gap-3 mb-3">
