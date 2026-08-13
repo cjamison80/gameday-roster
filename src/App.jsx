@@ -39,6 +39,7 @@ import Billing from '@/pages/Billing';
 import Tournaments from '@/pages/Tournaments';
 import TournamentDetail from '@/pages/TournamentDetail';
 import TournamentSourcesAdmin from '@/pages/TournamentSourcesAdmin';
+import SportsPage from '@/pages/SportsPage';
 
 const AuthenticatedApp = () => {
   const location = useLocation();
@@ -135,6 +136,7 @@ const AuthenticatedApp = () => {
         <Route path="/tournament/:id" element={<TournamentDetail />} />
         <Route path="/admin/tournament-sources" element={<TournamentSourcesAdmin />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/sports" element={<SportsPage />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/settings" element={<Settings />} />
         </Route>
