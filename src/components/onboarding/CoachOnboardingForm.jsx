@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-
-// Strips age-division and classification tokens so "Gold Glove Elite 11U AAA"
-// and "Gold Glove Elite" compare as the same underlying team name — coaches
-// often add these inconsistently.
-const DIVISION_TOKENS = /\b(\d{1,2}u|major|aaa|aa|a|open)\b/gi;
-function normalizeTeamName(name = '') {
-  return name.toLowerCase().replace(DIVISION_TOKENS, '').replace(/[^a-z0-9]+/g, ' ').trim();
-}
+import { teamIdentityKey } from '@/lib/teamIdentity';
 
 export default function CoachOnboardingForm({ user, onComplete }) {
   const [coach, setCoach] = useState({ first_name: '', last_name: '', city: '', state: '', bio: '', years_coaching: '' });
@@ -20,23 +13,22 @@ export default function CoachOnboardingForm({ user, onComplete }) {
 
   const setCoachField = (k) => (e) => setCoach(f => ({ ...f, [k]: e.target.value }));
   const setTeamField = (k) => (e) => { setTeam(f => ({ ...f, [k]: e.target.value })); setAcknowledgedDuplicates(false); };
-  const valid = coach.first_name && coach.last_name && team.name;
+  const valid = coach.first_name && coach.last_name && team.name && team.age_division;
 
-  // Debounced duplicate check — fires once there's a real name and a state to
-  // scope the search to (checking nationwide would surface too many unrelated
-  // same-named teams to be useful).
+  // Debounced duplicate check — fires once there's a real name, age division,
+  // and state (all three are part of team identity, see teamIdentity.js).
   useEffect(() => {
-    const normalized = normalizeTeamName(team.name);
     const state = (team.state || coach.state || '').trim().toUpperCase();
-    if (normalized.length < 3 || !state) {
+    if (!team.name.trim() || !team.age_division || !state) {
       setPossibleDuplicates([]);
       return;
     }
+    const key = teamIdentityKey({ name: team.name, age_division: team.age_division, state });
     setCheckingDuplicates(true);
     const timeout = setTimeout(async () => {
       try {
         const candidates = await base44.entities.Team.filter({ state }, '-created_date', 100);
-        const matches = candidates.filter(t => normalizeTeamName(t.name) === normalized);
+        const matches = candidates.filter(t => teamIdentityKey(t) === key);
         setPossibleDuplicates(matches);
       } catch (e) {
         console.error(e);
@@ -45,7 +37,7 @@ export default function CoachOnboardingForm({ user, onComplete }) {
       }
     }, 500);
     return () => clearTimeout(timeout);
-  }, [team.name, team.state, coach.state]);
+  }, [team.name, team.age_division, team.state, coach.state]);
 
   const submit = async () => {
     if (!valid || saving) return;
@@ -100,9 +92,9 @@ export default function CoachOnboardingForm({ user, onComplete }) {
       <Area label="Bio" value={coach.bio} onChange={setCoachField('bio')} placeholder="Tell families about your coaching philosophy..." />
 
       <h3 className="text-sm font-bold uppercase tracking-wide pt-2" style={{ color: '#94A3B8' }}>First Team</h3>
-      <Field label="Team Name *" value={team.name} onChange={setTeamField('name')} placeholder="Gold Glove Elite 11U AAA" />
+      <Field label="Team Name *" value={team.name} onChange={setTeamField('name')} placeholder="Gold Glove Elite" />
       <div className="grid grid-cols-2 gap-3">
-        <Select label="Age Division" value={team.age_division} onChange={setTeamField('age_division')}
+        <Select label="Age Division *" value={team.age_division} onChange={setTeamField('age_division')}
           options={['8U','9U','10U','11U','12U','13U','14U','15U','16U','17U','18U']} />
         <Select label="Classification" value={team.classification} onChange={setTeamField('classification')}
           options={['Major','AAA','AA','A']} />
