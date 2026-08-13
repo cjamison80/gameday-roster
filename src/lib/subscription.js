@@ -158,6 +158,14 @@ export function getLimit(plan, key) {
   return value === undefined || value === null ? null : value;
 }
 
+export function getIncludedPlayerPlusProfiles(plan) {
+  return Number(plan?.limits?.included_player_plus_profiles || 0);
+}
+
+export function hasBundledPlayerPlus(plan) {
+  return getIncludedPlayerPlusProfiles(plan) > 0;
+}
+
 export function isLimitReached(plan, key, used = 0) {
   const limit = getLimit(plan, key);
   if (limit === null || isUnlimited(limit)) return false;
