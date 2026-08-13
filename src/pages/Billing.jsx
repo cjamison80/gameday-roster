@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Check, CreditCard, ShieldCheck, Star, Zap } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useToast } from '@/components/ui/use-toast';
+import { startStripeCheckout } from '@/lib/stripeBilling';
 import {
   formatMoney,
   formatPlanPrice,
@@ -12,8 +13,7 @@ import {
   getPlansForRole,
   isPaidPlan,
   loadPublicPlans,
-  loadUserSubscription,
-  recordBillingEvent
+  loadUserSubscription
 } from '@/lib/subscription';
 
 const reasonCopy = {
@@ -47,10 +47,19 @@ export default function Billing() {
   const [plans, setPlans] = useState([]);
   const [subscription, setSubscription] = useState(null);
   const reason = searchParams.get('reason') || '';
+  const checkoutStatus = searchParams.get('checkout') || '';
 
   useEffect(() => {
     loadData();
   }, []);
+
+  useEffect(() => {
+    if (checkoutStatus === 'success') {
+      toast({ title: 'Checkout complete', description: 'Your subscription is being activated. This page will update after Stripe confirms payment.' });
+    } else if (checkoutStatus === 'cancelled') {
+      toast({ title: 'Checkout cancelled', description: 'No payment was processed.' });
+    }
+  }, [checkoutStatus]);
 
   const loadData = async () => {
     setLoading(true);
@@ -85,53 +94,24 @@ export default function Billing() {
     setSavingPlan(plan.code);
     try {
       const interval = plan.monthly_price_cents > 0 ? billingInterval : 'none';
-      const status = plan.monthly_price_cents > 0 ? 'incomplete' : 'free';
-      const payload = {
-        user_id: user.id,
-        account_type: role,
-        plan_code: plan.code,
-        plan_name: plan.name,
-        status,
-        billing_interval: interval,
-        limits_snapshot: plan.limits || {},
-        notes: plan.monthly_price_cents > 0
-          ? 'Stripe checkout is not connected yet. This records upgrade intent only.'
-          : 'Free plan selected.'
-      };
 
-      const existing = await base44.entities.UserSubscription.filter({ user_id: user.id }, '-created_date', 1).catch(() => []);
-      const saved = existing.length > 0
-        ? await base44.entities.UserSubscription.update(existing[0].id, payload)
-        : await base44.entities.UserSubscription.create(payload);
-
-      await recordBillingEvent(user, {
-        subscription_id: saved.id,
-        event_type: plan.monthly_price_cents > 0 ? 'checkout_started' : 'plan_changed',
-        plan_code: plan.code,
-        amount_cents: billingInterval === 'annual' ? plan.annual_price_cents : plan.monthly_price_cents,
-        currency: plan.currency || 'USD',
-        metadata: { interval: billingInterval, stripe_connected: false },
-        notes: plan.monthly_price_cents > 0
-          ? 'Upgrade requested. Stripe checkout must be connected before paid status becomes active.'
-          : 'Free plan selected.'
-      });
-
-      setSubscription(saved);
       if (isPaidPlan(plan)) {
-        toast({
-          title: 'Upgrade request saved',
-          description: 'The plan is recorded. Next step is connecting Stripe checkout to collect payment.'
-        });
-      } else {
-        toast({ title: 'Plan updated', description: `${plan.name} is now selected.` });
+        await startStripeCheckout({ plan, interval: billingInterval, role });
+        return;
       }
+
+      const data = await startStripeCheckout({ plan, interval, role });
+      if (data?.subscription) setSubscription(data.subscription);
+      toast({ title: 'Plan updated', description: `${plan.name} is now selected.` });
+      await loadData();
     } catch (e) {
       console.error(e);
-      toast({ title: 'Could not update plan', description: e?.message || 'Please try again.', variant: 'destructive' });
+      toast({ title: 'Could not start checkout', description: e?.message || 'Please try again.', variant: 'destructive' });
     } finally {
       setSavingPlan('');
     }
   };
+
 
   if (loading) {
     return (
@@ -267,7 +247,7 @@ export default function Billing() {
                     color: isCurrent ? '#64748B' : '#FFFFFF'
                   }}
                 >
-                  {isCurrent ? 'Current Plan' : savingPlan === plan.code ? 'Saving...' : isPaidPlan(plan) ? 'Request Upgrade' : 'Select Free Plan'}
+                  {isCurrent ? 'Current Plan' : savingPlan === plan.code ? 'Redirecting...' : isPaidPlan(plan) ? 'Upgrade with Stripe' : 'Select Free Plan'}
                 </button>
               </div>
             );
@@ -278,9 +258,9 @@ export default function Billing() {
           <div className="flex items-start gap-3">
             <ShieldCheck size={20} color="#16A34A" className="mt-0.5" />
             <div>
-              <h3 className="font-black" style={{ color: '#0B1528' }}>Stripe-ready billing model</h3>
+              <h3 className="font-black" style={{ color: '#0B1528' }}>Stripe Checkout connected</h3>
               <p className="text-sm mt-1 leading-relaxed" style={{ color: '#5B6475' }}>
-                Plan records, subscription records, usage limits, and billing events are now in place. Paid checkout is not collecting money yet; the next step is connecting Stripe checkout and webhooks.
+                Paid upgrades now route through Stripe Checkout. Subscriptions activate automatically after the Stripe webhook confirms payment.
               </p>
             </div>
           </div>
