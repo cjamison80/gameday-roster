@@ -4,7 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LogIn, Mail, Lock, Loader2 } from "lucide-react";
+import { Mail, Lock, Loader2 } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
 import { safeReturnTo } from "@/lib/authReturnTo";
@@ -14,8 +14,6 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  // Post-login destination (e.g. the MCP OAuth consent page sends users here
-  // with returnTo so the grant flow can resume). Same-origin paths only.
   const returnTo = safeReturnTo();
 
   const handleSubmit = async (e) => {
@@ -38,50 +36,55 @@ export default function Login() {
 
   return (
     <AuthLayout
-      icon={LogIn}
-      title="Welcome back"
-      subtitle="Log in to your account"
+      panelMode="login"
+      kicker="WELCOME BACK"
+      title="Sign in to GameDay Roster"
+      subtitle="Manage your roster needs, player profile, opportunities, messages, and tournaments."
       footer={
         <>
-          Don't have an account?{" "}
+          New to GameDay Roster?{" "}
           <Link
             to={"/register" + (returnTo !== "/" ? "?returnTo=" + encodeURIComponent(returnTo) : "")}
-            className="text-primary font-medium hover:underline"
+            className="font-black hover:underline"
+            style={{ color: '#C1121F' }}
           >
-            Create one
+            Create Account
           </Link>
         </>
       }
     >
-      <Button
-        variant="outline"
-        className="w-full h-12 text-sm font-medium mb-6"
+      <button
+        type="button"
+        className="w-full h-13 min-h-[52px] rounded-2xl border flex items-center justify-center gap-3 text-sm font-black uppercase tracking-[0.12em] transition active:scale-[0.98]"
+        style={{ borderColor: '#CBD5E1', color: '#0B1528', backgroundColor: '#FFFFFF' }}
         onClick={handleGoogle}
       >
-        <GoogleIcon className="w-5 h-5 mr-2" />
+        <GoogleIcon className="w-5 h-5" />
         Continue with Google
-      </Button>
+      </button>
 
-      <div className="relative mb-6">
+      <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-border" />
+          <div className="w-full border-t" style={{ borderColor: '#E2E8F0' }} />
         </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-card px-3 text-muted-foreground">or</span>
+        <div className="relative flex justify-center text-[10px] uppercase tracking-[0.18em] font-black">
+          <span className="bg-white px-3" style={{ color: '#94A3B8' }}>or sign in with email</span>
         </div>
       </div>
 
       {error && (
-        <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
+        <div className="mb-4 p-3 rounded-2xl text-sm font-semibold" style={{ backgroundColor: '#FEE2E2', color: '#991B1B' }}>
           {error}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email" className="text-xs font-black uppercase tracking-[0.14em]" style={{ color: '#64748B' }}>
+            Email address
+          </Label>
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
+            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4" color="#94A3B8" aria-hidden="true" />
             <Input
               id="email"
               type="email"
@@ -90,20 +93,24 @@ export default function Login() {
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="pl-10 h-12"
+              className="pl-11 h-[52px] rounded-2xl border text-base"
+              style={{ borderColor: '#CBD5E1' }}
               required
             />
           </div>
         </div>
+
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="password">Password</Label>
-            <Link to="/forgot-password" className="text-xs text-primary hover:underline">
+            <Label htmlFor="password" className="text-xs font-black uppercase tracking-[0.14em]" style={{ color: '#64748B' }}>
+              Password
+            </Label>
+            <Link to="/forgot-password" className="text-xs font-black hover:underline" style={{ color: '#C1121F' }}>
               Forgot password?
             </Link>
           </div>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
+            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4" color="#94A3B8" aria-hidden="true" />
             <Input
               id="password"
               type="password"
@@ -111,22 +118,35 @@ export default function Login() {
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="pl-10 h-12"
+              className="pl-11 h-[52px] rounded-2xl border text-base"
+              style={{ borderColor: '#CBD5E1' }}
               required
             />
           </div>
         </div>
-        <Button type="submit" className="w-full h-12 font-medium" disabled={loading}>
+
+        <Button
+          type="submit"
+          className="w-full h-[52px] rounded-2xl font-black uppercase tracking-[0.14em] text-xs border-0"
+          style={{ background: 'linear-gradient(135deg, #C1121F, #8F0F1A)', color: '#FFFFFF' }}
+          disabled={loading}
+        >
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Logging in...
+              Signing In...
             </>
           ) : (
-            "Log in"
+            "Sign In"
           )}
         </Button>
       </form>
+
+      <div className="mt-5 rounded-2xl p-4" style={{ backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0' }}>
+        <p className="text-xs leading-relaxed font-semibold" style={{ color: '#64748B' }}>
+          Parent-managed profiles. Coach-driven opportunities. Verified connections for the travel baseball community.
+        </p>
+      </div>
     </AuthLayout>
   );
 }
