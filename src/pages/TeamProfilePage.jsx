@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, ExternalLink, MessageCircle, Trophy, Users, Heart } from 'lucide-react';
+import { ArrowLeft, MapPin, ExternalLink, MessageCircle, Trophy, Users, Heart, Pencil } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import OpportunityCard from '@/components/OpportunityCard';
 import VerifiedBadge from '@/components/VerifiedBadge';
@@ -16,6 +16,7 @@ export default function TeamProfilePage() {
   const [opportunities, setOpportunities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [following, setFollowing] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState(null);
   const { isFav, toggle: toggleFav } = useFavorite(id, 'team');
 
   useEffect(() => {
@@ -26,6 +27,8 @@ export default function TeamProfilePage() {
     try {
       const t = await base44.entities.Team.get(id);
       setTeam(t);
+      const user = await base44.auth.me().catch(() => null);
+      setCurrentUserId(user?.id || null);
       const [coachResults, opps] = await Promise.all([
         t.head_coach_id ? base44.entities.CoachProfile.filter({ user_id: t.head_coach_id }) : Promise.resolve([]),
         base44.entities.Opportunity.filter({ team_id: id, status: 'active' }, '-event_date_start', 20)
@@ -76,6 +79,16 @@ export default function TeamProfilePage() {
             <Heart size={14} fill={isFav ? '#FFFFFF' : 'none'} />
             {isFav ? 'Favorited' : 'Favorite'}
           </button>
+          {currentUserId && team.head_coach_id === currentUserId && (
+            <button
+              onClick={() => navigate(`/team/${id}/edit`)}
+              className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-bold ml-2"
+              style={{ backgroundColor: '#17233A', color: '#FFFFFF' }}
+            >
+              <Pencil size={13} />
+              Edit
+            </button>
+          )}
         </div>
 
         <div className="flex items-center gap-4">
@@ -126,10 +139,13 @@ export default function TeamProfilePage() {
       <div className="px-5 py-5 space-y-5">
         {/* Quick stats */}
         <div className="grid grid-cols-3 gap-3">
-          <StatCard icon={Trophy} label="Active Posts" value={opportunities.length} />
+          <StatCard icon={Trophy} label="Record" value={(team.wins != null || team.losses != null) ? `${team.wins || 0}-${team.losses || 0}${team.ties ? `-${team.ties}` : ''}` : '—'} />
           <StatCard icon={Users} label="Roster Size" value={team.roster_size || '—'} />
           <StatCard icon={Trophy} label="Recruiting" value={team.is_recruiting ? 'Yes' : 'No'} />
         </div>
+        {team.season_label && (
+          <p className="text-xs text-center -mt-3" style={{ color: '#8B95A7' }}>{team.season_label}</p>
+        )}
 
         {/* Tournament Finder */}
         <button
@@ -153,6 +169,29 @@ export default function TeamProfilePage() {
           <div className="gdr-card p-5">
             <h3 className="font-semibold mb-2" style={{ color: '#0B1528' }}>About {team.name}</h3>
             <p className="text-sm leading-relaxed" style={{ color: '#5B6475' }}>{team.bio}</p>
+          </div>
+        )}
+
+        {/* Philosophy */}
+        {team.philosophy && (
+          <div className="gdr-card p-5">
+            <h3 className="font-semibold mb-2" style={{ color: '#0B1528' }}>Team Philosophy</h3>
+            <p className="text-sm leading-relaxed" style={{ color: '#5B6475' }}>{team.philosophy}</p>
+          </div>
+        )}
+
+        {/* Coaching Staff */}
+        {team.assistant_coaches?.length > 0 && (
+          <div className="gdr-card p-5">
+            <h3 className="font-semibold mb-3" style={{ color: '#0B1528' }}>Coaching Staff</h3>
+            <div className="space-y-2">
+              {team.assistant_coaches.map((a, idx) => (
+                <div key={idx} className="flex items-center justify-between">
+                  <span className="text-sm font-semibold" style={{ color: '#0B1528' }}>{a.name}</span>
+                  {a.role && <span className="text-xs" style={{ color: '#8B95A7' }}>{a.role}</span>}
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
