@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,7 +33,9 @@ const accountRoles = [
 ];
 
 export default function Register() {
-  const [selectedRole, setSelectedRole] = useState('parent');
+  const [searchParams] = useSearchParams();
+  const initialRole = searchParams.get('role') || localStorage.getItem('gdr_selected_role') || 'parent';
+  const [selectedRole, setSelectedRole] = useState(accountRoles.some(r => r.id === initialRole) ? initialRole : 'parent');
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
