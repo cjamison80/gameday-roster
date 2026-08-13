@@ -132,6 +132,16 @@ export default function Discover() {
 
   const filteredOpps = getFilteredOpps();
 
+  const filteredRecs = (() => {
+    if (!searchQuery) return recommendations;
+    const q = searchQuery.toLowerCase();
+    return recommendations.filter(r => {
+      const p = recPlayers[r.player_id];
+      if (!p) return false;
+      return [p.first_name, p.last_name, p.city, p.state].some(f => f?.toLowerCase().includes(q));
+    });
+  })();
+
   const getMatchScore = (opp) => {
     if (!playerProfile) return Math.floor(70 + Math.random() * 25);
     return calculateMatchScore({ player: playerProfile, opportunity: opp });
