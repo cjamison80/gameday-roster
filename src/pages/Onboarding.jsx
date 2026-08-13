@@ -60,9 +60,13 @@ export default function Onboarding() {
   const [user, setUser] = useState(null);
   const [profileId, setProfileId] = useState(null);
   const [initialRoleHandled, setInitialRoleHandled] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
-    base44.auth.me().then(u => setUser(u)).catch(() => {});
+    base44.auth.me()
+      .then(u => setUser(u))
+      .catch(() => {})
+      .finally(() => setAuthChecked(true));
   }, []);
 
   useEffect(() => {
@@ -94,6 +98,11 @@ export default function Onboarding() {
   };
 
   const handleRoleSelect = (role, options = {}) => {
+    if (authChecked && !user) {
+      localStorage.setItem('gdr_selected_role', role);
+      navigate(`/register?role=${encodeURIComponent(role)}`);
+      return;
+    }
     setSelectedRole(role);
     setStep(role);
     saveRoleProfile(role).then(id => {
