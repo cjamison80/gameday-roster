@@ -1,17 +1,55 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { AlertTriangle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+
+// Strips age-division and classification tokens so "Gold Glove Elite 11U AAA"
+// and "Gold Glove Elite" compare as the same underlying team name — coaches
+// often add these inconsistently.
+const DIVISION_TOKENS = /\b(\d{1,2}u|major|aaa|aa|a|open)\b/gi;
+function normalizeTeamName(name = '') {
+  return name.toLowerCase().replace(DIVISION_TOKENS, '').replace(/[^a-z0-9]+/g, ' ').trim();
+}
 
 export default function CoachOnboardingForm({ user, onComplete }) {
   const [coach, setCoach] = useState({ first_name: '', last_name: '', city: '', state: '', bio: '', years_coaching: '' });
   const [team, setTeam] = useState({ name: '', age_division: '', classification: '', city: '', state: '' });
   const [saving, setSaving] = useState(false);
+  const [possibleDuplicates, setPossibleDuplicates] = useState([]);
+  const [checkingDuplicates, setCheckingDuplicates] = useState(false);
+  const [acknowledgedDuplicates, setAcknowledgedDuplicates] = useState(false);
 
   const setCoachField = (k) => (e) => setCoach(f => ({ ...f, [k]: e.target.value }));
-  const setTeamField = (k) => (e) => setTeam(f => ({ ...f, [k]: e.target.value }));
+  const setTeamField = (k) => (e) => { setTeam(f => ({ ...f, [k]: e.target.value })); setAcknowledgedDuplicates(false); };
   const valid = coach.first_name && coach.last_name && team.name;
+
+  // Debounced duplicate check — fires once there's a real name and a state to
+  // scope the search to (checking nationwide would surface too many unrelated
+  // same-named teams to be useful).
+  useEffect(() => {
+    const normalized = normalizeTeamName(team.name);
+    const state = (team.state || coach.state || '').trim().toUpperCase();
+    if (normalized.length < 3 || !state) {
+      setPossibleDuplicates([]);
+      return;
+    }
+    setCheckingDuplicates(true);
+    const timeout = setTimeout(async () => {
+      try {
+        const candidates = await base44.entities.Team.filter({ state }, '-created_date', 100);
+        const matches = candidates.filter(t => normalizeTeamName(t.name) === normalized);
+        setPossibleDuplicates(matches);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setCheckingDuplicates(false);
+      }
+    }, 500);
+    return () => clearTimeout(timeout);
+  }, [team.name, team.state, coach.state]);
 
   const submit = async () => {
     if (!valid || saving) return;
+    if (possibleDuplicates.length > 0 && !acknowledgedDuplicates) return;
     setSaving(true);
     try {
       await base44.entities.CoachProfile.create({
@@ -32,7 +70,11 @@ export default function CoachOnboardingForm({ user, onComplete }) {
         classification: team.classification,
         city: team.city || coach.city,
         state: team.state || coach.state,
-        is_recruiting: true
+        is_recruiting: true,
+        verification_status: possibleDuplicates.length > 0 ? 'pending' : 'unverified',
+        duplicate_flag_note: possibleDuplicates.length > 0
+          ? `Coach acknowledged similar existing team(s) at creation: ${possibleDuplicates.map(t => `${t.name} (${t.city || '?'}, ${t.state || '?'}, id ${t.id})`).join('; ')}`
+          : ''
       });
       onComplete();
     } catch (e) {
