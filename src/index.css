@@ -240,12 +240,30 @@
   .gdr-auth-shell {
     background: #FFFFFF;
     border: 1px solid rgba(203, 213, 225, 0.92);
+    border-radius: 28px;
     box-shadow: 0 30px 80px rgba(11, 21, 40, 0.20);
+  }
+
+  .gdr-auth-shell-modern {
+    border-radius: 32px;
+    box-shadow: 0 34px 90px rgba(11, 21, 40, 0.22);
   }
 
   .gdr-auth-form-card {
     background: rgba(255, 255, 255, 0.96);
     box-shadow: 0 16px 44px rgba(11, 21, 40, 0.06);
+  }
+
+  .gdr-auth-form-card-modern {
+    border-color: rgba(203, 213, 225, 0.95);
+    border-radius: 26px;
+    box-shadow: 0 22px 60px rgba(11, 21, 40, 0.08);
+  }
+
+  .gdr-auth-form-side {
+    background:
+      radial-gradient(circle at 86% 8%, rgba(193,18,31,0.06), transparent 24%),
+      linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
   }
 
   .gdr-auth-ballpark {
@@ -361,6 +379,90 @@
     letter-spacing: 0.18em;
     padding: 8px 12px;
     backdrop-filter: blur(14px);
+  }
+
+  .gdr-auth-badge-clean {
+    border-radius: 999px;
+    background: rgba(193, 18, 31, 0.18);
+    border-color: rgba(248, 250, 252, 0.18);
+  }
+
+  .gdr-auth-brand-modern {
+    background:
+      radial-gradient(circle at 16% 12%, rgba(193,18,31,0.22), transparent 24%),
+      radial-gradient(circle at 84% 84%, rgba(30,58,95,0.34), transparent 28%),
+      linear-gradient(145deg, #071020 0%, #0B1528 48%, #111C34 100%);
+    isolation: isolate;
+  }
+
+  .gdr-auth-brand-modern::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent 0%, rgba(7,16,32,0.10) 48%, rgba(7,16,32,0.42) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .gdr-auth-brand-grid {
+    position: absolute;
+    inset: 0;
+    opacity: 0.14;
+    background-image:
+      linear-gradient(rgba(248,250,252,0.10) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(248,250,252,0.10) 1px, transparent 1px);
+    background-size: 54px 54px;
+    mask-image: radial-gradient(circle at center, black 0%, black 44%, transparent 76%);
+    z-index: 0;
+  }
+
+  .gdr-auth-brand-orbit {
+    position: absolute;
+    width: 520px;
+    height: 520px;
+    border: 1px solid rgba(248,250,252,0.14);
+    border-radius: 999px;
+    left: 50%;
+    top: 48%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+  }
+
+  .gdr-auth-brand-orbit::before,
+  .gdr-auth-brand-orbit::after {
+    content: '';
+    position: absolute;
+    inset: 74px;
+    border: 1px solid rgba(248,250,252,0.10);
+    border-radius: 999px;
+  }
+
+  .gdr-auth-brand-orbit::after {
+    inset: 154px;
+    border-color: rgba(193,18,31,0.28);
+  }
+
+  .gdr-auth-brand-redline {
+    position: absolute;
+    right: -120px;
+    top: 22%;
+    width: 380px;
+    height: 2px;
+    transform: rotate(-34deg);
+    background: linear-gradient(90deg, transparent, rgba(193,18,31,0.80), transparent);
+    z-index: 0;
+  }
+
+  .gdr-auth-feature-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 15px;
+    border-radius: 20px;
+    background: rgba(248, 250, 252, 0.075);
+    border: 1px solid rgba(248, 250, 252, 0.13);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 16px 36px rgba(0,0,0,0.10);
+    backdrop-filter: blur(18px);
   }
 
   .gdr-premium-auth-panel {
