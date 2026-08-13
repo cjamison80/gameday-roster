@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, ChevronRight, Edit, Settings, Bell, HelpCircle, LogOut, Shield, Camera, ClipboardList, Heart, Trophy, CreditCard } from 'lucide-react';
+import { Plus, ChevronRight, Edit, Settings, Bell, HelpCircle, LogOut, Shield, Camera, ClipboardList, Heart, Trophy, CreditCard, Sparkles } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { getInitials } from '@/lib/utils';
 import VerifiedBadge from '@/components/VerifiedBadge';
@@ -295,6 +295,7 @@ export default function Profile() {
         {/* Settings menu */}
         <div className="gdr-card overflow-hidden">
           {[
+            { icon: Sparkles, label: 'Sports', path: '/sports' },
             { icon: Settings, label: 'Account Settings', path: '/settings' },
             { icon: Bell, label: 'Notifications', path: '/settings' },
             { icon: Shield, label: 'Privacy & Safety', path: '/settings' },
