@@ -41,13 +41,14 @@ import TournamentSourcesAdmin from '@/pages/TournamentSourcesAdmin';
 const AuthenticatedApp = () => {
   const location = useLocation();
   const isPublicRoute = location.pathname.startsWith('/public/');
-  const isAuthRoute = ['/login', '/register', '/forgot-password', '/reset-password'].includes(location.pathname);
+  const isAuthRoute = ['/welcome', '/login', '/register', '/forgot-password', '/reset-password'].includes(location.pathname);
   const isUnprotectedRoute = isPublicRoute || isAuthRoute;
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
   if (isUnprotectedRoute) {
     return (
       <Routes>
+        <Route path="/welcome" element={<Onboarding />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -109,7 +110,7 @@ const AuthenticatedApp = () => {
       <Route path="/public/player/:id" element={<PlayerProfilePage publicView />} />
 
       {/* Protected routes */}
-      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/welcome" replace />} />}>
         <Route element={<OnboardingGate />}>
         {/* Routes with bottom nav */}
         <Route element={<AppShell />}>
