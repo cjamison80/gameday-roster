@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { ShieldCheck, Camera, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Image } from '@/components/ui/image';
-
-const PARENTAL_TERMS = 'I understand that this player page is created and managed by a parent or legal guardian. Player profiles on GameDay Roster are owned, controlled, and posted by the parent/guardian on behalf of their athlete. I confirm I am the parent or legal guardian of this player and am authorized to create this page. I agree to provide accurate guardian information and to comply with all safety and community guidelines.';
+import ParentalConsentForm from '@/components/onboarding/ParentalConsentForm';
 
 const POSITIONS = ['Pitcher', 'Catcher', 'Shortstop', 'Second Base', 'Third Base', 'First Base', 'Outfield', 'Utility'];
 const AGE_DIVISIONS = ['8U', '9U', '10U', '11U', '12U', '13U', '14U', '15U', '16U', '17U', '18U'];
@@ -13,6 +12,7 @@ const currentYear = new Date().getFullYear();
 const GRAD_YEARS = Array.from({ length: 8 }, (_, i) => currentYear + i);
 
 export default function ParentOnboardingForm({ user, onComplete }) {
+  const [step, setStep] = useState('details');
   const [form, setForm] = useState({
     first_name: '', last_name: '',
     age_division: '', graduation_year: '',
@@ -23,7 +23,6 @@ export default function ParentOnboardingForm({ user, onComplete }) {
     city: '', state: '',
     guardian_name: user?.full_name || '', guardian_relationship: '', guardian_email: user?.email || '', guardian_phone: ''
   });
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
@@ -46,16 +45,21 @@ export default function ParentOnboardingForm({ user, onComplete }) {
     }
   };
 
-  const valid = form.first_name && form.last_name && form.guardian_name && form.guardian_relationship && acceptedTerms;
+  const detailsValid = form.first_name && form.last_name && form.guardian_name && form.guardian_relationship;
 
-  const submit = async (e) => {
+  const goToConsent = (e) => {
     if (e) e.preventDefault();
     setError('');
-    if (!valid || saving) return;
+    if (!detailsValid) { setError('Please fill in the required fields, including parent/guardian name and relationship.'); return; }
+    setStep('consent');
+  };
+
+  const handleSigned = async (consent) => {
     setSaving(true);
+    setError('');
     try {
       const positions = [form.primary_position, form.secondary_position].filter(Boolean);
-      await base44.entities.PlayerProfile.create({
+      const p = await base44.entities.PlayerProfile.create({
         parent_id: user.id,
         first_name: form.first_name,
         last_name: form.last_name,
@@ -74,18 +78,45 @@ export default function ParentOnboardingForm({ user, onComplete }) {
         guardian_email: form.guardian_email,
         guardian_phone: form.guardian_phone,
         has_accepted_parental_terms: true,
-        parental_terms_accepted_at: new Date().toISOString()
+        parental_terms_accepted_at: consent.signed_at
+      });
+      await base44.entities.ParentalConsent.create({
+        player_id: p.id,
+        ...consent
       });
       onComplete();
     } catch (err) {
       console.error(err);
       setError(err?.message || 'Could not create player. Please try again.');
+      setStep('details');
+    } finally {
       setSaving(false);
     }
   };
 
+  if (step === 'consent') {
+    return (
+      <div className="px-6 space-y-4 flex-1">
+        <p className="text-sm font-semibold" style={{ color: '#0B1528' }}>One more step — parent/guardian consent</p>
+        <ParentalConsentForm
+          playerFirstName={form.first_name}
+          defaultName={form.guardian_name}
+          defaultRelationship={form.guardian_relationship}
+          onSigned={handleSigned}
+          onCancel={() => setStep('details')}
+        />
+        {saving && <p className="text-xs text-center" style={{ color: '#94A3B8' }}>Creating player profile...</p>}
+        {error && (
+          <div className="rounded-xl px-4 py-3 text-sm font-medium" style={{ backgroundColor: '#FEE2E2', color: '#DC2626' }}>
+            {error}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
-    <form id="parent-onboarding-form" onSubmit={submit} className="px-6 space-y-4 flex-1">
+    <form id="parent-onboarding-form" onSubmit={goToConsent} className="px-6 space-y-4 flex-1">
       {/* Profile photo */}
       <div className="flex flex-col items-center pb-1">
         <label htmlFor="po-photo" className="cursor-pointer">
@@ -151,17 +182,9 @@ export default function ParentOnboardingForm({ user, onComplete }) {
         </div>
       </div>
 
-      <label className="flex items-start gap-3 cursor-pointer" htmlFor="po-terms">
-        <input
-          id="po-terms"
-          type="checkbox"
-          checked={acceptedTerms}
-          onChange={e => setAcceptedTerms(e.target.checked)}
-          className="mt-0.5 w-5 h-5 rounded flex-shrink-0"
-          style={{ accentColor: '#2563EB' }}
-        />
-        <span className="text-xs leading-relaxed" style={{ color: '#475569' }}>{PARENTAL_TERMS}</span>
-      </label>
+      <p className="text-xs leading-relaxed px-1" style={{ color: '#94A3B8' }}>
+        Next, you'll review and electronically sign a parent/guardian consent statement.
+      </p>
 
       {error && (
         <div className="rounded-xl px-4 py-3 text-sm font-medium" style={{ backgroundColor: '#FEE2E2', color: '#DC2626' }}>
@@ -171,11 +194,11 @@ export default function ParentOnboardingForm({ user, onComplete }) {
 
       <button
         type="submit"
-        disabled={!valid || saving}
+        disabled={!detailsValid}
         className="w-full py-4 rounded-2xl font-bold text-white transition-opacity"
-        style={{ backgroundColor: '#2563EB', opacity: valid ? 1 : 0.6 }}
+        style={{ backgroundColor: '#2563EB', opacity: detailsValid ? 1 : 0.6 }}
       >
-        {saving ? 'Saving...' : 'Save & Continue'}
+        Continue to Consent
       </button>
     </form>
   );
