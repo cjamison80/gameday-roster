@@ -89,7 +89,7 @@ export default function TeamProfilePage() {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-3xl text-white">{team.name}</h1>
-              {team.is_verified && <VerifiedBadge type="organization" size={13} />}
+              {team.is_verified && <VerifiedBadge type="team" size={13} />}
             </div>
             {team.city && (
               <div className="flex items-center gap-1 mt-1">
