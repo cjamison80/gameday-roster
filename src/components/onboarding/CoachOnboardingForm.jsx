@@ -111,11 +111,47 @@ export default function CoachOnboardingForm({ user, onComplete }) {
         <Field label="Team City" value={team.city} onChange={setTeamField('city')} placeholder="Rogers" />
         <Field label="Team State" value={team.state} onChange={setTeamField('state')} placeholder="AR" />
       </div>
+
+      {checkingDuplicates && (
+        <p className="text-xs" style={{ color: '#94A3B8' }}>Checking for similar teams...</p>
+      )}
+
+      {possibleDuplicates.length > 0 && (
+        <div className="rounded-2xl p-4 border" style={{ backgroundColor: '#FFFBEB', borderColor: '#FDE68A' }}>
+          <div className="flex items-start gap-2">
+            <AlertTriangle size={18} color="#D97706" className="flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-sm font-bold" style={{ color: '#92400E' }}>
+                {possibleDuplicates.length === 1 ? 'A similar team already exists' : `${possibleDuplicates.length} similar teams already exist`} in {team.state || coach.state}
+              </p>
+              <div className="mt-2 space-y-1">
+                {possibleDuplicates.map(t => (
+                  <p key={t.id} className="text-sm" style={{ color: '#92400E' }}>
+                    • {t.name}{t.city ? ` — ${t.city}, ${t.state}` : ''}
+                  </p>
+                ))}
+              </div>
+              <label className="flex items-start gap-2 mt-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={acknowledgedDuplicates}
+                  onChange={e => setAcknowledgedDuplicates(e.target.checked)}
+                  className="mt-0.5"
+                />
+                <span className="text-sm" style={{ color: '#92400E' }}>
+                  This is a different team. I understand it will be flagged for a quick admin review.
+                </span>
+              </label>
+            </div>
+          </div>
+        </div>
+      )}
+
       <button
         onClick={submit}
-        disabled={!valid || saving}
+        disabled={!valid || saving || (possibleDuplicates.length > 0 && !acknowledgedDuplicates)}
         className="w-full py-4 rounded-2xl font-bold text-white transition-opacity"
-        style={{ backgroundColor: '#2563EB', opacity: valid ? 1 : 0.6 }}
+        style={{ backgroundColor: '#2563EB', opacity: (valid && (possibleDuplicates.length === 0 || acknowledgedDuplicates)) ? 1 : 0.6 }}
       >
         {saving ? 'Creating...' : 'Create Team & Continue'}
       </button>
