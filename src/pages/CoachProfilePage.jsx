@@ -107,6 +107,16 @@ export default function CoachProfilePage() {
           <button onClick={() => navigate(-1)} className="p-2 -ml-2">
             <ArrowLeft size={24} color="white" />
           </button>
+          {isOwnProfile && (
+            <button
+              onClick={() => navigate(`/coach/${id}/edit`)}
+              className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-bold"
+              style={{ backgroundColor: '#1E293B', color: 'white' }}
+            >
+              <Pencil size={13} />
+              Edit
+            </button>
+          )}
         </div>
 
         <div className="flex items-center gap-4">
@@ -127,6 +137,13 @@ export default function CoachProfilePage() {
               <div className="flex items-center gap-1 mt-1">
                 <MapPin size={12} color="#64748B" />
                 <span className="text-sm" style={{ color: '#64748B' }}>{coach.city}, {coach.state}</span>
+              </div>
+            )}
+            {reviews.length > 0 && (
+              <div className="flex items-center gap-1.5 mt-2">
+                <StarRating value={avgRating} size={14} />
+                <span className="text-sm font-bold text-white">{avgRating.toFixed(1)}</span>
+                <span className="text-xs" style={{ color: '#64748B' }}>({reviews.length} {reviews.length === 1 ? 'review' : 'reviews'})</span>
               </div>
             )}
           </div>
