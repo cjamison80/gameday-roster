@@ -106,6 +106,29 @@ export default function PlayerProfilePage({ publicView = false }) {
     }
   };
 
+  const submitRecommendation = async () => {
+    if (!recStart || !recEnd || submittingRec) return;
+    setSubmittingRec(true);
+    try {
+      await base44.entities.PlayerRecommendation.create({
+        player_id: playerId,
+        recommended_by_user_id: user.id,
+        recommended_by_name: user.full_name || 'A coach',
+        available_start: recStart,
+        available_end: recEnd,
+        note: recNote,
+        sport: player.sport || 'baseball'
+      });
+      setRecSubmitted(true);
+      setShowRecommendForm(false);
+    } catch (e) {
+      console.error(e);
+      toast({ title: 'Could not submit', description: e?.message || 'Please try again.', variant: 'destructive' });
+    } finally {
+      setSubmittingRec(false);
+    }
+  };
+
   const handleSelectPhoto = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
