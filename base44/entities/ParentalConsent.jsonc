@@ -1,0 +1,73 @@
+{
+  "name": "ParentalConsent",
+  "properties": {
+    "consent_text_snapshot": {
+      "description": "Full text of the disclosure the signer actually saw and agreed to \u2014 stored verbatim so a later change to the terms can't retroactively alter what this signer consented to",
+      "type": "string"
+    },
+    "consent_version": {
+      "description": "Version identifier of the consent text at signing time, e.g. 'v1-2026-08-13'",
+      "type": "string"
+    },
+    "parent_user_id": {
+      "description": "User.id of the account that signed",
+      "type": "string"
+    },
+    "player_id": {
+      "description": "PlayerProfile.id this consent covers",
+      "type": "string"
+    },
+    "signed_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "signer_full_name": {
+      "description": "Typed full legal name \u2014 the e-signature itself",
+      "type": "string"
+    },
+    "signer_relationship": {
+      "enum": [
+        "Mother",
+        "Father",
+        "Legal Guardian",
+        "Grandparent",
+        "Self",
+        "Other"
+      ],
+      "type": "string"
+    }
+  },
+  "required": [
+    "player_id",
+    "parent_user_id",
+    "signer_full_name",
+    "signer_relationship",
+    "consent_version"
+  ],
+  "rls": {
+    "create": {},
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "data.parent_user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "type": "object"
+}
