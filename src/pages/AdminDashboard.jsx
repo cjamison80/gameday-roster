@@ -292,6 +292,55 @@ export default function AdminDashboard() {
             )}
           </div>
         )}
+
+        {activeTab === 'duplicates' && (
+          <div className="space-y-4">
+            <div>
+              <h2 className="text-lg font-black" style={{ color: '#0B1528' }}>Possible Duplicate Teams</h2>
+              <p className="text-sm mt-1" style={{ color: '#94A3B8' }}>Grouped by name + age division + state — same rule used when a coach creates a new team.</p>
+            </div>
+            {duplicateClusters.length === 0 ? (
+              <div className="text-center py-12">
+                <CheckCircle size={40} color="#16A34A" className="mx-auto mb-3" />
+                <p className="font-bold" style={{ color: '#0B1528' }}>No duplicates found</p>
+                <p className="text-sm" style={{ color: '#94A3B8' }}>Every team has a unique name + age + state.</p>
+              </div>
+            ) : (
+              duplicateClusters.map(([key, group]) => (
+                <div key={key} className="bg-white rounded-2xl border border-gray-100 p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Copy size={16} color="#D97706" />
+                    <p className="text-sm font-bold" style={{ color: '#92400E' }}>{group.length} teams look like the same team</p>
+                  </div>
+                  <div className="space-y-2">
+                    {group.map(t => (
+                      <div key={t.id} className="flex items-center gap-3 p-3 rounded-xl" style={{ backgroundColor: '#F8FAFC' }}>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <p className="font-bold truncate" style={{ color: '#0B1528' }}>{t.name}</p>
+                            {t.is_verified && <span className="text-xs font-bold px-1.5 py-0.5 rounded-full" style={{ backgroundColor: '#DCFCE7', color: '#16A34A' }}>Verified</span>}
+                          </div>
+                          <p className="text-xs mt-0.5" style={{ color: '#64748B' }}>
+                            {[t.age_division, t.classification, t.city ? `${t.city}, ${t.state}` : t.state, t.roster_size ? `${t.roster_size} players` : null].filter(Boolean).join(' · ')}
+                            {t.created_date ? ` · created ${new Date(t.created_date).toLocaleDateString()}` : ''}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => keepTeam(key, t.id, group.map(g => g.id))}
+                          disabled={mergingKey === key}
+                          className="px-3 py-2 rounded-lg text-xs font-bold text-white flex-shrink-0 disabled:opacity-50"
+                          style={{ backgroundColor: '#16A34A' }}
+                        >
+                          {mergingKey === key ? 'Working...' : 'Keep This One'}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
