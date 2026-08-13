@@ -21,6 +21,8 @@ const brandFeatures = [
 ];
 
 export default function AuthLayout({ icon: Icon, title, subtitle, footer, children }) {
+  const HeaderIcon = Icon || ShieldCheck;
+
   return (
     <div className="gdr-auth-screen min-h-screen flex items-center justify-center px-4 py-6 sm:py-8">
       <div className="gdr-auth-shell gdr-auth-shell-modern w-full max-w-6xl overflow-hidden">
@@ -81,7 +83,7 @@ export default function AuthLayout({ icon: Icon, title, subtitle, footer, childr
                 </div>
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, #C1121F, #8F0F1A)' }}>
-                    <Icon className="w-6 h-6 text-white" aria-hidden="true" />
+                    <HeaderIcon className="w-6 h-6 text-white" aria-hidden="true" />
                   </div>
                   <div>
                     <h1 className="text-3xl sm:text-4xl tracking-[-0.05em] font-black" style={{ color: '#0B1528' }}>{title}</h1>
