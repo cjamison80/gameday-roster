@@ -410,6 +410,107 @@
     height: min(120vw, 780px);
   }
 
+  .gdr-clean-splash {
+    position: relative;
+    background:
+      radial-gradient(circle at 50% 22%, rgba(248,250,252,0.08), transparent 25%),
+      radial-gradient(circle at 18% 18%, rgba(193,18,31,0.16), transparent 26%),
+      radial-gradient(circle at 86% 82%, rgba(30,58,95,0.30), transparent 30%),
+      linear-gradient(145deg, #071020 0%, #0B1528 48%, #111C34 100%);
+  }
+
+  .gdr-clean-splash::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.16;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px);
+    background-size: 54px 54px;
+    mask-image: radial-gradient(circle at center, black 0%, black 46%, transparent 78%);
+  }
+
+  .gdr-clean-splash::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent 0%, rgba(7,16,32,0.18) 46%, rgba(7,16,32,0.64) 100%);
+    pointer-events: none;
+  }
+
+  .gdr-splash-glow {
+    position: absolute;
+    border-radius: 999px;
+    filter: blur(28px);
+    opacity: 0.52;
+    pointer-events: none;
+  }
+
+  .gdr-splash-glow-red {
+    width: 220px;
+    height: 220px;
+    top: -76px;
+    right: -72px;
+    background: rgba(193,18,31,0.32);
+  }
+
+  .gdr-splash-glow-blue {
+    width: 260px;
+    height: 260px;
+    left: -96px;
+    bottom: -82px;
+    background: rgba(30,58,95,0.34);
+  }
+
+  .gdr-splash-linework {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: min(86vw, 520px);
+    height: min(86vw, 520px);
+    transform: translate(-50%, -50%);
+    opacity: 0.28;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .gdr-splash-plate {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 170px;
+    height: 150px;
+    transform: translate(-50%, -50%);
+    clip-path: polygon(50% 0%, 92% 26%, 78% 100%, 22% 100%, 8% 26%);
+    border: 2px solid rgba(248,250,252,0.62);
+    background: rgba(248,250,252,0.025);
+  }
+
+  .gdr-splash-diagonal {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 62%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(248,250,252,0.52), transparent);
+    transform-origin: center;
+  }
+
+  .gdr-splash-diagonal-left { transform: translate(-50%, -50%) rotate(45deg); }
+  .gdr-splash-diagonal-right { transform: translate(-50%, -50%) rotate(-45deg); }
+
+  .gdr-splash-arc {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 92%;
+    height: 92%;
+    transform: translate(-50%, -50%);
+    border: 1px solid rgba(193,18,31,0.42);
+    border-radius: 999px;
+  }
+
   .gdr-splash-loader {
     width: 42%;
     background: linear-gradient(90deg, #C1121F, #FCA5A5, #C1121F);
