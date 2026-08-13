@@ -1,0 +1,60 @@
+{
+  "name": "CoachReview",
+  "properties": {
+    "coach_id": {
+      "description": "CoachProfile.id being reviewed",
+      "type": "string"
+    },
+    "comment": {
+      "type": "string"
+    },
+    "rating": {
+      "description": "1-5 stars",
+      "maximum": 5,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "reviewer_name": {
+      "description": "Display name of the reviewer at time of posting",
+      "type": "string"
+    },
+    "reviewer_user_id": {
+      "description": "User.id of whoever wrote the review",
+      "type": "string"
+    }
+  },
+  "required": [
+    "coach_id",
+    "reviewer_user_id",
+    "rating"
+  ],
+  "rls": {
+    "create": {},
+    "delete": {
+      "$or": [
+        {
+          "data.reviewer_user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {},
+    "update": {
+      "$or": [
+        {
+          "data.reviewer_user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  },
+  "type": "object"
+}
