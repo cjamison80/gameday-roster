@@ -7,7 +7,7 @@ import VerifiedBadge from '@/components/VerifiedBadge';
 import AvailabilityChip from '@/components/AvailabilityChip';
 import { Image } from '@/components/ui/image';
 import PlayerCreateForm from '@/components/player/PlayerCreateForm';
-import { getEntitledPlan, getPlanFromList, isLimitReached, loadPublicPlans, loadUserSubscription } from '@/lib/subscription';
+import { getEntitledPlan, getIncludedPlayerPlusProfiles, getPlanFromList, hasBundledPlayerPlus, isLimitReached, loadPublicPlans, loadUserSubscription } from '@/lib/subscription';
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -73,10 +73,12 @@ export default function Profile() {
   };
 
   const currentPlan = getEntitledPlan(plans, subscription, userProfile?.role || 'parent');
+  const bundledPlayerPlusProfiles = getIncludedPlayerPlusProfiles(currentPlan);
+  const canManagePlayers = !userProfile?.role || ['parent', 'player'].includes(userProfile?.role) || bundledPlayerPlusProfiles > 0;
   const playerLimitReached = isLimitReached(currentPlan, 'player_profiles', players.length);
   const handleAddPlayer = () => {
     if (playerLimitReached) {
-      navigate('/billing?reason=player_profiles');
+      navigate(userProfile?.role === 'coach' ? '/billing?reason=coach_player_plus' : '/billing?reason=player_profiles');
       return;
     }
     setShowCreatePlayer(true);
@@ -147,7 +149,9 @@ export default function Profile() {
           <div className="flex-1">
             <p className="text-xs font-black uppercase tracking-[0.16em]" style={{ color: '#94A3B8' }}>Current Plan</p>
             <h3 className="font-black" style={{ color: '#0B1528' }}>{currentPlan?.name || 'Free Plan'}</h3>
-            <p className="text-xs mt-0.5" style={{ color: '#5B6475' }}>View limits, upgrades and billing</p>
+            <p className="text-xs mt-0.5" style={{ color: '#5B6475' }}>
+              {hasBundledPlayerPlus(currentPlan) ? 'Includes Player Plus for 1 player profile' : 'View limits, upgrades and billing'}
+            </p>
           </div>
           <ChevronRight size={18} color="#8B95A7" />
         </button>
@@ -187,11 +191,18 @@ export default function Profile() {
           </div>
         )}
 
-        {/* Players section (for parents) */}
-        {(!userProfile?.role || userProfile?.role === 'parent' || userProfile?.role === 'player') && (
+        {/* Players section */}
+        {canManagePlayers && (
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-2xl" style={{ color: '#0B1528' }}>My Players</h2>
+              <div>
+                <h2 className="text-2xl" style={{ color: '#0B1528' }}>My Players</h2>
+                {hasBundledPlayerPlus(currentPlan) && (
+                  <p className="text-xs font-semibold mt-0.5" style={{ color: '#5B6475' }}>
+                    Coach Pro includes Player Plus benefits for 1 player profile.
+                  </p>
+                )}
+              </div>
               <button
                 onClick={handleAddPlayer}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold text-white"
@@ -214,7 +225,9 @@ export default function Profile() {
                 </div>
                 <p className="font-semibold" style={{ color: '#0B1528' }}>Add Your First Player</p>
                 <p className="text-sm mt-1 text-center" style={{ color: '#8B95A7' }}>
-                  Create a player profile to start applying to opportunities
+                  {hasBundledPlayerPlus(currentPlan)
+                    ? 'Create the included Player Plus profile for your own child'
+                    : 'Create a player profile to start applying to opportunities'}
                 </p>
               </div>
             ) : (
