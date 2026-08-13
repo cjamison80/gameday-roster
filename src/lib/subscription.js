@@ -70,9 +70,9 @@ export const FALLBACK_PLANS = [
     annual_price_cents: 24900,
     recommended: true,
     display_order: 50,
-    description: 'For coaches who need to find players quickly and manage roster needs all season.',
-    features: ['Unlimited roster posts', 'Player search by position, age, class and availability', 'Applicant management', 'Save players', 'Tournament Finder', 'Team profile enhancements'],
-    limits: { teams: 3, roster_posts_per_month: -1, saved_players: -1, advanced_player_search: true }
+    description: 'For coaches who need to find players quickly and manage roster needs all season. Includes Player Plus benefits for one player profile owned by the coach account.',
+    features: ['Unlimited roster posts', 'Player search by position, age, class and availability', 'Applicant management', 'Save players', 'Tournament Finder', 'Team profile enhancements', 'Includes Player Plus for 1 player profile'],
+    limits: { teams: 3, roster_posts_per_month: -1, saved_players: -1, advanced_player_search: true, player_profiles: 1, applications_per_month: -1, videos_per_player: 6, saved_searches: 5, included_player_plus_profiles: 1 }
   },
   {
     code: 'org_starter',
