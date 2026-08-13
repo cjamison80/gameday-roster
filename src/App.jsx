@@ -9,6 +9,7 @@ import ScrollToTop from './components/ScrollToTop';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import OnboardingGate from '@/components/OnboardingGate';
 import AppShell from '@/components/AppShell';
+import GameDayLogo from '@/components/GameDayLogo';
 
 // Auth pages (boilerplate)
 import Login from '@/pages/Login';
@@ -59,10 +60,30 @@ const AuthenticatedApp = () => {
 
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center" style={{ backgroundColor: '#0B1528' }}>
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-4 rounded-full animate-spin" style={{ borderColor: '#1E293B', borderTopColor: '#2563EB' }} />
-          <p className="text-sm font-semibold" style={{ color: '#64748B' }}>Loading GameDay Roster...</p>
+      <div className="fixed inset-0 gdr-auth-ballpark gdr-premium-auth-panel flex items-center justify-center overflow-hidden" style={{ backgroundColor: '#0B1528' }}>
+        <div className="gdr-diamond-scene gdr-splash-diamond" aria-hidden="true">
+          <div className="gdr-outfield-arc" />
+          <div className="gdr-foul-line gdr-left-line" />
+          <div className="gdr-foul-line gdr-right-line" />
+          <div className="gdr-baseball-diamond">
+            <span className="gdr-base gdr-home" />
+            <span className="gdr-base gdr-first" />
+            <span className="gdr-base gdr-second" />
+            <span className="gdr-base gdr-third" />
+            <span className="gdr-mound" />
+          </div>
+        </div>
+        <div className="relative z-10 flex flex-col items-center gap-5 px-8 text-center">
+          <GameDayLogo size={62} showText={true} light={true} />
+          <p className="text-sm font-semibold max-w-xs" style={{ color: '#CBD5E1' }}>
+            The marketplace for travel baseball opportunities.
+          </p>
+          <div className="w-48 h-1.5 rounded-full overflow-hidden mt-2" style={{ backgroundColor: 'rgba(255,255,255,0.14)' }}>
+            <div className="h-full rounded-full gdr-splash-loader" />
+          </div>
+          <p className="text-[10px] font-black uppercase tracking-[0.22em]" style={{ color: '#94A3B8' }}>
+            Every connection creates an opportunity.
+          </p>
         </div>
       </div>
     );
