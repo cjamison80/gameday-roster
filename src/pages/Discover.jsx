@@ -30,6 +30,9 @@ export default function Discover() {
   const [user, setUser] = useState(null);
   const [playerProfile, setPlayerProfile] = useState(null);
   const [filters, setFilters] = useState({ position: '', age_division: '', classification: '', sport: '', sanctioning: '' });
+  const [contentType, setContentType] = useState('opportunities');
+  const [recommendations, setRecommendations] = useState([]);
+  const [recPlayers, setRecPlayers] = useState({});
 
   useEffect(() => {
     init();
@@ -39,14 +42,22 @@ export default function Discover() {
     try {
       const u = await base44.auth.me();
       setUser(u);
-      const [opps, saved, players] = await Promise.all([
+      const [opps, saved, players, recs] = await Promise.all([
         base44.entities.Opportunity.filter({ status: 'active' }, '-created_date', 50),
         base44.entities.SavedOpportunity.filter({ user_id: u.id }),
-        base44.entities.PlayerProfile.filter({ parent_id: u.id })
+        base44.entities.PlayerProfile.filter({ parent_id: u.id }),
+        base44.entities.PlayerRecommendation.filter({ status: 'open' }, '-created_date', 50)
       ]);
       setOpportunities(opps);
       setSavedIds(new Set(saved.map(s => s.opportunity_id)));
       if (players.length > 0) setPlayerProfile(players[0]);
+
+      setRecommendations(recs);
+      const uniquePlayerIds = [...new Set(recs.map(r => r.player_id))];
+      const playerResults = await Promise.all(uniquePlayerIds.map(pid => base44.entities.PlayerProfile.get(pid).catch(() => null)));
+      const playerMap = {};
+      uniquePlayerIds.forEach((pid, i) => { if (playerResults[i]) playerMap[pid] = playerResults[i]; });
+      setRecPlayers(playerMap);
     } catch (e) {
       console.error(e);
     } finally {
