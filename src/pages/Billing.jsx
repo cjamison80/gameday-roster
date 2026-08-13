@@ -29,6 +29,10 @@ const reasonCopy = {
     title: 'Post more roster needs',
     body: 'Free Coach accounts include 1 roster post per month. Coach Pro unlocks unlimited roster posts.'
   },
+  coach_player_plus: {
+    title: 'Coach Pro includes 1 Player Plus profile',
+    body: 'Coach Pro includes Player Plus benefits for one player profile owned by the coach account. Add more children with a Family Plan or future Coach + Family bundle.'
+  },
   teams: {
     title: 'Manage more teams',
     body: 'Upgrade to manage additional teams and organization-wide workflows.'
