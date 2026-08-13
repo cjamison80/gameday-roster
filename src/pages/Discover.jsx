@@ -293,18 +293,46 @@ export default function Discover() {
         </div>
       </div>
 
-      {/* Filter chips */}
-      <div className="flex gap-2 px-5 py-5 overflow-x-auto no-scrollbar">
-        {filterChips.map(chip => (
-          <button
-            key={chip.id}
-            onClick={() => setActiveFilter(chip.id)}
-            className={`flex-shrink-0 px-4 py-2 font-black text-[11px] transition-all ${activeFilter === chip.id ? 'gdr-chip-active' : 'gdr-chip'}`}
-          >
-            {chip.label}
-          </button>
-        ))}
+      {/* Content type toggle */}
+      <div className="px-5 pt-5 flex gap-2">
+        <button
+          onClick={() => setContentType('opportunities')}
+          className="flex-1 flex items-center justify-center gap-1.5 py-2.5 font-black text-xs uppercase tracking-[0.1em]"
+          style={{
+            backgroundColor: contentType === 'opportunities' ? '#0B1528' : '#F5F7FB',
+            color: contentType === 'opportunities' ? '#FFFFFF' : '#5B6475'
+          }}
+        >
+          <Trophy size={14} />
+          Opportunities
+        </button>
+        <button
+          onClick={() => setContentType('guests')}
+          className="flex-1 flex items-center justify-center gap-1.5 py-2.5 font-black text-xs uppercase tracking-[0.1em]"
+          style={{
+            backgroundColor: contentType === 'guests' ? '#0B1528' : '#F5F7FB',
+            color: contentType === 'guests' ? '#FFFFFF' : '#5B6475'
+          }}
+        >
+          <UserPlus size={14} />
+          Guest Players
+        </button>
       </div>
+
+      {/* Filter chips */}
+      {contentType === 'opportunities' && (
+        <div className="flex gap-2 px-5 py-5 overflow-x-auto no-scrollbar">
+          {filterChips.map(chip => (
+            <button
+              key={chip.id}
+              onClick={() => setActiveFilter(chip.id)}
+              className={`flex-shrink-0 px-4 py-2 font-black text-[11px] transition-all ${activeFilter === chip.id ? 'gdr-chip-active' : 'gdr-chip'}`}
+            >
+              {chip.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Content */}
       <div className="px-5 pb-6 space-y-4">
