@@ -5,6 +5,7 @@ export default function VerifiedBadge({ type = 'player', size = 14 }) {
   const configs = {
     player: { label: 'Verified Player', color: '#2563EB', bg: '#EFF6FF' },
     coach: { label: 'Verified Coach', color: '#2563EB', bg: '#EFF6FF' },
+    team: { label: 'Verified Team', color: '#16A34A', bg: '#DCFCE7' },
     organization: { label: 'Elite Organization', color: '#8B5CF6', bg: '#F5F3FF' },
     top_rated: { label: 'Top Rated', color: '#A4A017', bg: '#FEFCE8' }
   };
