@@ -39,7 +39,27 @@
       "type": "boolean",
       "default": true
     },
+    "message_notifications": {
+      "type": "boolean",
+      "default": true
+    },
+    "application_notifications": {
+      "type": "boolean",
+      "default": true
+    },
+    "opportunity_notifications": {
+      "type": "boolean",
+      "default": true
+    },
     "availability_reminders": {
+      "type": "boolean",
+      "default": true
+    },
+    "billing_notifications": {
+      "type": "boolean",
+      "default": true
+    },
+    "system_notifications": {
       "type": "boolean",
       "default": true
     },
