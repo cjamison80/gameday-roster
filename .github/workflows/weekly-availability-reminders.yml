@@ -1,0 +1,33 @@
+name: Weekly Availability Reminders
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Wednesday 6:00 PM Central Time during daylight time equivalent.
+    # Adjust this if you want a different reminder window.
+    - cron: '0 23 * * 3'
+
+jobs:
+  availability-reminders:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Send weekly availability reminders
+        env:
+          BASE44_APP_ID: ${{ secrets.BASE44_APP_ID }}
+          BASE44_ADMIN_EMAIL: ${{ secrets.BASE44_ADMIN_EMAIL }}
+          BASE44_ADMIN_PASSWORD: ${{ secrets.BASE44_ADMIN_PASSWORD }}
+          BASE44_APP_BASE_URL: https://gameday-roster-hub.base44.app
+        run: npm run notify:availability
