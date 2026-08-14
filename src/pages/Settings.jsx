@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Bell, Shield, LogOut, RefreshCw, Settings as SettingsIcon, CreditCard } from 'lucide-react';
+import { ArrowLeft, Bell, Shield, LogOut, RefreshCw, Settings as SettingsIcon, CreditCard, FileText, ChevronRight } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { getInitials } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
@@ -170,8 +170,36 @@ export default function Settings() {
           </div>
           <p className="text-sm leading-relaxed" style={{ color: '#64748B' }}>
             Player profiles are parent/guardian-run. Verified identities help keep the community trusted.
-            Contact Base44 support for any safety concerns.
+            Use the legal center for safety, privacy, media, subscription, and community rules.
           </p>
+        </div>
+
+        {/* Legal */}
+        <div className="bg-white rounded-2xl border border-gray-100 p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <FileText size={18} color="#C1121F" />
+            <h3 className="font-bold" style={{ color: '#0B1528' }}>Legal Center</h3>
+          </div>
+          <div className="space-y-2">
+            {[
+              { label: 'Terms of Service', path: '/legal/terms' },
+              { label: 'Privacy Policy', path: '/legal/privacy' },
+              { label: 'Minor Safety & Guardian Consent', path: '/legal/minor-safety' },
+              { label: 'Photo & Video Policy', path: '/legal/photo-video' },
+              { label: 'Refund & Cancellation Policy', path: '/legal/refunds' },
+              { label: 'Community Guidelines', path: '/legal/community-guidelines' }
+            ].map(item => (
+              <button
+                key={item.path}
+                onClick={() => navigate(item.path)}
+                className="w-full flex items-center gap-3 p-3 rounded-2xl text-left"
+                style={{ backgroundColor: '#F8FAFC' }}
+              >
+                <span className="flex-1 text-sm font-bold" style={{ color: '#0B1528' }}>{item.label}</span>
+                <ChevronRight size={16} color="#94A3B8" />
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Logout */}
