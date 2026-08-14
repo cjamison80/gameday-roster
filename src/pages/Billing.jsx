@@ -4,6 +4,7 @@ import { ArrowLeft, Check, CreditCard, ShieldCheck, Star, Zap } from 'lucide-rea
 import { base44 } from '@/api/base44Client';
 import { useToast } from '@/components/ui/use-toast';
 import { startStripeCheckout } from '@/lib/stripeBilling';
+import { notifyBillingEvent } from '@/lib/notifications';
 import {
   formatMoney,
   formatPlanPrice,
@@ -60,8 +61,10 @@ export default function Billing() {
   useEffect(() => {
     if (checkoutStatus === 'success') {
       toast({ title: 'Checkout complete', description: 'Your subscription is being activated. This page will update after Stripe confirms payment.' });
+      if (user) notifyBillingEvent({ userId: user.id, planName: currentPlanLabel, status: 'processing' });
     } else if (checkoutStatus === 'cancelled') {
       toast({ title: 'Checkout cancelled', description: 'No payment was processed.' });
+      if (user) notifyBillingEvent({ userId: user.id, planName: currentPlanLabel, status: 'cancelled before payment' });
     }
   }, [checkoutStatus]);
 
@@ -107,6 +110,7 @@ export default function Billing() {
       const data = await startStripeCheckout({ plan, interval, role });
       if (data?.subscription) setSubscription(data.subscription);
       toast({ title: 'Plan updated', description: `${plan.name} is now selected.` });
+      await notifyBillingEvent({ userId: user.id, planName: plan.name, status: 'selected' });
       await loadData();
     } catch (e) {
       console.error(e);
