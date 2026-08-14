@@ -311,7 +311,10 @@ export default function Register() {
       </form>
 
       <p className="text-[11px] leading-relaxed mt-5" style={{ color: '#94A3B8' }}>
-        Start free. Upgrade when you need more exposure, unlimited applications, or advanced roster tools. By creating an account, you agree to GameDay Roster’s Terms and Privacy Policy.
+        Start free. Upgrade when you need more exposure, unlimited applications, or advanced roster tools. By creating an account, you agree to GameDay Roster’s{' '}
+        <Link to="/legal/terms" className="font-black hover:underline" style={{ color: '#C1121F' }}>Terms</Link>,{' '}
+        <Link to="/legal/privacy" className="font-black hover:underline" style={{ color: '#C1121F' }}>Privacy Policy</Link>, and{' '}
+        <Link to="/legal/minor-safety" className="font-black hover:underline" style={{ color: '#C1121F' }}>Minor Safety Rules</Link>.
       </p>
     </AuthLayout>
   );
