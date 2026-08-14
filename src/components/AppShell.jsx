@@ -8,18 +8,41 @@ export default function AppShell() {
   const [unreadNotifications, setUnreadNotifications] = useState(0);
 
   useEffect(() => {
-    loadUnreadCounts();
+    let mounted = true;
+    let currentUserId = '';
+
+    const bootstrap = async () => {
+      try {
+        const user = await base44.auth.me();
+        currentUserId = user.id;
+        if (mounted) await loadUnreadCounts(user);
+      } catch {
+        // not critical
+      }
+    };
+
+    bootstrap();
+    const interval = setInterval(() => loadUnreadCounts(), 60000);
+    const onFocus = () => loadUnreadCounts();
+    window.addEventListener('focus', onFocus);
+
     const unsub = base44.entities.Notification.subscribe((event) => {
-      if (event.type === 'create' && !event.data.is_read) {
+      if (event.type === 'create' && !event.data.is_read && event.data.user_id === currentUserId) {
         setUnreadNotifications(prev => prev + 1);
       }
     });
-    return unsub;
+
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+      window.removeEventListener('focus', onFocus);
+      if (typeof unsub === 'function') unsub();
+    };
   }, []);
 
-  const loadUnreadCounts = async () => {
+  const loadUnreadCounts = async (knownUser = null) => {
     try {
-      const user = await base44.auth.me();
+      const user = knownUser || await base44.auth.me();
       const [notifs, convsA, convsB] = await Promise.all([
         base44.entities.Notification.filter({ user_id: user.id, is_read: false }),
         base44.entities.Conversation.filter({ participant_a_id: user.id }),
