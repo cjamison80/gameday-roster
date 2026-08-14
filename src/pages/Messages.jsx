@@ -103,6 +103,14 @@ export default function Messages() {
       msgs.filter(m => m.recipient_id === user.id && !m.is_read).forEach(m => {
         base44.entities.Message.update(m.id, { is_read: true, read_at: new Date().toISOString() });
       });
+      const readPatch = activeConv.participant_a_id === user.id
+        ? { unread_count_a: 0 }
+        : { unread_count_b: 0 };
+      const updatedConv = await base44.entities.Conversation.update(activeConv.id, readPatch).catch(() => null);
+      if (updatedConv) {
+        setActiveConv(updatedConv);
+        setConversations(prev => prev.map(c => c.id === updatedConv.id ? updatedConv : c));
+      }
     }
   };
 
