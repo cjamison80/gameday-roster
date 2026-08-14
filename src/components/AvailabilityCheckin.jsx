@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle, Loader2, CalendarDays } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { notifyAvailabilitySaved } from '@/lib/notifications';
 
 const DAYS = [
   { key: 'friday', label: 'Friday', short: 'Fri' },
@@ -120,6 +121,8 @@ export default function AvailabilityCheckin({ user, playerId, onSaved }) {
       } else {
         await base44.entities.Availability.create(payload);
       }
+      const selectedPlayer = players.find(p => p.id === selectedPlayerId) || { id: selectedPlayerId };
+      await notifyAvailabilitySaved({ parentId: user.id, player: selectedPlayer, weekStart });
       setSaved(true);
       if (onSaved) onSaved();
     } catch (e) {
