@@ -127,8 +127,13 @@ export default function Activity() {
             </div>
           ) : (
             notifications
-              .filter(n => activeTab === 'All' || (activeTab === 'Invitations' && n.type === 'invitation_received'))
-              .map(notif => <NotificationItem key={notif.id} notif={notif} navigate={navigate} />)
+              .filter(n => {
+                if (activeTab === 'All') return true;
+                if (activeTab === 'Applications') return ['application_received', 'application_accepted', 'application_declined'].includes(n.type);
+                if (activeTab === 'Invitations') return n.type === 'invitation_received';
+                return true;
+              })
+              .map(notif => <NotificationItem key={notif.id} notif={notif} onClick={() => handleNotificationClick(notif)} />)
           )
         )}
       </div>
@@ -136,13 +141,15 @@ export default function Activity() {
   );
 }
 
-function NotificationItem({ notif, navigate }) {
+function NotificationItem({ notif, onClick }) {
   const cfg = notificationIcons[notif.type] || notificationIcons.system;
   const Icon = cfg.icon;
 
   return (
-    <div
-      className="bg-white rounded-2xl p-4 flex items-start gap-3 border border-gray-100"
+    <button
+      type="button"
+      onClick={onClick}
+      className="w-full bg-white rounded-2xl p-4 flex items-start gap-3 border border-gray-100 text-left active:scale-[0.99] transition-transform"
       style={{ borderLeftWidth: notif.is_read ? 1 : 3, borderLeftColor: notif.is_read ? '#E2E8F0' : '#2563EB' }}
     >
       <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
@@ -154,7 +161,7 @@ function NotificationItem({ notif, navigate }) {
         {notif.body && <p className="text-sm mt-0.5 leading-relaxed" style={{ color: '#64748B' }}>{notif.body}</p>}
         <p className="text-xs mt-1" style={{ color: '#94A3B8' }}>{timeAgo(notif.created_date)}</p>
       </div>
-    </div>
+    </button>
   );
 }
 
