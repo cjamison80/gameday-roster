@@ -27,8 +27,13 @@ export default function TournamentSourcesAdmin() {
         base44.entities.TournamentSource.list('-created_date', 100),
         base44.entities.TournamentSyncJob.list('-created_date', 50)
       ]);
+      const visibleJobs = (jobRows || []).filter(job =>
+        job.run_type !== 'archived_cleanup' &&
+        !String(job.notes || '').includes('REMOVED_FROM_BETA_CLEANUP') &&
+        !String(job.error_message || '').includes('Archived during beta cleanup')
+      );
       setSources(sourceRows);
-      setJobs(jobRows);
+      setJobs(visibleJobs);
     } catch (e) {
       console.error(e);
       setAuthorized(false);
