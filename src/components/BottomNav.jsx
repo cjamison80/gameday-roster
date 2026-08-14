@@ -22,7 +22,7 @@ export default function BottomNav({ unreadMessages = 0, unreadNotifications = 0 
         <div className="flex items-center justify-around gap-1 h-full">
           {navItems.map(({ path, icon: Icon, label }) => {
             const isActive = location.pathname === path || (path === '/discover' && location.pathname === '/');
-            const badge = label === 'Messages' ? unreadMessages : 0;
+            const badge = label === 'Messages' ? unreadMessages : label === 'Profile' ? unreadNotifications : 0;
 
             return (
               <Link
