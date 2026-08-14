@@ -40,10 +40,11 @@ import Tournaments from '@/pages/Tournaments';
 import TournamentDetail from '@/pages/TournamentDetail';
 import TournamentSourcesAdmin from '@/pages/TournamentSourcesAdmin';
 import SportsPage from '@/pages/SportsPage';
+import Legal from '@/pages/Legal';
 
 const AuthenticatedApp = () => {
   const location = useLocation();
-  const isPublicRoute = location.pathname.startsWith('/public/');
+  const isPublicRoute = location.pathname.startsWith('/public/') || location.pathname.startsWith('/legal');
   const isAuthRoute = ['/welcome', '/login', '/register', '/forgot-password', '/reset-password'].includes(location.pathname);
   const isUnprotectedRoute = isPublicRoute || isAuthRoute;
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -57,6 +58,8 @@ const AuthenticatedApp = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/public/player/:id" element={<PlayerProfilePage publicView />} />
+        <Route path="/legal" element={<Legal />} />
+        <Route path="/legal/:slug" element={<Legal />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     );
