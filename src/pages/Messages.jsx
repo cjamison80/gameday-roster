@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Send, Search, Plus, Image, Paperclip } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { timeAgo, getInitials } from '@/lib/utils';
+import { notifyMessageReceived } from '@/lib/notifications';
 import { Image as AppImage } from '@/components/ui/image';
 
 export default function Messages() {
@@ -111,15 +112,31 @@ export default function Messages() {
     const otherId = activeConv.participant_a_id === user.id
       ? activeConv.participant_b_id : activeConv.participant_a_id;
     try {
+      const messageBody = newMessage.trim();
       const msg = await base44.entities.Message.create({
         conversation_id: activeConv.id,
         sender_id: user.id,
         recipient_id: otherId,
-        content: newMessage.trim()
+        content: messageBody,
+        opportunity_id: activeConv.opportunity_id || ''
       });
-      await base44.entities.Conversation.update(activeConv.id, {
-        last_message: newMessage.trim(),
-        last_message_at: new Date().toISOString()
+      const unreadPatch = activeConv.participant_a_id === otherId
+        ? { unread_count_a: (activeConv.unread_count_a || 0) + 1, unread_count_b: 0 }
+        : { unread_count_b: (activeConv.unread_count_b || 0) + 1, unread_count_a: 0 };
+      const updatedConv = await base44.entities.Conversation.update(activeConv.id, {
+        last_message: messageBody,
+        last_message_at: new Date().toISOString(),
+        ...unreadPatch
+      });
+      setActiveConv(updatedConv);
+      setConversations(prev => prev.map(c => c.id === updatedConv.id ? updatedConv : c));
+      await notifyMessageReceived({
+        recipientId: otherId,
+        senderId: user.id,
+        senderName: user.full_name,
+        conversationId: activeConv.id,
+        opportunityId: activeConv.opportunity_id || '',
+        preview: messageBody
       });
       setNewMessage('');
     } catch (e) {
