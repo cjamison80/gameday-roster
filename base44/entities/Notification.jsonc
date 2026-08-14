@@ -16,6 +16,7 @@
         "availability_reminder",
         "opportunity_match",
         "verification_update",
+        "billing",
         "system"
       ]
     },
@@ -31,12 +32,59 @@
     "related_type": {
       "type": "string"
     },
+    "source_user_id": {
+      "type": "string"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "normal",
+        "high",
+        "urgent"
+      ],
+      "default": "normal"
+    },
+    "channel": {
+      "type": "string",
+      "enum": [
+        "in_app",
+        "push",
+        "email",
+        "sms"
+      ],
+      "default": "in_app"
+    },
+    "delivery_status": {
+      "type": "string",
+      "enum": [
+        "queued",
+        "delivered",
+        "failed",
+        "suppressed"
+      ],
+      "default": "delivered"
+    },
+    "delivered_at": {
+      "type": "string",
+      "format": "date-time"
+    },
     "is_read": {
       "type": "boolean",
       "default": false
     },
+    "read_at": {
+      "type": "string",
+      "format": "date-time"
+    },
     "action_url": {
       "type": "string"
+    },
+    "channel_snapshot": {
+      "type": "object"
+    },
+    "metadata": {
+      "type": "object"
     }
   },
   "required": [
