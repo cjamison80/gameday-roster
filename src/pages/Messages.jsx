@@ -200,7 +200,7 @@ export default function Messages() {
             <div className="space-y-2">
               {conversations.map(conv => {
                 const other = getOtherUser(conv);
-                const isUnread = conv.unread_count_a > 0 || conv.unread_count_b > 0;
+                const isUnread = conv.participant_a_id === user?.id ? (conv.unread_count_a || 0) > 0 : (conv.unread_count_b || 0) > 0;
                 return (
                   <button
                     key={conv.id}
