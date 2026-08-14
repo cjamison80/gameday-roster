@@ -13,7 +13,9 @@
     "sync:tournaments": "node scripts/tournament-sync/daily-sync.mjs",
     "sync:tournaments:usssa-ar": "node scripts/tournament-sync/usssa-arkansas-baseball.mjs",
     "sync:tournaments:2d-ar": "node scripts/tournament-sync/2d-arkansas-baseball.mjs",
-    "sync:tournaments:dry-run": "DRY_RUN=true node scripts/tournament-sync/daily-sync.mjs"
+    "sync:tournaments:dry-run": "DRY_RUN=true node scripts/tournament-sync/daily-sync.mjs",
+    "notify:availability": "node scripts/notifications/weekly-availability-reminders.mjs",
+    "notify:availability:dry-run": "DRY_RUN=true node scripts/notifications/weekly-availability-reminders.mjs"
   },
   "dependencies": {
     "@base44/sdk": "^0.8.41",
