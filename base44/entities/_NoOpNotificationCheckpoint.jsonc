@@ -1,0 +1,10 @@
+{
+  "name": "_NoOpNotificationCheckpoint",
+  "type": "object",
+  "properties": {
+    "note": {
+      "type": "string"
+    }
+  },
+  "required": []
+}
