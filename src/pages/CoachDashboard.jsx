@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Plus, ChevronRight, Check, X, MessageCircle, Users, ClipboardList, Trophy } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { calculateMatchScore, getMatchScoreColor } from '@/lib/utils';
+import { notifyApplicationDecision } from '@/lib/notifications';
 import MatchScoreBadge from '@/components/MatchScoreBadge';
 import VerifiedBadge from '@/components/VerifiedBadge';
 import { Image } from '@/components/ui/image';
@@ -86,23 +87,24 @@ export default function CoachDashboard() {
           });
         }
 
-        await base44.entities.Notification.create({
-          user_id: app.parent_id,
-          type: 'application_accepted',
-          title: 'Application Accepted',
-          body: `Your application was accepted by ${user.full_name}. You can now message the coach.`,
-          related_id: app.opportunity_id,
-          related_type: 'opportunity',
-          action_url: `/messages?conversation=${conv.id}`
+        await notifyApplicationDecision({
+          parentId: app.parent_id,
+          coachId: user.id,
+          coachName: user.full_name,
+          opportunity: opp || { id: app.opportunity_id, title: 'this roster need' },
+          application: app,
+          decision,
+          conversationId: conv.id
         });
       } else {
-        await base44.entities.Notification.create({
-          user_id: app.parent_id,
-          type: 'application_declined',
-          title: 'Application Declined',
-          body: `Your application was declined.`,
-          related_id: app.opportunity_id,
-          related_type: 'opportunity'
+        const opp = opportunities.find(o => o.id === app.opportunity_id);
+        await notifyApplicationDecision({
+          parentId: app.parent_id,
+          coachId: user.id,
+          coachName: user.full_name,
+          opportunity: opp || { id: app.opportunity_id, title: 'this roster need' },
+          application: app,
+          decision
         });
       }
     } catch (e) {
