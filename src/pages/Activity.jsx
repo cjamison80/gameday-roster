@@ -3,6 +3,7 @@ import { CheckCircle, Mail, Bell, Clock, Shield, ChevronRight } from 'lucide-rea
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { timeAgo } from '@/lib/utils';
+import { markAllNotificationsRead, markNotificationRead } from '@/lib/notifications';
 import AvailabilityCheckin from '@/components/AvailabilityCheckin';
 
 const tabs = ['All', 'Applications', 'Invitations', 'Availability'];
@@ -49,9 +50,14 @@ export default function Activity() {
   };
 
   const markAllRead = async () => {
-    const unread = notifications.filter(n => !n.is_read);
-    await Promise.all(unread.map(n => base44.entities.Notification.update(n.id, { is_read: true })));
-    setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
+    await markAllNotificationsRead(notifications);
+    setNotifications(prev => prev.map(n => ({ ...n, is_read: true, read_at: n.read_at || new Date().toISOString() })));
+  };
+
+  const handleNotificationClick = async (notif) => {
+    const updated = await markNotificationRead(notif);
+    setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, ...updated, is_read: true } : n));
+    if (notif.action_url) navigate(notif.action_url);
   };
 
   const unreadCount = notifications.filter(n => !n.is_read).length;
