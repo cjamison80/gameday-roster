@@ -1,0 +1,10 @@
+{
+  "type": "object",
+  "properties": {
+    "noop": {
+      "type": "string"
+    }
+  },
+  "required": [],
+  "name": "NoOpCheckpointSchema_DO_NOT_USE"
+}
