@@ -4,6 +4,7 @@ import { ArrowLeft, Share, Heart, MapPin, Calendar, DollarSign, Users, Clock, Ch
 import { base44 } from '@/api/base44Client';
 import { formatDateRange, formatDate, calculateMatchScore } from '@/lib/utils';
 import { currentMonthKey, getEntitledPlan, isLimitReached, loadPublicPlans, loadUserSubscription } from '@/lib/subscription';
+import { notifyApplicationReceived } from '@/lib/notifications';
 import MatchScoreBadge from '@/components/MatchScoreBadge';
 import { Image } from '@/components/ui/image';
 import PlayerCreateForm from '@/components/player/PlayerCreateForm';
@@ -127,7 +128,7 @@ export default function OpportunityDetail() {
         return;
       }
 
-      await base44.entities.Application.create({
+      const createdApplication = await base44.entities.Application.create({
         opportunity_id: id,
         parent_id: user.id,
         player_id: selectedPlayer.id,
@@ -141,14 +142,12 @@ export default function OpportunityDetail() {
       setShowApplyModal(false);
       setShowSubmittedConfirmation(true);
       if (opportunity.coach_id) {
-        await base44.entities.Notification.create({
-          user_id: opportunity.coach_id,
-          type: 'application_received',
-          title: 'New Application Received',
-          body: `${selectedPlayer.first_name} ${selectedPlayer.last_name} applied for ${opportunity.title}.`,
-          related_id: id,
-          related_type: 'opportunity',
-          action_url: '/coach-dashboard'
+        await notifyApplicationReceived({
+          coachId: opportunity.coach_id,
+          parentId: user.id,
+          player: selectedPlayer,
+          opportunity: { ...opportunity, id },
+          application: createdApplication
         });
       }
     } catch (e) {
