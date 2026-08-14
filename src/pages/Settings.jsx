@@ -118,21 +118,45 @@ export default function Settings() {
           <div className="space-y-4">
             <ToggleRow
               label="Push Notifications"
-              desc="Receive in-app push alerts"
-              checked={!!profile?.push_notifications}
+              desc="Allow mobile/web push delivery when native push is connected"
+              checked={profile?.push_notifications !== false}
               onChange={v => togglePref('push_notifications', v)}
             />
             <ToggleRow
               label="Email Notifications"
-              desc="Email me about important updates"
-              checked={!!profile?.email_notifications}
+              desc="Allow email delivery for important updates when email service is connected"
+              checked={profile?.email_notifications !== false}
               onChange={v => togglePref('email_notifications', v)}
+            />
+            <ToggleRow
+              label="Messages"
+              desc="Notify me when a coach or parent sends a message"
+              checked={profile?.message_notifications !== false}
+              onChange={v => togglePref('message_notifications', v)}
+            />
+            <ToggleRow
+              label="Applications"
+              desc="Application received, accepted, declined, and invitations"
+              checked={profile?.application_notifications !== false}
+              onChange={v => togglePref('application_notifications', v)}
+            />
+            <ToggleRow
+              label="Opportunity Matches"
+              desc="New roster opportunities that match a player profile"
+              checked={profile?.opportunity_notifications !== false}
+              onChange={v => togglePref('opportunity_notifications', v)}
             />
             <ToggleRow
               label="Availability Reminders"
               desc="Remind me to set weekly availability"
-              checked={!!profile?.availability_reminders}
+              checked={profile?.availability_reminders !== false}
               onChange={v => togglePref('availability_reminders', v)}
+            />
+            <ToggleRow
+              label="Billing Updates"
+              desc="Plan, subscription, and payment status alerts"
+              checked={profile?.billing_notifications !== false}
+              onChange={v => togglePref('billing_notifications', v)}
             />
           </div>
         </div>
