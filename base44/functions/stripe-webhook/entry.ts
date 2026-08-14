@@ -131,6 +131,23 @@ async function recordEvent(base44, userId, payload) {
   }).catch(() => null);
 }
 
+async function recordNotification(base44, userId, payload) {
+  if (!userId) return null;
+  return await base44.asServiceRole.entities.Notification.create({
+    user_id: userId,
+    type: 'billing',
+    title: payload.title || 'Subscription update',
+    body: payload.body || 'Your subscription was updated.',
+    related_type: 'billing',
+    action_url: '/billing',
+    priority: payload.priority || 'normal',
+    channel: 'in_app',
+    delivery_status: 'delivered',
+    delivered_at: new Date().toISOString(),
+    metadata: payload.metadata || {}
+  }).catch(() => null);
+}
+
 async function applySubscriptionObject(base44, subscription, context = {}) {
   const metadata = subscription.metadata || {};
   const userId = context.user_id || metadata.user_id;
@@ -225,6 +242,11 @@ export default async function(req: Request) {
         provider_event_id: event.id,
         metadata: { checkout_session_id: session.id, stripe_subscription_id: subscriptionId }
       });
+      await recordNotification(base44, metadata.user_id, {
+        title: 'Checkout complete',
+        body: `${saved?.plan_name || metadata.plan_code || 'Your plan'} checkout is complete.`,
+        metadata: { checkout_session_id: session.id, stripe_subscription_id: subscriptionId }
+      });
     }
 
     if (event.type === 'customer.subscription.created' || event.type === 'customer.subscription.updated') {
@@ -234,6 +256,11 @@ export default async function(req: Request) {
         event_type: event.type === 'customer.subscription.created' ? 'subscription_created' : 'subscription_updated',
         plan_code: saved?.plan_code || obj.metadata?.plan_code,
         provider_event_id: event.id,
+        metadata: { stripe_subscription_id: obj.id, stripe_status: obj.status }
+      });
+      await recordNotification(base44, saved?.user_id || obj.metadata?.user_id, {
+        title: 'Subscription updated',
+        body: `${saved?.plan_name || 'Your plan'} is now ${saved?.status || mapStripeStatus(obj.status)}.`,
         metadata: { stripe_subscription_id: obj.id, stripe_status: obj.status }
       });
     }
@@ -247,6 +274,12 @@ export default async function(req: Request) {
         provider_event_id: event.id,
         metadata: { stripe_subscription_id: obj.id }
       });
+      await recordNotification(base44, saved?.user_id || obj.metadata?.user_id, {
+        title: 'Subscription canceled',
+        body: `${saved?.plan_name || 'Your plan'} has been canceled.`,
+        priority: 'high',
+        metadata: { stripe_subscription_id: obj.id }
+      });
     }
 
     if (event.type === 'invoice.payment_succeeded' || event.type === 'invoice.payment_failed') {
@@ -255,13 +288,22 @@ export default async function(req: Request) {
       if (invoice.subscription) stripeSubscription = await stripeGet(stripeSecretKey, `/subscriptions/${invoice.subscription}`).catch(() => null);
       const saved = stripeSubscription ? await applySubscriptionObject(base44, stripeSubscription) : null;
       const userId = stripeSubscription?.metadata?.user_id || saved?.user_id;
+      const paymentSucceeded = event.type === 'invoice.payment_succeeded';
       await recordEvent(base44, userId, {
         subscription_id: saved?.id,
-        event_type: event.type === 'invoice.payment_succeeded' ? 'payment_succeeded' : 'payment_failed',
+        event_type: paymentSucceeded ? 'payment_succeeded' : 'payment_failed',
         plan_code: saved?.plan_code || stripeSubscription?.metadata?.plan_code,
         amount_cents: invoice.amount_paid || invoice.amount_due || undefined,
         currency: (invoice.currency || 'usd').toUpperCase(),
         provider_event_id: event.id,
+        metadata: { invoice_id: invoice.id, stripe_subscription_id: invoice.subscription }
+      });
+      await recordNotification(base44, userId, {
+        title: paymentSucceeded ? 'Payment received' : 'Payment failed',
+        body: paymentSucceeded
+          ? `${saved?.plan_name || 'Your subscription'} payment was received.`
+          : `${saved?.plan_name || 'Your subscription'} payment failed. Update billing to keep premium features active.`,
+        priority: paymentSucceeded ? 'normal' : 'high',
         metadata: { invoice_id: invoice.id, stripe_subscription_id: invoice.subscription }
       });
     }
