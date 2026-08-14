@@ -17,6 +17,7 @@ const notificationIcons = {
   availability_reminder: { icon: Clock, color: '#F59E0B', bg: '#FEF9C3' },
   opportunity_match: { icon: Bell, color: '#A4A017', bg: '#FEFCE8' },
   verification_update: { icon: Shield, color: '#2563EB', bg: '#EFF6FF' },
+  billing: { icon: Shield, color: '#C1121F', bg: '#FEE2E2' },
   system: { icon: Bell, color: '#64748B', bg: '#F1F5F9' }
 };
 
