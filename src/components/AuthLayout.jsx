@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { ArrowRight, MapPin, ShieldCheck, Trophy, Users } from "lucide-react";
 import GameDayLogo from "@/components/GameDayLogo";
 
@@ -34,7 +35,10 @@ export default function AuthLayout({ icon: Icon, title, subtitle, footer, childr
 
             <div className="relative z-10 flex items-center justify-between gap-4">
               <GameDayLogo size={38} showText={true} light={true} />
-              <span className="gdr-auth-badge gdr-auth-badge-clean">BETA</span>
+              <div className="flex items-center gap-2">
+                <Link to="/how-it-works" className="hidden sm:inline-flex gdr-auth-badge gdr-auth-badge-clean hover:opacity-90">HOW IT WORKS</Link>
+                <span className="gdr-auth-badge gdr-auth-badge-clean">BETA</span>
+              </div>
             </div>
 
             <div className="relative z-10 max-w-xl py-12 lg:py-0">
@@ -47,6 +51,9 @@ export default function AuthLayout({ icon: Icon, title, subtitle, footer, childr
               </p>
 
               <div className="mt-7 flex flex-wrap gap-2">
+                <Link to="/how-it-works" className="px-3 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.16em]" style={{ backgroundColor: 'rgba(193,18,31,0.24)', border: '1px solid rgba(252,165,165,0.28)', color: '#FCA5A5' }}>
+                  See What We Do
+                </Link>
                 {['Players', 'Coaches', 'Teams', 'Tournaments'].map(item => (
                   <span key={item} className="px-3 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.16em]" style={{ backgroundColor: 'rgba(248,250,252,0.09)', border: '1px solid rgba(248,250,252,0.15)', color: '#E2E8F0' }}>
                     {item}
