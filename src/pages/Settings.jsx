@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Bell, Shield, LogOut, RefreshCw, Settings as SettingsIcon, CreditCard, FileText, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Bell, Shield, LogOut, RefreshCw, Settings as SettingsIcon, CreditCard, FileText, ChevronRight, Sparkles } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { getInitials } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
@@ -85,6 +85,31 @@ export default function Settings() {
       </div>
 
       <div className="px-5 py-5 space-y-5">
+        {/* How It Works */}
+        <div className="bg-white rounded-2xl border border-gray-100 p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles size={18} color="#C1121F" />
+            <h3 className="font-bold" style={{ color: '#0B1528' }}>How GameDay Roster Works</h3>
+          </div>
+          <p className="text-sm mb-3" style={{ color: '#64748B' }}>
+            Learn what the platform does for parents, players, coaches, organizations, tournaments, and safety.
+          </p>
+          <button
+            onClick={() => navigate('/how-it-works')}
+            className="w-full flex items-center gap-3 p-4 rounded-2xl text-left"
+            style={{ backgroundColor: '#FEE2E2' }}
+          >
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#C1121F' }}>
+              <Sparkles size={18} color="white" />
+            </div>
+            <div className="flex-1">
+              <h4 className="font-bold text-sm" style={{ color: '#0B1528' }}>View Services & Purpose</h4>
+              <p className="text-xs mt-0.5" style={{ color: '#C1121F' }}>What we do and why it matters</p>
+            </div>
+            <ChevronRight size={16} color="#C1121F" />
+          </button>
+        </div>
+
         {/* Subscription & Billing */}
         <div className="bg-white rounded-2xl border border-gray-100 p-5">
           <div className="flex items-center gap-2 mb-3">
