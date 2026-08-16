@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { ChevronRight, ArrowLeft, CheckCircle2, Users, Trophy, Building2, MapPinned } from 'lucide-react';
 import GameDayLogo from '@/components/GameDayLogo';
@@ -191,6 +191,11 @@ export default function Onboarding() {
             <p className="text-center text-xs pt-2" style={{ color: '#94A3B8' }}>
               Built for parents, players, coaches, and organizations.
             </p>
+            <div className="text-center">
+              <Link to="/how-it-works" className="text-xs font-black uppercase tracking-[0.16em] hover:underline" style={{ color: '#FCA5A5' }}>
+                See how it works
+              </Link>
+            </div>
           </div>
         </div>
       </div>
