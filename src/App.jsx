@@ -41,10 +41,11 @@ import TournamentDetail from '@/pages/TournamentDetail';
 import TournamentSourcesAdmin from '@/pages/TournamentSourcesAdmin';
 import SportsPage from '@/pages/SportsPage';
 import Legal from '@/pages/Legal';
+import HowItWorks from '@/pages/HowItWorks';
 
 const AuthenticatedApp = () => {
   const location = useLocation();
-  const isPublicRoute = location.pathname.startsWith('/public/') || location.pathname.startsWith('/legal');
+  const isPublicRoute = location.pathname.startsWith('/public/') || location.pathname.startsWith('/legal') || location.pathname === '/how-it-works' || location.pathname === '/about';
   const isAuthRoute = ['/welcome', '/login', '/register', '/forgot-password', '/reset-password'].includes(location.pathname);
   const isUnprotectedRoute = isPublicRoute || isAuthRoute;
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -60,6 +61,8 @@ const AuthenticatedApp = () => {
         <Route path="/public/player/:id" element={<PlayerProfilePage publicView />} />
         <Route path="/legal" element={<Legal />} />
         <Route path="/legal/:slug" element={<Legal />} />
+        <Route path="/how-it-works" element={<HowItWorks />} />
+        <Route path="/about" element={<HowItWorks />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     );
@@ -110,6 +113,8 @@ const AuthenticatedApp = () => {
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/welcome" element={<Onboarding />} />
       <Route path="/public/player/:id" element={<PlayerProfilePage publicView />} />
+      <Route path="/how-it-works" element={<HowItWorks />} />
+      <Route path="/about" element={<HowItWorks />} />
 
       {/* Protected routes */}
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/welcome" replace />} />}>
